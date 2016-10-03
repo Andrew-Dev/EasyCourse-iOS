@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="cZB-Xw-oY4">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+    </dependencies>
+    <scenes>
+        <!--LoginVC-->
+        <scene sceneID="Ttg-bp-6Cs">
+            <objects>
+                <viewController storyboardIdentifier="LoginVC" id="cZB-Xw-oY4" customClass="LoginVC" customModule="EasyCourse" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="1av-cI-iA6"/>
+                        <viewControllerLayoutGuide type="bottom" id="XjE-Dj-HUw"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="gcL-eV-35n">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" pagingEnabled="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="odf-RA-Pgd">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                                <color key="backgroundColor" red="0.10419792004929664" green="0.14950508791159484" blue="0.32453440656565657" alpha="1" colorSpace="calibratedRGB"/>
+                            </scrollView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="odf-RA-Pgd" firstAttribute="top" secondItem="gcL-eV-35n" secondAttribute="top" id="1mh-I1-D7H"/>
+                            <constraint firstItem="odf-RA-Pgd" firstAttribute="leading" secondItem="gcL-eV-35n" secondAttribute="leading" id="7cz-35-ACr"/>
+                            <constraint firstItem="XjE-Dj-HUw" firstAttribute="top" secondItem="odf-RA-Pgd" secondAttribute="bottom" id="kDr-TK-5Yz"/>
+                            <constraint firstAttribute="trailing" secondItem="odf-RA-Pgd" secondAttribute="trailing" id="pZv-8w-edC"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="mainScrollView" destination="odf-RA-Pgd" id="PXY-bQ-S9d"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="42q-b0-CVB" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="311" y="1763"/>
+        </scene>
+    </scenes>
+</document>
