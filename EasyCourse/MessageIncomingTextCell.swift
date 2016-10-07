@@ -50,6 +50,7 @@ class MessageIncomingTextCell: UITableViewCell {
     var message:Message?
     override func awakeFromNib() {
         super.awakeFromNib()
+        self.layoutIfNeeded()
         messageBubbleView.layer.cornerRadius = 10
         messageBubbleView.layer.masksToBounds = true
         userAvatarImageView.layer.cornerRadius = userAvatarImageView.frame.size.width/2

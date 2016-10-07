@@ -45,8 +45,11 @@ open class Design {
         //very light green
         class func cellSelectedGreen() -> UIColor { return UIColor(red: 230/255, green: 255/255, blue: 236/255, alpha: 1) }
     }
+
+//    open static let defaultAvatarImage = UIImage(named: "DefaultAvatar")
+//    open static let defaultRoomImage = UIImage(named: "DefaultRoom")
     
-    open static let defaultAvatarImage = UIImage(named: "DefaultAvatar")
-    open static let defaultRoomImage = UIImage(named: "DefaultRoom")
+    open static let defaultAvatarImage = #imageLiteral(resourceName: "DefaultAvatar")
+    open static let defaultRoomImage = #imageLiteral(resourceName: "DefaultRoom")
     
 }

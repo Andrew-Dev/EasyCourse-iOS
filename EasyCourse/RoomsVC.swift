@@ -36,7 +36,7 @@ class RoomsVC: UIViewController {
             self.roomTableView.reloadData()
         })
         messageUpdateNotif = message.addNotificationBlock({ (result) in
-            print("message update")
+            print("room message update")
             self.sortRooms()
             self.roomTableView.reloadData()
         })
@@ -49,6 +49,7 @@ class RoomsVC: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        print("=====================notif is \(messageUpdateNotif)")
     }
     
     override func didReceiveMemoryWarning() {

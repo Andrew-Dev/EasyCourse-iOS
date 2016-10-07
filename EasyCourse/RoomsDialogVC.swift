@@ -37,7 +37,8 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     @IBOutlet weak var inputBottomConstraint: NSLayoutConstraint!
     
     //Data
-    var liveMessage:Results<(Message)>!
+//    var liveMessage:Results<(Message)>!
+    var liveMessage:List<(Message)>!
     var liveImageMessage:Results<(Message)>!
     var localRoom:Room!
     var msgPage = 0
@@ -57,7 +58,8 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     override func viewDidLoad() {
         super.viewDidLoad()
         //Load data
-        liveMessage = localRoom.getMessage()
+//        liveMessage = localRoom.getMessage()
+        liveMessage = localRoom.messageList
         liveImageMessage = localRoom.getMessageContainsImage()
         
         //UI
@@ -114,6 +116,8 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
         NotificationCenter.default.addObserver(self, selector: #selector(self.gobackToLastView), name: Constant.NotificationKey.RoomDelete, object: nil)
         
     }
+    
+    
     
     deinit {
         messageUpdateNotif?.stop()
@@ -451,7 +455,7 @@ extension RoomsDialogVC: UIViewControllerTransitioningDelegate, popUpImageProtoc
         } else {
             return
         }
-        
+                
         //        browser.setCurrentPhotoIndex(UInt(currentIndex))
         browser?.displayActionButton = false
         browser?.enableSwipeToDismiss = false

@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import RealmSwift
+import JGProgressHUD
 
 class RoomDetailTableVC: UITableViewController {
 
@@ -16,7 +18,7 @@ class RoomDetailTableVC: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        notificationSwitch.isOn = room.silent
     }
 
     override func didReceiveMemoryWarning() {
@@ -28,6 +30,36 @@ class RoomDetailTableVC: UITableViewController {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    
+    @IBAction func notificationSwitchChanged(_ sender: UISwitch) {
+        sender.isEnabled = false
+        let realm = try! Realm()
+        let hud = JGProgressHUD()
+        hud.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
+        hud.textLabel.text = "Loading"
+        hud.show(in: self.view)
+        ServerConst.sharedInstance.silentRoom(room.id!, silent: sender.isOn, completion: { (success, error) in
+            sender.isEnabled = true
+            print("finished")
+            if success {
+                hud.dismiss()
+                try! realm.write {
+                    self.room.silent = sender.isOn
+                }
+            } else {
+                sender.isOn = !sender.isOn
+                hud.indicatorView = JGProgressHUDErrorIndicatorView()
+                hud.textLabel.text = "Connect Error"
+                hud.tapOutsideBlock = { (hu) in
+                    hud.dismiss()
+                }
+                hud.tapOnHUDViewBlock = { (hu) in
+                    hud.dismiss()
+                }
+            }
+        })
     }
     
     /*

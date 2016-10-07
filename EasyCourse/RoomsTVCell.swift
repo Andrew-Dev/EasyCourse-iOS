@@ -25,9 +25,11 @@ class RoomsTVCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
+        self.layoutIfNeeded()
+        roomProfilePicture.image = Design.defaultRoomImage
         roomProfilePicture.layer.cornerRadius = roomProfilePicture.frame.width/2
         roomProfilePicture.layer.masksToBounds = true
-        roomProfilePicture.image = Design.defaultRoomImage
+
         unreadLabel.layer.cornerRadius = 8
         unreadLabel.layer.masksToBounds = true
         unreadLabel.backgroundColor = Design.color.brightRedPomegranate()

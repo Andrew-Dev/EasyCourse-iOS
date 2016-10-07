@@ -22,12 +22,15 @@ class UserCoursesTVCell: UITableViewCell {
     var userJoinedThisCourse = false
     var delegate:cellTableviewProtocol?
     
+    var isOperating = false
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
         operationBtn.layer.cornerRadius = 6
         operationBtn.layer.borderWidth = 1
         operationBtn.layer.masksToBounds = true
+//        self.operationBtn.alpha = 1
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -36,6 +39,7 @@ class UserCoursesTVCell: UITableViewCell {
     }
     
     func configureCell(_ course:Course, userJoinedCourses:Results<(Course)>) {
+        operationBtn.alpha = 1
         cellCourse = course
         courseNameLabel.text = course.coursename
         courseTitleLabel.text = course.title
@@ -43,6 +47,7 @@ class UserCoursesTVCell: UITableViewCell {
         userJoinedThisCourse = userJoinedCourses.contains { (joinedCourse) -> Bool in
             return course.id == joinedCourse.id
         }
+        
         if userJoinedThisCourse {
             operationBtn.setTitle(" Drop ", for: UIControlState())
             operationBtn.setTitleColor(Design.color.deleteButtonColor(), for: UIControlState())
@@ -56,16 +61,17 @@ class UserCoursesTVCell: UITableViewCell {
     
     
     @IBAction func operationBtnPressed(_ sender: UIButton) {
+
         if userJoinedThisCourse {
             print("click quit")
             SocketIOManager.sharedInstance.dropCourse(cellCourse!.id!, completion: { (success, error) in
-                self.delegate?.reloadTableView()
+
             })
             
         } else {
             print("click join \(User.userLang) = \(cellCourse!.id)")
             ServerConst.sharedInstance.userChooseCourseAndLang(["lang":User.userLang, "course":[cellCourse!.id!]], completion: { (success, error) in
-                self.delegate?.reloadTableView()
+
             })
         }
     }

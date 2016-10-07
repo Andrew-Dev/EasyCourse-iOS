@@ -55,6 +55,7 @@ class MessageIncomingImageCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
+        self.layoutIfNeeded()
         messageBubbleView.layer.cornerRadius = 10
         messageBubbleView.layer.masksToBounds = true
         messageBubbleWidthConstraint.constant = UIScreen.main.bounds.width * 0.4

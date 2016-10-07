@@ -23,21 +23,10 @@ class SocketIOManager: NSObject {
     
     func establishConnection() {
         socket = SocketIOClient(socketURL: URL(string: Constant.baseURL)!, config: [.connectParams(["token" : User.token!])])
-        
+
         socket.connect()
-        socket.on("connect") {data, ack in
-            print("socket connected")
-            self.socket.emit("syncUser", 1)
-            var updateTime = NSDate().timeIntervalSince1970
-            if let lastUpdatedTime = try! Realm().objects(Message.self).last?.createdAt {
-                updateTime = lastUpdatedTime.timeIntervalSince1970
-            }
-            let a = try! Realm().objects(Message.self).last?.text
-            print("lastupdateTime: \(a), \(updateTime)")
-            self.socket.emit("getHistMessage", updateTime)
-            
-            self.publicListener()
-        }
+        self.publicListener()
+        
     }
     
     func closeConnection() {
@@ -108,7 +97,11 @@ class SocketIOManager: NSObject {
         socket.emit("joinRooms", roomsId)
         socket.once("joinRooms") { (obj, ack) in
             self.socket.emit("syncUser", 1)
-            completion(true, nil)
+            self.socket.once("syncUser", callback: { (objects, ack) in
+                User.currentUser!.syncCurrentUserWithData(objects[0] as! NSDictionary)
+                completion(true, nil)
+            })
+            
         }
     }
     
@@ -116,7 +109,10 @@ class SocketIOManager: NSObject {
         socket.emit("dropCourse", courseId)
         socket.once("dropCourse") { (obj, ack) in
             self.socket.emit("syncUser", 1)
-            completion(true, nil)
+            self.socket.once("syncUser", callback: { (objects, ack) in
+                User.currentUser!.syncCurrentUserWithData(objects[0] as! NSDictionary)
+                completion(true, nil)
+            })
         }
     }
     
@@ -139,6 +135,20 @@ class SocketIOManager: NSObject {
     }
     
     func publicListener() {
+        socket.on("connect") {data, ack in
+            print("socket connected")
+            self.socket.emit("syncUser", 1)
+            var updateTime = NSDate().timeIntervalSince1970
+            if let lastUpdatedTime = try! Realm().objects(Message.self).last?.createdAt {
+                updateTime = lastUpdatedTime.timeIntervalSince1970
+            }
+            let a = try! Realm().objects(Message.self).last?.text
+            print("lastupdateTime: \(a), \(updateTime)")
+            self.socket.emit("getHistMessage", updateTime)
+            
+            
+        }
+        
         socket.on("syncUser") { (objects, ack) in
 //            print("object get : \(objects)")
             
@@ -158,25 +168,29 @@ class SocketIOManager: NSObject {
                 //                print("one object: \(object)")
 
                 if (object as AnyObject).isKind(of: NSArray.self) {
-                    print("new message is array")
+                    print("new message [array]")
                     for obj in object as! NSArray {
                         print("message obj: \(obj)")
-                        let newMessage = Message.initMessage(obj as! NSDictionary)
+                        let newMessage = Message()
+                        newMessage.initMessage(obj as! NSDictionary)
+                        
                         if newMessage.senderId != User.currentUser!.id {
-                            newMessage.saveToDatabase()
                             Message().saveSenderUserInfo(obj as! NSDictionary)
+                            newMessage.saveToDatabase()
                         }
                     }
                 } else {
-                    print("new message is on dic")
-                    let newMessage = Message.initMessage(object as! NSDictionary)
+                    print("new message [single]")
+                    let newMessage = Message()
+                    newMessage.initMessage(object as! NSDictionary)
+
                     if newMessage.senderId != User.currentUser!.id {
-                        newMessage.saveToDatabase()
                         Message().saveSenderUserInfo(object as! NSDictionary)
+                        newMessage.saveToDatabase()
                     }
                 }
                 
-                NotificationCenter.default.post(name: Constant.NotificationKey.GetMessage, object: nil)
+//                NotificationCenter.default.post(name: Constant.NotificationKey.GetMessage, object: nil)
             }
 //            print("objects: \(objects)")
 //            print("new message recieve")

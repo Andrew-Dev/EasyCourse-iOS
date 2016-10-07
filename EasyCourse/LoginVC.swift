@@ -24,7 +24,7 @@ class LoginVC: UIViewController, moveToVCProtocol {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        self.view.layoutIfNeeded()
         mainScrollView.backgroundColor = Design.color.DarkGunPowder()
         
         mainLoginVC.delegate = self

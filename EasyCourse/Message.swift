@@ -23,37 +23,39 @@ class Message: Object {
     let imageWidth = RealmOptional<Float>()
     let imageHeight = RealmOptional<Float>()
     
+    
+    
     dynamic var roomId:String? = nil
     dynamic var createdAt:Date? = nil
     
     override static func primaryKey() -> String? {
         return "id"
+        
     }
     
     override static func indexedProperties() -> [String] {
         return ["createdAt"]
     }
     
-    internal class func initMessage(_ data:NSDictionary) -> Message {
-        let message = Message()
+    func initMessage(_ data:NSDictionary) {
         if let id = data["_id"] as? String {
             //            print("init date: \(data["createdAt"] as? NSDate)")
-            message.id = id
-            message.senderId = data["sender"] as? String
+            self.id = id
+            self.senderId = data["sender"] as? String
 //            message.senderName = data["senderName"] as? String
-            message.text = data["text"] as? String
-            message.imageUrl = data["imageUrl"] as? String
-            message.roomId = data["room"] as? String
-            message.imageWidth.value = data["imageWidth"] as? Float
-            message.imageHeight.value = data["imageHeight"] as? Float
+            self.text = data["text"] as? String
+            self.imageUrl = data["imageUrl"] as? String
+            self.roomId = data["room"] as? String
+            self.imageWidth.value = data["imageWidth"] as? Float
+            self.imageHeight.value = data["imageHeight"] as? Float
             if let interval = data["createdAt"] as? Double {
-                message.createdAt = Date(timeIntervalSince1970: interval)
+                self.createdAt = Date(timeIntervalSince1970: interval)
             } else {
                 //                message.createdAt = NSDate()
             }
             //            print("create at: \(message.createdAt)")
         }
-        return message
+//        return self
     }
     
     func initForCurrentUser(_ text: String?, imageUrl: String?, image: UIImage?, roomId: String) {
@@ -88,7 +90,7 @@ class Message: Object {
 //    }
     
     internal func saveSenderUserInfo(_ data:NSDictionary) {
-        print("start cache")
+//        print("start cache")
         if let senderId = data["sender"] as? String,
             let username = data["senderName"] as? String {
             
@@ -110,8 +112,9 @@ class Message: Object {
         
         let realm = try! Realm()
         if let room = realm.object(ofType: Room.self, forPrimaryKey: self.roomId) {
-            print("save msg to db: \(self.text) : \(realm.object(ofType: Message.self, forPrimaryKey: self.id))")
+            
             if realm.object(ofType: Message.self, forPrimaryKey: self.id) == nil {
+                print("save msg to db: \(self.text))")
                 try! realm.write({
                     room.messageList.append(self)
                     room.unread += 1

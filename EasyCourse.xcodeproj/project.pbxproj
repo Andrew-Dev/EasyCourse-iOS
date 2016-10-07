@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		607454C92A25EA07E84A634D /* Pods_EasyCourse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 285A98B99E4E74B8D3BBADE7 /* Pods_EasyCourse.framework */; };
+		F7364C7D1DA6E0EF007A967F /* LoadingTVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7364C7B1DA6E0EF007A967F /* LoadingTVCell.swift */; };
+		F7364C7E1DA6E0EF007A967F /* LoadingTVCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F7364C7C1DA6E0EF007A967F /* LoadingTVCell.xib */; };
 		F76A9B8C1D85FF3B0065C25C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F76A9B8B1D85FF3B0065C25C /* AppDelegate.swift */; };
 		F76A9B911D85FF3B0065C25C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F76A9B8F1D85FF3B0065C25C /* Main.storyboard */; };
 		F76A9B961D85FF3B0065C25C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F76A9B941D85FF3B0065C25C /* LaunchScreen.storyboard */; };
@@ -71,6 +73,8 @@
 		285A98B99E4E74B8D3BBADE7 /* Pods_EasyCourse.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_EasyCourse.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCA52E0697DF4E7A4BBCB7B6 /* Pods-EasyCourse.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EasyCourse.debug.xcconfig"; path = "Pods/Target Support Files/Pods-EasyCourse/Pods-EasyCourse.debug.xcconfig"; sourceTree = "<group>"; };
 		DE96EBA49BC6989A41637D04 /* Pods-EasyCourse.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EasyCourse.release.xcconfig"; path = "Pods/Target Support Files/Pods-EasyCourse/Pods-EasyCourse.release.xcconfig"; sourceTree = "<group>"; };
+		F7364C7B1DA6E0EF007A967F /* LoadingTVCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingTVCell.swift; sourceTree = "<group>"; };
+		F7364C7C1DA6E0EF007A967F /* LoadingTVCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LoadingTVCell.xib; sourceTree = "<group>"; };
 		F742AC3D1D9EFB6300AA61D7 /* EasyCourse.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = EasyCourse.entitlements; sourceTree = "<group>"; };
 		F76A9B881D85FF3B0065C25C /* EasyCourse.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EasyCourse.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F76A9B8B1D85FF3B0065C25C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -304,6 +308,8 @@
 				F76A9BD91D8623240065C25C /* LoginCourseChooseTVCell.xib */,
 				F76A9BDC1D86236D0065C25C /* LoginLangChooseTVCell.swift */,
 				F76A9BDD1D86236D0065C25C /* LoginLangChooseTVCell.xib */,
+				F7364C7B1DA6E0EF007A967F /* LoadingTVCell.swift */,
+				F7364C7C1DA6E0EF007A967F /* LoadingTVCell.xib */,
 			);
 			name = cell;
 			sourceTree = "<group>";
@@ -425,6 +431,7 @@
 				F76A9BCC1D8622020065C25C /* LoginLangChooseVC.xib in Resources */,
 				F76A9BC81D8621EF0065C25C /* LoginCourseComponentVC.xib in Resources */,
 				F76A9BA31D861D870065C25C /* User.storyboard in Resources */,
+				F7364C7E1DA6E0EF007A967F /* LoadingTVCell.xib in Resources */,
 				F7A5564A1D90DEC9003E258D /* Assets.xcassets in Resources */,
 				F76A9BD71D8622AB0065C25C /* LoginCourseListCVCell.xib in Resources */,
 				F76A9BF41D8627760065C25C /* LoginMainComponentVC.xib in Resources */,
@@ -511,6 +518,7 @@
 				F76A9BEC1D8626890065C25C /* MessageOutgoingImageCell.swift in Sources */,
 				F7ADFB341D8BA2DF00AD53C3 /* UserEditProfileTableVC.swift in Sources */,
 				F76A9BEA1D86266E0065C25C /* MessageIncomingTextCell.swift in Sources */,
+				F7364C7D1DA6E0EF007A967F /* LoadingTVCell.swift in Sources */,
 				F7ADFB201D888EC100AD53C3 /* UserTableVC.swift in Sources */,
 				F76A9C011D8706450065C25C /* RealmTools.swift in Sources */,
 				F76A9BBF1D86219E0065C25C /* LoginVC.swift in Sources */,

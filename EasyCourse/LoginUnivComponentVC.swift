@@ -25,7 +25,7 @@ class LoginUnivComponentVC: UIViewController, UITableViewDelegate, UITableViewDa
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        self.view.layoutIfNeeded()
         titleLabel.textColor = UIColor(white: 0.9, alpha: 1)
         titleLabelToCenterConstraint.constant = UIScreen.main.bounds.height * -0.15
         
@@ -36,6 +36,7 @@ class LoginUnivComponentVC: UIViewController, UITableViewDelegate, UITableViewDa
         univTableView.register(UINib(nibName: "LoginUnivChooseCell", bundle: nil), forCellReuseIdentifier: "LoginUnivChooseCell")
         univTableView.tableFooterView = UIView()
         univTVWidthConstraint.constant = UIScreen.main.bounds.width * 0.9
+        
         ServerConst.sharedInstance.getUniversity(nil, limit: nil, skip: nil) { (univArr, error) in
             if univArr != nil {
                 self.universities = univArr!

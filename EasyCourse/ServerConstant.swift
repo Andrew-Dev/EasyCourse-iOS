@@ -220,7 +220,7 @@ class ServerConst {
     
     func silentRoom(_ room:String, silent: Bool, completion: @escaping (_ success:Bool, _ error:Error?) -> ()) {
         if User.token == nil { return completion(false, nil) }
-        let apiUrl = URL(string: "\(Constant.baseURL)/report")
+        let apiUrl = URL(string: "\(Constant.baseURL)/silentRoom")
         let params = ["room":room, "silent":silent] as Parameters
         
         Alamofire.request(apiUrl!, method: .post, parameters: params, encoding: JSONEncoding.default, headers: ["auth":User.token!]).response { (response) in
@@ -302,7 +302,7 @@ class ServerConst {
         //TODO: check from database or cache
         if !refresh {
             if let user = try! Realm().object(ofType: User.self, forPrimaryKey: id) {
-                print("user get in database")
+//                print("user get in database")
                 return completion(user, [], nil)
             }
         }

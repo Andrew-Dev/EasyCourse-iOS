@@ -315,7 +315,7 @@ class LoginMainComponentVC: UIViewController, UITextFieldDelegate {
                             self.gotoNextScreen()
                         } else {
                             hud.indicatorView = JGProgressHUDErrorIndicatorView()
-                            hud.textLabel.text = "error"
+                            hud.textLabel.text = "Error"
                             hud.tapOutsideBlock = { (hu) in
                                 hud.dismiss()
                             }

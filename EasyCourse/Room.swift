@@ -21,6 +21,7 @@ class Room: Object {
     let memberList = List<User>()
     let messageList = List<Message>()
     dynamic var unread = 0
+    dynamic var silent = false
     
     //user built room
     dynamic var founderID:String? = nil

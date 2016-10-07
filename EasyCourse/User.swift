@@ -26,7 +26,7 @@ class User: Object {
     dynamic var profilePictureUrl:String? = nil
     dynamic var email:String? = nil
     dynamic var universityID:String? = nil
-    let silentRoomList = List<Room>()
+//    let silentRoomList = List<Room>()
     
     override static func primaryKey() -> String? {
         return "id"
@@ -133,7 +133,14 @@ class User: Object {
         }
         
         if let silentRoomIdArray = data["silentRoom"] as? [String] {
-            
+            let realm = try! Realm()
+            for roomId in silentRoomIdArray {
+                if let room = realm.object(ofType: Room.self, forPrimaryKey: roomId) {
+                    try! realm.write {
+                        room.silent = true
+                    }
+                }
+            }
         }
 
         return self
@@ -148,14 +155,9 @@ class User: Object {
             self.universityID = data["university"] as? String
             self.profilePictureUrl = data["avatarUrl"] as? String
         })
-//        self.id = data["_id"] as? String
-//        self.username = data["displayName"] as? String
-//        self.email = data["email"] as? String
-//        self.universityID = data["university"] as? String
-//        self.profilePictureUrl = data["avatarUrl"] as? String
-        
-        print("profilUrl: \(self.profilePictureUrl)")
-        print("oriprofilUrl: \(originProfilePictureUrl)")
+
+//        print("profilUrl: \(self.profilePictureUrl)")
+//        print("oriprofilUrl: \(originProfilePictureUrl)")
         if profilePictureUrl != nil {
             
             if User.currentUser?.profilePicture == nil || originProfilePictureUrl != self.profilePictureUrl  {

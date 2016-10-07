@@ -27,7 +27,7 @@ class LoginLangChooseVC: UIViewController, UITableViewDelegate, UITableViewDataS
     var choosedLang: [Int] = []
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        self.view.layoutIfNeeded()
         titleLabel.textColor = UIColor(white: 0.9, alpha: 1)
         
         titleLabelToCenterConstraint.constant = UIScreen.main.bounds.height * -0.25

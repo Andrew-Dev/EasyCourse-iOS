@@ -24,7 +24,7 @@ class UserEditProfileTableVC: UITableViewController, UIImagePickerControllerDele
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        self.view.layoutIfNeeded()
         tap = UITapGestureRecognizer(target: self, action: #selector(self.dismissSubView))
         picker.delegate = self
         picker.allowsEditing = true
