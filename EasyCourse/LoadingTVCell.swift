@@ -8,8 +8,18 @@
 
 import UIKit
 
+
+// suggested default height: 55
+
 class LoadingTVCell: UITableViewCell {
 
+    @IBOutlet weak var loadingIndicator: UIActivityIndicatorView!
+    
+    
+    @IBOutlet weak var resultLabel: UILabel!
+    
+    @IBOutlet weak var resultLabelVerticalConstraint: NSLayoutConstraint!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
@@ -21,4 +31,30 @@ class LoadingTVCell: UITableViewCell {
         // Configure the view for the selected state
     }
     
+    func configureCell(loadingStatus: Constant.searchStatus, text:String?) {
+        switch loadingStatus {
+        case .isSearching:
+            loadingIndicator.isHidden = false
+            loadingIndicator.startAnimating()
+            resultLabel.text = "Loading..."
+            self.layoutIfNeeded()
+            resultLabelVerticalConstraint.constant = 10
+        case .receivedEmptyResult:
+            loadingIndicator.isHidden = true
+            loadingIndicator.stopAnimating()
+            resultLabel.text = "No results"
+            self.layoutIfNeeded()
+            resultLabelVerticalConstraint.constant = 0
+        default:
+            loadingIndicator.isHidden = true
+            loadingIndicator.stopAnimating()
+            resultLabel.text = text ?? "No results"
+            self.layoutIfNeeded()
+            resultLabelVerticalConstraint.constant = 0
+            
+        }
+    }
+    
 }
+
+

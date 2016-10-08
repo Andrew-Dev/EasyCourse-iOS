@@ -23,6 +23,8 @@ class LoginUnivComponentVC: UIViewController, UITableViewDelegate, UITableViewDa
     
     var universities:[University] = []
     
+    var loadStatus = Constant.searchStatus.notSearching
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.layoutIfNeeded()
@@ -34,22 +36,31 @@ class LoginUnivComponentVC: UIViewController, UITableViewDelegate, UITableViewDa
         univTableView.delegate = self
         univTableView.dataSource = self
         univTableView.register(UINib(nibName: "LoginUnivChooseCell", bundle: nil), forCellReuseIdentifier: "LoginUnivChooseCell")
+        univTableView.register(UINib(nibName: "LoadingTVCell", bundle: nil), forCellReuseIdentifier: "LoadingTVCell")
         univTableView.tableFooterView = UIView()
         univTVWidthConstraint.constant = UIScreen.main.bounds.width * 0.9
         
-        ServerConst.sharedInstance.getUniversity(nil, limit: nil, skip: nil) { (univArr, error) in
-            if univArr != nil {
-                self.universities = univArr!
-                self.univTableView.reloadData()
-            } else {
-                //TODO: error situation
-            }
-        }
+        loadStatus = .isSearching
+        getUniversity()
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    func getUniversity() {
+        loadStatus = .isSearching
+        univTableView.reloadData()
+        ServerConst.sharedInstance.getUniversity(nil, limit: nil, skip: nil) { (univArr, error) in
+            if univArr != nil {
+                self.loadStatus = .receivedResult
+                self.universities = univArr!
+            } else {
+                self.loadStatus = .receivedError
+            }
+            self.univTableView.reloadData()
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -65,31 +76,59 @@ class LoginUnivComponentVC: UIViewController, UITableViewDelegate, UITableViewDa
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return universities.count
+        if loadStatus == .receivedResult {
+            return universities.count
+        } else {
+            return 1
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "LoginUnivChooseCell", for: indexPath) as! LoginUnivChooseCell
-        cell.univLabel.text = universities[(indexPath as NSIndexPath).row].name
-        return cell
+        switch loadStatus {
+        case .isSearching:
+            let statusCell = tableView.dequeueReusableCell(withIdentifier: "LoadingTVCell", for: indexPath) as! LoadingTVCell
+            statusCell.configureCell(loadingStatus: loadStatus, text: nil)
+            return statusCell
+        case .receivedError:
+            let statusCell = tableView.dequeueReusableCell(withIdentifier: "LoadingTVCell", for: indexPath) as! LoadingTVCell
+            statusCell.configureCell(loadingStatus: loadStatus, text: "Error, tap to reconnect")
+            return statusCell
+        case .receivedResult:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "LoginUnivChooseCell", for: indexPath) as! LoginUnivChooseCell
+            cell.univLabel.text = universities[(indexPath as NSIndexPath).row].name
+            return cell
+        default:
+            let statusCell = tableView.dequeueReusableCell(withIdentifier: "LoadingTVCell", for: indexPath) as! LoadingTVCell
+            statusCell.configureCell(loadingStatus: loadStatus, text: nil)
+            return statusCell
+        }
+        
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let a = universities[indexPath.row]
-        ServerConst.sharedInstance.postUpdateUser(["university":a.id! as AnyObject]) { (success, error) in
-            if success {
-                try! Realm().write({ 
-                    User.currentUser?.universityID = self.universities[indexPath.row].id
-                })
-                self.delegate?.moveToVC(1)
-            } else {
-                //TODO: error
+        if loadStatus == .receivedResult {
+            ServerConst.sharedInstance.postUpdateUser(["university":universities[indexPath.row].id! as AnyObject]) { (success, error) in
+                if success {
+                    try! Realm().write({
+                        User.currentUser?.universityID = self.universities[indexPath.row].id
+                    })
+                    self.delegate?.moveToVC(1)
+                } else {
+                    //TODO: error
+                    self.loadStatus = .receivedError
+                    self.univTableView.reloadData()
+                }
             }
+        } else if loadStatus == .receivedError {
+            getUniversity()
         }
+        
         univTableView.deselectRow(at: indexPath, animated: true)
     }
     
-    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 55
+    }
     /*
      // MARK: - Navigation
      

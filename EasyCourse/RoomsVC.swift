@@ -31,6 +31,9 @@ class RoomsVC: UIViewController {
         roomTableView.tableFooterView = UIView()
         sortRooms()
         print("message coutn: \(message.count)")
+        if rooms.count == 0 {
+            SocketIOManager.sharedInstance.syncUser()
+        }
         roomUpdateNotif = rooms.addNotificationBlock({ (result) in
             self.sortRooms()
             self.roomTableView.reloadData()
@@ -49,7 +52,6 @@ class RoomsVC: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        print("=====================notif is \(messageUpdateNotif)")
     }
     
     override func didReceiveMemoryWarning() {

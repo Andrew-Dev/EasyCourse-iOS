@@ -318,10 +318,10 @@
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="UserRoomsTVCell" rowHeight="58" id="642-yt-ENG" customClass="UserRoomsTVCell" customModule="EasyCourse" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="92" width="1000" height="58"/>
+                                        <rect key="frame" x="0.0" y="92" width="375" height="58"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="642-yt-ENG" id="acZ-ew-rrI">
-                                            <frame key="frameInset" width="1000" height="57"/>
+                                            <frame key="frameInset" width="375" height="57"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="RoomName" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XZ6-cc-o0w">
@@ -392,39 +392,33 @@
                             </tableView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JZ5-2e-pX6">
                                 <subviews>
-                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="SearchRooms" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="EPx-aH-IGe" customClass="JVFloatLabeledTextField">
+                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="SearchRooms" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="EPx-aH-IGe">
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no"/>
-                                        <userDefinedRuntimeAttributes>
-                                            <userDefinedRuntimeAttribute type="number" keyPath="floatingLabelYPadding">
-                                                <real key="value" value="8"/>
-                                            </userDefinedRuntimeAttribute>
-                                        </userDefinedRuntimeAttributes>
                                         <connections>
                                             <action selector="searchRoomTextChanged:" destination="bSZ-Lg-tf7" eventType="editingChanged" id="FaG-Sb-dv2"/>
                                         </connections>
                                     </textField>
                                 </subviews>
-                                <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
-                                    <constraint firstItem="EPx-aH-IGe" firstAttribute="leading" secondItem="JZ5-2e-pX6" secondAttribute="leading" constant="8" id="1jn-qr-waj"/>
-                                    <constraint firstAttribute="height" constant="44" id="6Er-sS-N7c"/>
-                                    <constraint firstItem="EPx-aH-IGe" firstAttribute="top" secondItem="JZ5-2e-pX6" secondAttribute="top" id="Hsp-oa-iBD"/>
-                                    <constraint firstAttribute="bottom" secondItem="EPx-aH-IGe" secondAttribute="bottom" id="W4q-rP-LOf"/>
+                                    <constraint firstItem="EPx-aH-IGe" firstAttribute="leading" secondItem="JZ5-2e-pX6" secondAttribute="leading" constant="12" id="1jn-qr-waj"/>
+                                    <constraint firstAttribute="height" constant="32" id="6Er-sS-N7c"/>
+                                    <constraint firstItem="EPx-aH-IGe" firstAttribute="top" secondItem="JZ5-2e-pX6" secondAttribute="top" constant="8" id="Hsp-oa-iBD"/>
+                                    <constraint firstAttribute="bottom" secondItem="EPx-aH-IGe" secondAttribute="bottom" constant="8" id="W4q-rP-LOf"/>
                                     <constraint firstAttribute="trailing" secondItem="EPx-aH-IGe" secondAttribute="trailing" constant="8" id="uLa-dp-vBd"/>
                                 </constraints>
                             </view>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="JZ5-2e-pX6" firstAttribute="leading" secondItem="FsY-Tq-clQ" secondAttribute="leading" id="6ia-bm-iGY"/>
+                            <constraint firstItem="JZ5-2e-pX6" firstAttribute="leading" secondItem="FsY-Tq-clQ" secondAttribute="leading" constant="8" id="6ia-bm-iGY"/>
                             <constraint firstAttribute="trailing" secondItem="Did-m7-p1t" secondAttribute="trailing" id="NOw-i9-6EN"/>
                             <constraint firstItem="Did-m7-p1t" firstAttribute="top" secondItem="FsY-Tq-clQ" secondAttribute="top" id="XQK-iX-GhI"/>
                             <constraint firstItem="2XL-aY-Jxo" firstAttribute="top" secondItem="Did-m7-p1t" secondAttribute="bottom" id="cIn-Pw-V2S"/>
-                            <constraint firstItem="JZ5-2e-pX6" firstAttribute="top" secondItem="iqA-4U-7dL" secondAttribute="bottom" id="kMN-6J-CeH"/>
-                            <constraint firstItem="Did-m7-p1t" firstAttribute="top" secondItem="JZ5-2e-pX6" secondAttribute="bottom" id="nu2-h5-JbH"/>
+                            <constraint firstItem="JZ5-2e-pX6" firstAttribute="top" secondItem="iqA-4U-7dL" secondAttribute="bottom" constant="8" id="kMN-6J-CeH"/>
+                            <constraint firstItem="Did-m7-p1t" firstAttribute="top" secondItem="JZ5-2e-pX6" secondAttribute="bottom" constant="8" id="nu2-h5-JbH"/>
                             <constraint firstItem="Did-m7-p1t" firstAttribute="leading" secondItem="FsY-Tq-clQ" secondAttribute="leading" id="qdQ-Fm-d84"/>
-                            <constraint firstAttribute="trailing" secondItem="JZ5-2e-pX6" secondAttribute="trailing" id="wDQ-OA-MgU"/>
+                            <constraint firstAttribute="trailing" secondItem="JZ5-2e-pX6" secondAttribute="trailing" constant="8" id="wDQ-OA-MgU"/>
                         </constraints>
                         <variation key="default">
                             <mask key="constraints">
@@ -435,11 +429,12 @@
                     <connections>
                         <outlet property="roomsTableView" destination="Did-m7-p1t" id="Fln-tZ-laO"/>
                         <outlet property="searchTextField" destination="EPx-aH-IGe" id="0aV-yv-v2s"/>
+                        <outlet property="searchView" destination="JZ5-2e-pX6" id="EsT-8x-c74"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6LD-h9-NS3" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2091" y="1140"/>
+            <point key="canvasLocation" x="2090.4000000000001" y="1139.2803598200901"/>
         </scene>
         <!--User CoursesVC-->
         <scene sceneID="cYy-2e-scX">
@@ -458,11 +453,6 @@
                                     <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Search Course" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="nhe-9N-Bzm">
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="done"/>
-                                        <userDefinedRuntimeAttributes>
-                                            <userDefinedRuntimeAttribute type="number" keyPath="floatingLabelYPadding">
-                                                <real key="value" value="0.0"/>
-                                            </userDefinedRuntimeAttribute>
-                                        </userDefinedRuntimeAttributes>
                                         <connections>
                                             <action selector="searchContentChanged:" destination="DKf-LH-1WW" eventType="editingChanged" id="y4O-0f-Ted"/>
                                         </connections>

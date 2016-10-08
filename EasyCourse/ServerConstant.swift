@@ -37,7 +37,22 @@ class ServerConst {
                     return completion(false, nil)
                 }
                 self.setupCurrentUserWithData(response.result.value as! NSDictionary)
-                completion(true, nil)
+                SocketIOManager.sharedInstance.establishConnection()
+                self.saveDeviceTokenForUser({ (success, err) in
+                    if success {
+                        print("success save device token")
+                        self.setupCurrentUserWithData(response.result.value as! NSDictionary)
+                        //MARK: connect to server after login
+                        SocketIOManager.sharedInstance.establishConnection()
+                        completion(true, nil)
+                    } else {
+                        print("fail save device token")
+                        self.setupCurrentUserWithData(response.result.value as! NSDictionary)
+                        //MARK: connect to server after login
+                        SocketIOManager.sharedInstance.establishConnection()
+                        completion(true, err)
+                    }
+                })
             }
         }
     }
@@ -154,11 +169,10 @@ class ServerConst {
         print("choose course: \(params)")
         Alamofire.request(apiUrl!, method: .post, parameters: params, encoding: JSONEncoding.default, headers: ["auth":User.token!]).response { (response) in
             if response.error != nil {
-                //MARK: connect after finishing choose course
                 completion(false, response.error)
             } else {
                 print("=====choose course finish")
-                SocketIOManager.sharedInstance.establishConnection()
+                SocketIOManager.sharedInstance.syncUser()
                 completion(true, nil)
             }
         }
@@ -235,23 +249,23 @@ class ServerConst {
     
     
     //MARK: - Non user related
-    func searchCourse(_ searchText:String?, completion: @escaping (_ courseArr:[Course]?, _ error:Error?) -> ()) {
-        let query = generateQuery(searchText, limit: nil, skip: nil, univ: User.currentUser!.universityID)
+    func searchCourse(_ searchText:String?, limit:Int?, skip:Int?, completion: @escaping (_ courseArr:[Course], _ error:Error?) -> ()) {
+        let query = generateQuery(searchText, limit: limit, skip: skip, univ: User.currentUser!.universityID)
         let apiUrl = URL(string: "\(Constant.baseURL)/course\(query)")
-        
+        print("url is \(apiUrl)")
         Alamofire.request(apiUrl!).responseJSON { (response) in
-            print("get respons\(response)")
             if response.result.error != nil {
-                completion(nil, response.result.error)
+                completion([], response.result.error)
             } else {
                 if let crsArr = response.result.value as? [NSDictionary] {
                     var finalArray:[Course] = []
                     for crs in crsArr {
                         finalArray.append(Course.initCourse(crs)!)
+                        print("get course: \(crs["name"])")
                     }
                     completion(finalArray, nil)
                 } else {
-                    completion(nil, nil)
+                    completion([], nil)
                 }
             }
         }

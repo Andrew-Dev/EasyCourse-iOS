@@ -14,7 +14,7 @@ class SocketIOManager: NSObject {
     
     static let sharedInstance = SocketIOManager()
     
-    var socket:SocketIOClient = SocketIOClient(socketURL: URL(string: Constant.baseURL)!)
+    var socket:SocketIOClient = SocketIOClient(socketURL: URL(string: Constant.baseURL)!, config: [.connectParams(["token" : User.token!])])
     
     
     override init() {
@@ -22,9 +22,8 @@ class SocketIOManager: NSObject {
     }
     
     func establishConnection() {
-        socket = SocketIOClient(socketURL: URL(string: Constant.baseURL)!, config: [.connectParams(["token" : User.token!])])
-
         socket.connect()
+        socket.emit("syncUser", 1)
         self.publicListener()
         
     }
@@ -34,8 +33,12 @@ class SocketIOManager: NSObject {
         socket.disconnect()
     }
     
+    func syncUser() {
+        socket.emit("syncUser", 1)
+    }
+    
     func logout(_ completion: @escaping (_ success:Bool, _ error:NSError?) -> ()) {
-        socket.emit("logout", 1)
+        socket.emit("logout", UserSetting.userDeviceToken ?? 1)
         socket.once("userDidLogout") { (obj, act) in
             print("logout : \(obj)")
             if obj[0] as? Bool == false {
@@ -64,8 +67,13 @@ class SocketIOManager: NSObject {
         socket.emit("message", param)
     }
     
-    func searchRoom(_ text:String, completion: @escaping (_ rooms:[Room], _ error:NSError?) -> ()) {
-        socket.emit("searchRoom", ["text":text, "university":(User.currentUser?.universityID)!])
+    func searchRoom(_ text:String, limit:Int?, skip:Int?, completion: @escaping (_ rooms:[Room], _ error:NSError?) -> ()) {
+        let localLimit = limit ?? 20
+        let localSkip = skip ?? 0
+//        socket.emit("searchRoom", ["text":text, "university":(User.currentUser?.universityID)!, "limit":"\(localLimit)", skip:"\(localSkip)"])
+        
+        
+        socket.emit("searchRoom", ["text":text, "university":(User.currentUser?.universityID)!, "limit":localLimit, "skip":localSkip])
         socket.once("searchRoom") { (objects, ack) in
             var finalRooms:[Room] = []
             for object in objects {
@@ -198,13 +206,25 @@ class SocketIOManager: NSObject {
         
         socket.on("message:success") { (obj, ack) in
             print("message sent success \(obj)")
-            if (obj as AnyObject).isKind(of: NSArray.self), let msgId = obj[0] as? String {
-                let realm = try! Realm()
-                if let message = realm.object(ofType: Message.self, forPrimaryKey: msgId) {
-                    try! Realm().write {
-                        message.successSent.value = true
+            if (obj as AnyObject).isKind(of: NSArray.self), let receivedMsg = obj[0] as? [String:AnyObject] {
+                
+                if let localId = receivedMsg["localId"] as? String, let msg = receivedMsg["msg"] as? NSDictionary {
+                    let realm = try! Realm()
+                    if let message = realm.object(ofType: Message.self, forPrimaryKey: localId) {
+                        try! Realm().write {
+                            message.successSent.value = true
+                            if let remoteId = msg["_id"] as? String {
+                                message.remoteId = remoteId
+                            }
+                            if let remoteCreated = msg["createdAt"] as? Double {
+                                message.createdAt = Date(timeIntervalSince1970: remoteCreated)
+                            }
+                        }
                     }
                 }
+                
+                
+                
             } else {
                 print("message success wrong callback")
             }

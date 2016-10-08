@@ -8,8 +8,9 @@
 
 import UIKit
 import RealmSwift
+import JGProgressHUD
 
-class LoginLangChooseVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class LoginLangChooseVC: UIViewController {
     
     weak var delegate: moveToVCProtocol?
     
@@ -25,6 +26,9 @@ class LoginLangChooseVC: UIViewController, UITableViewDelegate, UITableViewDataS
     
     var language:[(String,Int)] = []
     var choosedLang: [Int] = []
+    
+    var loadStatus = Constant.searchStatus.notSearching
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.layoutIfNeeded()
@@ -38,16 +42,15 @@ class LoginLangChooseVC: UIViewController, UITableViewDelegate, UITableViewDataS
         finishBtn.tintColor = UIColor.white
         
         langTableView.register(UINib(nibName: "LoginLangChooseTVCell", bundle: nil), forCellReuseIdentifier: "LoginLangChooseTVCell")
+        langTableView.register(UINib(nibName: "LoadingTVCell", bundle: nil), forCellReuseIdentifier: "LoadingTVCell")
         langTableView.delegate = self
         langTableView.dataSource = self
         langTableView.tableFooterView = UIView()
         
-        ServerConst.sharedInstance.getDefaultLanguage { (lang, error) in
-            if lang != nil {
-                self.language = self.sortLanguage(lang!)
-                self.langTableView.reloadData()
-            }
-        }
+        loadStatus = .isSearching
+        getLanguage()
+        
+        
     }
     
     override func didReceiveMemoryWarning() {
@@ -68,6 +71,20 @@ class LoginLangChooseVC: UIViewController, UITableViewDelegate, UITableViewDataS
             self.view.layoutIfNeeded()
             }, completion: nil)
     }
+    
+    func getLanguage() {
+        loadStatus = .isSearching
+        langTableView.reloadData()
+        ServerConst.sharedInstance.getDefaultLanguage { (lang, error) in
+            if lang != nil {
+                self.loadStatus = .receivedResult
+                self.language = self.sortLanguage(lang!)
+            } else {
+                self.loadStatus = .receivedError
+            }
+            self.langTableView.reloadData()
+        }
+    }
 
     func sortLanguage(_ lang:[(String,Int)]) ->[(String, Int)] {
         let englishIndex = lang.index { (lang) -> Bool in
@@ -81,33 +98,6 @@ class LoginLangChooseVC: UIViewController, UITableViewDelegate, UITableViewDataS
         }
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return language.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "LoginLangChooseTVCell", for: indexPath) as! LoginLangChooseTVCell
-        cell.langLabel.text = language[(indexPath as NSIndexPath).row].0
-        if choosedLang.index(of: language[(indexPath as NSIndexPath).row].1) == nil {
-            cell.backgroundColor = UIColor.white
-            cell.operationImgView.image = UIImage(named: "plus-ion")!.withRenderingMode(UIImageRenderingMode.alwaysTemplate)
-            cell.operationImgView.tintColor = UIColor(red: 0, green: 200/255, blue: 7/255, alpha: 1)
-        } else {
-            cell.backgroundColor = Design.color.cellSelectedGreen()
-            cell.operationImgView.image = UIImage(named: "close-ion")!.withRenderingMode(UIImageRenderingMode.alwaysTemplate)
-            cell.operationImgView.tintColor = UIColor.red
-        }
-        return cell
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if let index = choosedLang.index(of: language[(indexPath as NSIndexPath).row].1) {
-            choosedLang.remove(at: index)
-        } else {
-            choosedLang.append(language[(indexPath as NSIndexPath).row].1)
-        }
-        tableView.reloadRows(at: [indexPath], with: .middle)
-    }
     
     @IBAction func finishBtnPressed(_ sender: UIButton) {
         User.userLang = choosedLang
@@ -117,9 +107,26 @@ class LoginLangChooseVC: UIViewController, UITableViewDelegate, UITableViewDataS
         for course in allCourse {
             courseIdArray.append(course.id!)
         }
+        let hud = JGProgressHUD(style: .extraLight)
+        hud?.textLabel.text = "Loading"
+        hud?.show(in: self.view, animated: true)
         ServerConst.sharedInstance.userChooseCourseAndLang(["lang":choosedLang, "course":courseIdArray]) { (success, error) in
             if success {
+                hud?.indicatorView = JGProgressHUDSuccessIndicatorView()
+                hud?.textLabel.text = "Success"
+                hud?.dismiss(animated: true)
                 self.delegate?.moveToVC(3)
+                SocketIOManager.sharedInstance.syncUser()
+            } else {
+                //TODO: error
+                hud?.indicatorView = JGProgressHUDErrorIndicatorView()
+                hud?.textLabel.text = "Error, try again"
+                hud?.tapOutsideBlock = { (hu) in
+                    hud?.dismiss()
+                }
+                hud?.tapOnHUDViewBlock = { (hu) in
+                    hud?.dismiss()
+                }
             }
         }
     }
@@ -133,5 +140,74 @@ class LoginLangChooseVC: UIViewController, UITableViewDelegate, UITableViewDataS
      // Pass the selected object to the new view controller.
      }
      */
+    
+}
+
+extension LoginLangChooseVC: UITableViewDataSource, UITableViewDelegate {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if loadStatus == .receivedResult {
+            return language.count
+        } else {
+            return 1
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        switch loadStatus {
+        case .isSearching:
+            let statusCell = tableView.dequeueReusableCell(withIdentifier: "LoadingTVCell", for: indexPath) as! LoadingTVCell
+            statusCell.configureCell(loadingStatus: loadStatus, text: nil)
+            return statusCell
+        case .receivedError:
+            let statusCell = tableView.dequeueReusableCell(withIdentifier: "LoadingTVCell", for: indexPath) as! LoadingTVCell
+            statusCell.configureCell(loadingStatus: loadStatus, text: "Error, tap to reconnect")
+            return statusCell
+        case .receivedResult:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "LoginLangChooseTVCell", for: indexPath) as! LoginLangChooseTVCell
+            let cellChoosed = choosedLang.index(of: language[(indexPath as NSIndexPath).row].1) != nil
+            cell.configureCell(langText: language[indexPath.row].0, choosed: cellChoosed)
+            return cell
+        default:
+            let statusCell = tableView.dequeueReusableCell(withIdentifier: "LoadingTVCell", for: indexPath) as! LoadingTVCell
+            statusCell.configureCell(loadingStatus: loadStatus, text: nil)
+            return statusCell
+        }
+        
+        
+//        let cell = tableView.dequeueReusableCell(withIdentifier: "LoginLangChooseTVCell", for: indexPath) as! LoginLangChooseTVCell
+//        cell.langLabel.text = language[(indexPath as NSIndexPath).row].0
+//        let cellChoosed = choosedLang.index(of: language[(indexPath as NSIndexPath).row].1) != nil
+//        cell.configureCell(langText: language[indexPath.row].0, choosed: cellChoosed)
+//        if choosedLang.index(of: language[(indexPath as NSIndexPath).row].1) == nil {
+//            cell.backgroundColor = UIColor.white
+//            cell.operationImgView.image = UIImage(named: "plus-ion")!.withRenderingMode(UIImageRenderingMode.alwaysTemplate)
+//            cell.operationImgView.tintColor = UIColor(red: 0, green: 200/255, blue: 7/255, alpha: 1)
+//        } else {
+//            cell.backgroundColor = Design.color.cellSelectedGreen()
+//            cell.operationImgView.image = UIImage(named: "close-ion")!.withRenderingMode(UIImageRenderingMode.alwaysTemplate)
+//            cell.operationImgView.tintColor = UIColor.red
+//        }
+        
+//        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if loadStatus == .receivedResult {
+            if let index = choosedLang.index(of: language[(indexPath as NSIndexPath).row].1) {
+                choosedLang.remove(at: index)
+            } else {
+                choosedLang.append(language[(indexPath as NSIndexPath).row].1)
+            }
+            tableView.reloadRows(at: [indexPath], with: .middle)
+        } else if loadStatus == .receivedError {
+            getLanguage()
+        }
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 55
+    }
     
 }

@@ -13,9 +13,8 @@ import RealmSwift
 class Message: Object {
     
     dynamic var id:String? = nil
+    dynamic var remoteId:String? = nil
     dynamic var senderId:String? = nil
-    dynamic var senderName:String? = nil
-    dynamic var senderProfilePicUrl:String? = nil
     dynamic var text:String? = nil
     dynamic var imageUrl:String? = nil
     dynamic var imageData:Data? = nil
@@ -71,7 +70,6 @@ class Message: Object {
         }
         
         senderId = User.currentUser?.id
-        senderName = User.currentUser?.username ?? "tempusername"
         createdAt = Date()
         id = UUID().uuidString
     }

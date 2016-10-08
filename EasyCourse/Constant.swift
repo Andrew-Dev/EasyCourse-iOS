@@ -34,6 +34,14 @@ class Constant: NSObject {
         case avatar
     }
     
+    enum searchStatus {
+        case notSearching
+        case isSearching
+        case receivedEmptyResult
+        case receivedError
+        case receivedResult
+    }
+    
     static let baseURL = "https://zengjintaotest.com/api"
 //    static let baseURL = "http://localhost:3000/api"
 }
