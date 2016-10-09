@@ -111,7 +111,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
 //        let token = deviceToken.description.trimmingCharacters(in: CharacterSet(charactersIn: "<>"))
 //        UserSetting.userDeviceToken = token.replacingOccurrences(of: " ", with: "")
-        print("Token is \(UserSetting.userDeviceToken)")
+        print("DeviceToken is \(UserSetting.userDeviceToken)")
     }
     
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {

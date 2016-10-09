@@ -42,10 +42,7 @@ class UserCoursesVC: UIViewController, cellTableviewProtocol {
         courseTableView.tableFooterView = UIView()
         courseTableView.register(UINib(nibName: "LoadingTVCell", bundle: nil), forCellReuseIdentifier: "LoadingTVCell")
         
-        searchView.layer.cornerRadius = searchView.frame.height/2
-        searchView.layer.masksToBounds = true
-        searchView.layer.borderWidth = 1
-        searchView.layer.borderColor = UIColor.lightGray.cgColor
+        
         
         searchTextField.delegate = self
         searchTextField.becomeFirstResponder()
@@ -68,15 +65,19 @@ class UserCoursesVC: UIViewController, cellTableviewProtocol {
         notificationToken?.stop()
     }
 
+    override func viewWillLayoutSubviews() {
+        searchView.layer.cornerRadius = searchView.frame.height/2
+        searchView.layer.masksToBounds = true
+        searchView.layer.borderWidth = 1
+        searchView.layer.borderColor = UIColor.lightGray.cgColor
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
     
-//    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-//        self.view.endEditing(true)
-//    }
-    
+
 
     /*
     // MARK: - Navigation

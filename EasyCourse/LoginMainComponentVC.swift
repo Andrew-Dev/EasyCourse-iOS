@@ -74,7 +74,7 @@ class LoginMainComponentVC: UIViewController, UITextFieldDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        self.view.layoutIfNeeded()
         titleLabel.textColor = UIColor.white
         
         emailBtn.tintColor = UIColor.white
@@ -85,42 +85,10 @@ class LoginMainComponentVC: UIViewController, UITextFieldDelegate {
         passwordTextfield.delegate = self
         userNameTextField.delegate = self
         
-        emailTextField.isHidden = true
-        passwordTextfield.isHidden = true
-        userNameTextField.isHidden = true
-        loginBtn.isHidden = true
-        signupBtn.isHidden = true
-        
-        emailTextField.alpha = 0
-        passwordTextfield.alpha = 0
-        userNameTextField.alpha = 0
-        loginBtn.alpha = 0
-        signupBtn.alpha = 0
-        
-        facebookLoginBtn.alpha = 0.95
-        FBBtnWidthConstraint.constant = UIScreen.main.bounds.width * 0.9
-        FBBtnHeightConstraint.constant = FBBtnWidthConstraint.constant * 0.13
-        
-        if FBBtnHeightConstraint.constant > 37.5 {
-            FBBtnHeightConstraint.constant = FBBtnHeightConstraint.constant + 5
-        }
-        
-        facebookLoginBtn.backgroundColor = Design.color.facebookColor()
-        facebookLoginBtn.setTitleColor(UIColor.white, for: UIControlState())
-        facebookLoginBtn.setTitleColor(UIColor.white, for: .selected)
-        facebookLoginBtn.layer.cornerRadius = FBBtnHeightConstraint.constant/2
-        facebookLoginBtn.layer.masksToBounds = true
         
         
-        setLoginbtnHighlighted()
-        
-        
-        
-        //Constraint
-        loginBtnToFBBtnVerticleConstraint.constant = -50
-        confirmPasswordHeightConstraint.constant = 0
-        
-        
+        NotificationCenter.default.addObserver(self, selector:#selector(self.keyboardWillAppear(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector:#selector(self.keyboardWillDisappear(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
     }
     
     func setLoginbtnHighlighted() {
@@ -157,15 +125,45 @@ class LoginMainComponentVC: UIViewController, UITextFieldDelegate {
         loginBtn.backgroundColor = nil
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(true)
-        NotificationCenter.default.addObserver(self, selector:#selector(self.keyboardWillAppear(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.addObserver(self, selector:#selector(self.keyboardWillDisappear(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+    override func viewWillLayoutSubviews() {
+        emailTextField.isHidden = true
+        passwordTextfield.isHidden = true
+        userNameTextField.isHidden = true
+        loginBtn.isHidden = true
+        signupBtn.isHidden = true
+        
+        emailTextField.alpha = 0
+        passwordTextfield.alpha = 0
+        userNameTextField.alpha = 0
+        loginBtn.alpha = 0
+        signupBtn.alpha = 0
+        
+        facebookLoginBtn.alpha = 0.95
+        FBBtnWidthConstraint.constant = UIScreen.main.bounds.width * 0.9
+        FBBtnHeightConstraint.constant = FBBtnWidthConstraint.constant * 0.13
+        
+        if FBBtnHeightConstraint.constant > 37.5 {
+            FBBtnHeightConstraint.constant = FBBtnHeightConstraint.constant + 5
+        }
+        
+        facebookLoginBtn.backgroundColor = Design.color.facebookColor()
+        facebookLoginBtn.setTitleColor(UIColor.white, for: UIControlState())
+        facebookLoginBtn.setTitleColor(UIColor.white, for: .selected)
+        facebookLoginBtn.layer.cornerRadius = FBBtnHeightConstraint.constant/2
+        facebookLoginBtn.layer.masksToBounds = true
+        
+        
+        setLoginbtnHighlighted()
+        
+        
+        
+        //Constraint
+        loginBtnToFBBtnVerticleConstraint.constant = -50
+        confirmPasswordHeightConstraint.constant = 0
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
+    deinit {
         NotificationCenter.default.removeObserver(self)
-        super.viewWillDisappear(true)
     }
     
     override func didReceiveMemoryWarning() {

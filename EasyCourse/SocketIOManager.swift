@@ -14,14 +14,14 @@ class SocketIOManager: NSObject {
     
     static let sharedInstance = SocketIOManager()
     
-    var socket:SocketIOClient = SocketIOClient(socketURL: URL(string: Constant.baseURL)!, config: [.connectParams(["token" : User.token!])])
-    
+    var socket:SocketIOClient!
     
     override init() {
         super.init()
     }
     
     func establishConnection() {
+        socket = SocketIOClient(socketURL: URL(string: Constant.baseURL)!, config: [.connectParams(["token" : User.token!])])
         socket.connect()
         socket.emit("syncUser", 1)
         self.publicListener()
@@ -38,20 +38,26 @@ class SocketIOManager: NSObject {
     }
     
     func logout(_ completion: @escaping (_ success:Bool, _ error:NSError?) -> ()) {
-        socket.emit("logout", UserSetting.userDeviceToken ?? 1)
+        if UserSetting.userDeviceToken != nil {
+            socket.emit("logout", ["deviceToken":UserSetting.userDeviceToken!])
+        } else {
+            socket.emit("logout", 1)
+        }
+        
         socket.once("userDidLogout") { (obj, act) in
             print("logout : \(obj)")
             if obj[0] as? Bool == false {
                 completion(false, nil)
                 print("fail log out")
             } else {
-                completion(true, nil)
+                
                 print("success log out")
                 User.currentUser = nil
                 User.token = nil
                 RealmTools.setDefaultRealmForUser(nil)
                 NotificationCenter.default.post(name: Constant.NotificationKey.UserDidLogout, object: nil)
                 self.closeConnection()
+                completion(true, nil)
             }
         }
     }
@@ -191,11 +197,12 @@ class SocketIOManager: NSObject {
                     print("new message [single]")
                     let newMessage = Message()
                     newMessage.initMessage(object as! NSDictionary)
-
-                    if newMessage.senderId != User.currentUser!.id {
-                        Message().saveSenderUserInfo(object as! NSDictionary)
-                        newMessage.saveToDatabase()
-                    }
+                    Message().saveSenderUserInfo(object as! NSDictionary)
+                    newMessage.saveToDatabase()
+//                    if newMessage.senderId != User.currentUser!.id {
+//                        Message().saveSenderUserInfo(object as! NSDictionary)
+//                        newMessage.saveToDatabase()
+//                    }
                 }
                 
 //                NotificationCenter.default.post(name: Constant.NotificationKey.GetMessage, object: nil)
@@ -246,6 +253,11 @@ class SocketIOManager: NSObject {
         
         socket.on("exception") { (obj, ack) in
             print(obj)
+        }
+        
+        socket.on("auth:error") { (obj, ack) in
+            print("auth error")
+            
         }
     }
     

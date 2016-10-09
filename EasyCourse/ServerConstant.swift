@@ -30,12 +30,13 @@ class ServerConst {
             if response.result.error != nil {
                 completion(false, response.result.error)
             } else {
-                print(response.result.value)
+//                print(response.result.value)
                 if let token = response.response?.allHeaderFields["Auth"] as? String {
                     User.token = token
                 } else {
                     return completion(false, nil)
                 }
+                print("get token: \(User.token)")
                 self.setupCurrentUserWithData(response.result.value as! NSDictionary)
                 SocketIOManager.sharedInstance.establishConnection()
                 self.saveDeviceTokenForUser({ (success, err) in
@@ -66,15 +67,15 @@ class ServerConst {
             if response.result.error != nil {
                 completion(false, response.result.error)
             } else {
-                print(response.result)
-                print("==")
-                print(response.response?.allHeaderFields["Auth"] as? String ?? "no auth")
+//                print(response.result)
+//                print("==")
+//                print(response.response?.allHeaderFields["Auth"] as? String ?? "no auth")
                 if let token = response.response?.allHeaderFields["Auth"] as? String {
                     User.token = token
                 } else {
                     return completion(false, nil)
                 }
-                
+                print("get token: \(User.token)")
                 self.saveDeviceTokenForUser({ (success, err) in
                     if success {
                         print("success save device token")

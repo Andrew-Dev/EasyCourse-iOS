@@ -45,10 +45,7 @@ class UserRoomsVC: UIViewController, cellTableviewProtocol {
         roomsTableView.tableFooterView = UIView()
         roomsTableView.register(UINib(nibName: "LoadingTVCell", bundle: nil), forCellReuseIdentifier: "LoadingTVCell")
         
-        searchView.layer.cornerRadius = searchView.frame.height/2
-        searchView.layer.masksToBounds = true
-        searchView.layer.borderWidth = 1
-        searchView.layer.borderColor = UIColor.lightGray.cgColor
+        
         
         searchTextField.delegate = self
         searchTextField.becomeFirstResponder()
@@ -69,6 +66,13 @@ class UserRoomsVC: UIViewController, cellTableviewProtocol {
     
     deinit {
         notificationToken?.stop()
+    }
+    
+    override func viewWillLayoutSubviews() {
+        searchView.layer.cornerRadius = searchView.frame.height/2
+        searchView.layer.masksToBounds = true
+        searchView.layer.borderWidth = 1
+        searchView.layer.borderColor = UIColor.lightGray.cgColor
     }
 
     override func didReceiveMemoryWarning() {
