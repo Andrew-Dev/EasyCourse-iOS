@@ -22,14 +22,11 @@ class Message: Object {
     let imageWidth = RealmOptional<Float>()
     let imageHeight = RealmOptional<Float>()
     
-    
-    
     dynamic var roomId:String? = nil
     dynamic var createdAt:Date? = nil
     
     override static func primaryKey() -> String? {
         return "id"
-        
     }
     
     override static func indexedProperties() -> [String] {

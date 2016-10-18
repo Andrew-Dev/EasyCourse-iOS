@@ -85,7 +85,40 @@ class LoginMainComponentVC: UIViewController, UITextFieldDelegate {
         passwordTextfield.delegate = self
         userNameTextField.delegate = self
         
+        emailTextField.isHidden = true
+        passwordTextfield.isHidden = true
+        userNameTextField.isHidden = true
+        loginBtn.isHidden = true
+        signupBtn.isHidden = true
         
+        emailTextField.alpha = 0
+        passwordTextfield.alpha = 0
+        userNameTextField.alpha = 0
+        loginBtn.alpha = 0
+        signupBtn.alpha = 0
+        
+        facebookLoginBtn.alpha = 0.95
+        FBBtnWidthConstraint.constant = UIScreen.main.bounds.width * 0.9
+        FBBtnHeightConstraint.constant = FBBtnWidthConstraint.constant * 0.13
+        
+        if FBBtnHeightConstraint.constant > 37.5 {
+            FBBtnHeightConstraint.constant = FBBtnHeightConstraint.constant + 5
+        }
+        
+        facebookLoginBtn.backgroundColor = Design.color.facebookColor()
+        facebookLoginBtn.setTitleColor(UIColor.white, for: UIControlState())
+        facebookLoginBtn.setTitleColor(UIColor.white, for: .selected)
+        facebookLoginBtn.layer.cornerRadius = FBBtnHeightConstraint.constant/2
+        facebookLoginBtn.layer.masksToBounds = true
+        
+        
+        setLoginbtnHighlighted()
+        
+        
+        
+        //Constraint
+        loginBtnToFBBtnVerticleConstraint.constant = -50
+        confirmPasswordHeightConstraint.constant = 0
         
         NotificationCenter.default.addObserver(self, selector:#selector(self.keyboardWillAppear(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector:#selector(self.keyboardWillDisappear(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
@@ -125,43 +158,11 @@ class LoginMainComponentVC: UIViewController, UITextFieldDelegate {
         loginBtn.backgroundColor = nil
     }
     
-    override func viewWillLayoutSubviews() {
-        emailTextField.isHidden = true
-        passwordTextfield.isHidden = true
-        userNameTextField.isHidden = true
-        loginBtn.isHidden = true
-        signupBtn.isHidden = true
-        
-        emailTextField.alpha = 0
-        passwordTextfield.alpha = 0
-        userNameTextField.alpha = 0
-        loginBtn.alpha = 0
-        signupBtn.alpha = 0
-        
-        facebookLoginBtn.alpha = 0.95
-        FBBtnWidthConstraint.constant = UIScreen.main.bounds.width * 0.9
-        FBBtnHeightConstraint.constant = FBBtnWidthConstraint.constant * 0.13
-        
-        if FBBtnHeightConstraint.constant > 37.5 {
-            FBBtnHeightConstraint.constant = FBBtnHeightConstraint.constant + 5
-        }
-        
-        facebookLoginBtn.backgroundColor = Design.color.facebookColor()
-        facebookLoginBtn.setTitleColor(UIColor.white, for: UIControlState())
-        facebookLoginBtn.setTitleColor(UIColor.white, for: .selected)
-        facebookLoginBtn.layer.cornerRadius = FBBtnHeightConstraint.constant/2
-        facebookLoginBtn.layer.masksToBounds = true
-        
-        
-        setLoginbtnHighlighted()
-        
-        
-        
-        //Constraint
-        loginBtnToFBBtnVerticleConstraint.constant = -50
-        confirmPasswordHeightConstraint.constant = 0
-    }
-    
+//    override func viewWillLayoutSubviews() {
+//        print("called")
+//        
+//    }
+//    
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
@@ -188,7 +189,7 @@ class LoginMainComponentVC: UIViewController, UITextFieldDelegate {
             self.emailBtn.setTitle("", for: UIControlState())
             self.emailBtn.setImage(UIImage(named: "up-arrow-circled"), for: .selected)
             self.emailBtn.setImage(UIImage(named: "up-arrow-circled"), for: UIControlState())
-            self.view.layoutIfNeeded()
+//            self.view.layoutIfNeeded()
             
             
             UIView.animate(withDuration: 0.5, delay: 0, options: UIViewAnimationOptions(), animations: {
@@ -199,7 +200,7 @@ class LoginMainComponentVC: UIViewController, UITextFieldDelegate {
                 self.loginBtn.alpha = 0.95
                 self.signupBtn.alpha = 0.95
                 
-                
+                print("view: \(self.emailTextField.isHidden), \(self.emailTextField.frame), \(self.emailTextField.alpha)")
                 
                 self.view.layoutIfNeeded()
                 }, completion: { (success) in

@@ -18,15 +18,12 @@ var _userLang:[Int] = []
 
 class User: Object {
     
-    var token: String?
-    
     dynamic var id:String? = nil
     dynamic var username:String? = nil
     dynamic var profilePicture: Data? = nil
     dynamic var profilePictureUrl:String? = nil
     dynamic var email:String? = nil
     dynamic var universityID:String? = nil
-//    let silentRoomList = List<Room>()
     
     override static func primaryKey() -> String? {
         return "id"

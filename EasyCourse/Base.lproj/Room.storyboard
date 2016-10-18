@@ -593,6 +593,33 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="800"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <view key="tableFooterView" contentMode="scaleToFill" id="9Ah-tw-JIg">
+                            <rect key="frame" x="0.0" y="224" width="600" height="135"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <subviews>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ube-MP-SAm">
+                                    <state key="normal" title="Report">
+                                        <color key="titleColor" red="0.81693892050000005" green="0.1528218328" blue="0.12873357269999999" alpha="1" colorSpace="calibratedRGB"/>
+                                    </state>
+                                </button>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nBE-sC-JJN">
+                                    <color key="backgroundColor" red="0.30374173599999998" green="0.6518486604" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                    <constraints>
+                                        <constraint firstAttribute="width" constant="300" id="VFh-I4-yca"/>
+                                        <constraint firstAttribute="height" constant="32" id="X2V-2O-FWa"/>
+                                    </constraints>
+                                    <state key="normal" title="Message">
+                                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    </state>
+                                </button>
+                            </subviews>
+                            <constraints>
+                                <constraint firstItem="nBE-sC-JJN" firstAttribute="top" secondItem="9Ah-tw-JIg" secondAttribute="top" constant="16" id="9bZ-58-LVU"/>
+                                <constraint firstItem="Ube-MP-SAm" firstAttribute="top" secondItem="nBE-sC-JJN" secondAttribute="bottom" constant="16" id="Duz-7v-lXS"/>
+                                <constraint firstItem="nBE-sC-JJN" firstAttribute="centerX" secondItem="9Ah-tw-JIg" secondAttribute="centerX" id="PHY-bn-kmk"/>
+                                <constraint firstItem="Ube-MP-SAm" firstAttribute="centerX" secondItem="9Ah-tw-JIg" secondAttribute="centerX" id="V5H-nt-Doj"/>
+                            </constraints>
+                        </view>
                         <sections>
                             <tableViewSection id="hAq-vZ-1BN">
                                 <cells>
@@ -626,29 +653,6 @@
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
-                            <tableViewSection id="SKf-nQ-ToI">
-                                <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="44" id="ae2-Yh-oDU">
-                                        <rect key="frame" x="0.0" y="242" width="600" height="44"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="ae2-Yh-oDU" id="ufz-4c-yQc">
-                                            <frame key="frameInset" width="600" height="43"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Report" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FV4-rd-0a0">
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                            <constraints>
-                                                <constraint firstItem="FV4-rd-0a0" firstAttribute="centerY" secondItem="ufz-4c-yQc" secondAttribute="centerY" id="9Pn-HD-a9L"/>
-                                                <constraint firstItem="FV4-rd-0a0" firstAttribute="centerX" secondItem="ufz-4c-yQc" secondAttribute="centerX" id="jTp-Uq-c3Y"/>
-                                            </constraints>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
-                                </cells>
-                            </tableViewSection>
                         </sections>
                         <connections>
                             <outlet property="dataSource" destination="HC5-CX-QTV" id="Pzq-XI-CzT"/>
@@ -659,13 +663,12 @@
                     <size key="freeformSize" width="600" height="800"/>
                     <connections>
                         <outlet property="avatarImageView" destination="R4n-ua-4sF" id="UNX-J8-Ddy"/>
-                        <outlet property="reportLabel" destination="FV4-rd-0a0" id="i34-Ji-lFL"/>
                         <outlet property="usernameLabel" destination="HtH-Dc-Gdw" id="WZV-Zr-gle"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="f1Z-Gc-gF6" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3650" y="-138"/>
+            <point key="canvasLocation" x="3649.5999999999999" y="-138.53073463268368"/>
         </scene>
         <!--Room Detail TableVC-->
         <scene sceneID="rlK-Ji-VD8">
