@@ -101,7 +101,7 @@ class UserEditProfileTableVC: UITableViewController, UIImagePickerControllerDele
         let cameraAction = UIAlertAction(title: "Camera", style: .default, handler: { (action) in
             self.openCamera()
         })
-        let albumAction = UIAlertAction(title: "Gallary", style: .default, handler: { (action) in
+        let albumAction = UIAlertAction(title: "Gallery", style: .default, handler: { (action) in
             self.openGallary()
         })
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
