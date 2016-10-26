@@ -16,6 +16,8 @@ target 'EasyCourse' do
         :branch => 'master'
     pod 'MWPhotoBrowser'
     pod 'LDONavigationSubtitleView'
+    pod 'ImageScrollView'
+    pod 'MXPagerView'
 
     # Util
     pod 'AsyncSwift'
@@ -33,7 +35,7 @@ target 'EasyCourse' do
     pod 'FacebookCore'
     pod 'FacebookLogin'
     pod 'FacebookShare'
-    
+
     post_install do |installer|
         installer.pods_project.targets.each do |target|
             target.build_configurations.each do |config|
@@ -41,5 +43,5 @@ target 'EasyCourse' do
             end
         end
     end
-    
+
 end

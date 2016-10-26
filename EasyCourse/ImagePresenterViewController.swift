@@ -12,12 +12,7 @@ import ImageScrollView
 import MXPagerView
 
 class ImagePresenterViewController: UIViewController, MXPagerViewDelegate, MXPagerViewDataSource {
-    
-    //TODO:
-    //take in message objects and check if cached to load images
-    //placeholder while loading if uncached
-    //first check if user has image, then check cache, if not download
-    
+
     private var pagerView: MXPagerView!
     private var pageLabel: UILabel = UILabel()
     private var saveBtn: UIButton = UIButton()
@@ -67,6 +62,10 @@ class ImagePresenterViewController: UIViewController, MXPagerViewDelegate, MXPag
         for v in view.subviews {
             v.isUserInteractionEnabled = true
         }
+        
+        pagerView.reloadData()
+        
+        pagerView.showPage(at: currentIndex, animated: false)
     }
     
     override func viewWillLayoutSubviews() {
@@ -107,7 +106,8 @@ class ImagePresenterViewController: UIViewController, MXPagerViewDelegate, MXPag
     
     override func viewDidAppear(_ animated: Bool) {
         //pagerView.reloadData()
-        pagerView.showPage(at: currentIndex, animated: false)
+        print("Current Index:" + String(currentIndex))
+        //pagerView.showPage(at: currentIndex, animated: false)
     }
 
     override func didReceiveMemoryWarning() {
@@ -116,6 +116,10 @@ class ImagePresenterViewController: UIViewController, MXPagerViewDelegate, MXPag
     }
     
     // MARK: - Pager view delegate
+    
+    func goToPage(index: Int) {
+        pagerView.showPage(at: index, animated: false)
+    }
     
     func pagerView(_ pagerView: MXPagerView, willMoveToPageAt index: Int) {
         let imageScrollView = pagerView.page(at: currentIndex)?.viewWithTag(1) as! ImageScrollView
@@ -137,7 +141,7 @@ class ImagePresenterViewController: UIViewController, MXPagerViewDelegate, MXPag
         
         let imageScrollView: ImageScrollView! = ImageScrollView()
         
-        var image = UIImage(color: .red, size: CGSize(width: 800, height: 600))
+        var image = UIImage(color: .black, size: CGSize(width: 800, height: 600))
         
         let result = liveImageMessage[index]
         /*if result.imageData != nil {

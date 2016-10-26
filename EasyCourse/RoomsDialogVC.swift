@@ -466,22 +466,25 @@ extension RoomsDialogVC: UIViewControllerTransitioningDelegate, popUpImageProtoc
  
         selectedImageView = imageView
         
-        let imagePresenter = ImagePresenterViewController()
         
         print(liveImageMessage)
         
-        imagePresenter.liveImageMessage = liveImageMessage
+        let imagePresenter = ImagePresenterViewController()
+
         
         if let currentIndex = liveImageMessage.index(of: message) {
-            imagePresenter.currentIndex = currentIndex
+            print("message index: " + String(currentIndex))
+            imagePresenter.startImageIndex = currentIndex
         } else {
             return
         }
         
+        imagePresenter.liveImageMessage = liveImageMessage
+        
         let nc = UINavigationController(rootViewController: imagePresenter)
         nc.isNavigationBarHidden = true
         nc.transitioningDelegate = self
-        present(nc, animated: true, completion: nil)
+        present(nc, animated: true,completion:nil)
     }
     
     func animationController(
