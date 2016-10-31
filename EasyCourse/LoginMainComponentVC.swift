@@ -277,6 +277,8 @@ class LoginMainComponentVC: UIViewController, UITextFieldDelegate {
                 hud.dismiss()
             }
         }
+        
+        
     }
     
     @IBAction func loginBtnPressed(_ sender: UIButton) {
@@ -516,7 +518,11 @@ class LoginMainComponentVC: UIViewController, UITextFieldDelegate {
         } else {
             let sb = UIStoryboard(name: "Main", bundle: nil)
             let mainTabBarController = sb.instantiateViewController(withIdentifier: "BaseTabBarController") as! UITabBarController
-            self.present(mainTabBarController, animated: true, completion: nil)
+            self.present(mainTabBarController, animated: true, completion: {
+                let aa = UIApplication.shared.delegate as! AppDelegate
+                aa.window?.rootViewController = mainTabBarController
+            })
+            
         }
     }
     

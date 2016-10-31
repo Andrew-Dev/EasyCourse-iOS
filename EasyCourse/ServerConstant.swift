@@ -59,7 +59,7 @@ class ServerConst {
     }
     
     func loginWithEmail(_ email:String, password:String, completion: @escaping (_ success:Bool, _ error:Error?) -> ()) {
-        
+
         let apiUrl = URL(string: "\(Constant.baseURL)/login")
         let params = ["email": email, "password": password] as Parameters
         
@@ -116,6 +116,7 @@ class ServerConst {
                 if FBSDKAccessToken.current().tokenString == nil {
                     return completion(false, nil)
                 }
+                //TODO: add mobile header
                 let apiUrl = URL(string: "\(Constant.baseURL)/facebook/token/?access_token=\(FBSDKAccessToken.current().tokenString!)")
                 Alamofire.request(apiUrl!).responseJSON { response in
                     print(response.result.error)
@@ -315,6 +316,7 @@ class ServerConst {
     
     func getUserInfo(_ id:String, refresh: Bool, completion: @escaping (_ user:User?, _ joinedCourse:[String], _ error:Error?) -> ()) {
         //TODO: check from database or cache
+        print("get user info api for user: \(id)")
         if !refresh {
             if let user = try! Realm().object(ofType: User.self, forPrimaryKey: id) {
 //                print("user get in database")

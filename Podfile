@@ -11,9 +11,7 @@ target 'EasyCourse' do
     pod 'XLPagerTabStrip'
     pod 'JGProgressHUD'
     pod 'JVFloatLabeledTextField'
-    pod 'DKImagePickerController',
-        :git => 'https://github.com/zhangao0086/DKImagePickerController.git',
-        :branch => 'master'
+    pod 'DKImagePickerController'
     pod 'MWPhotoBrowser'
     pod 'LDONavigationSubtitleView'
 

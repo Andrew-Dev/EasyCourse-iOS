@@ -36,8 +36,10 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     
     @IBOutlet weak var inputBottomConstraint: NSLayoutConstraint!
     
+    //Type: group chat or private chat
+    var otherUser:User?
+    
     //Data
-//    var liveMessage:Results<(Message)>!
     var liveMessage:List<(Message)>!
     var liveImageMessage:Results<(Message)>!
     var localRoom:Room!
@@ -63,10 +65,15 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
         liveImageMessage = localRoom.getMessageContainsImage()
         
         //UI
-        let customTitleView = LDONavigationSubtitleView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 44))
-        customTitleView.subtitle = "\(localRoom.memberCounts.value!) people"
-        customTitleView.title = localRoom.roomname!
-        self.navigationItem.titleView = customTitleView
+        if localRoom.isGroupChat {
+            let customTitleView = LDONavigationSubtitleView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 44))
+            customTitleView.subtitle = "\(localRoom.memberCounts.value!) people"
+            customTitleView.title = localRoom.roomname!
+            self.navigationItem.titleView = customTitleView
+        } else {
+            otherUser = try! Realm().object(ofType: User.self, forPrimaryKey: localRoom.id)
+            self.navigationItem.title = otherUser?.username
+        }
         
         messageTableView.delegate = self
         messageTableView.dataSource = self
@@ -264,7 +271,7 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     @IBAction func sendBtnPressed(_ sender: UIButton) {
         sendBtn.isEnabled = false
         let message = Message()
-        message.initForCurrentUser(inputTextView.text, imageUrl: nil, image: nil, roomId: localRoom.id!)
+        message.initForCurrentUser(inputTextView.text, imageUrl: nil, image: nil, toRoom: localRoom.id!, isGroupChat: localRoom.isGroupChat)
         message.saveToDatabase()
         inputTextView.text = ""
         UIView.animate(withDuration: 0.2, animations: {
@@ -272,7 +279,6 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
             self.view.layoutIfNeeded()
         }) 
         SocketIOManager.sharedInstance.sendMessage(message)
-        self.sendBtn.isEnabled = true
         
         
     }
@@ -309,7 +315,7 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
                         print("url: \(imageUrl) progress: \(progress) err: \(error)")
                         if imageUrl != nil {
                             let message = Message()
-                            message.initForCurrentUser(nil, imageUrl: imageUrl!, image: image, roomId: self.localRoom.id!)
+                            message.initForCurrentUser(nil, imageUrl: imageUrl!, image: image, toRoom: self.localRoom.id!, isGroupChat: self.localRoom.isGroupChat)
                             message.saveToDatabase()
                             SocketIOManager.sharedInstance.sendMessage(message)
                         }

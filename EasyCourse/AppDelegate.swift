@@ -14,7 +14,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
     
-    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         let homeDir = NSHomeDirectory()
         print("Home directory: \(homeDir)")
@@ -60,9 +59,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func userDidLogout() {
         let vc = UIStoryboard(name: "Login", bundle: nil).instantiateInitialViewController()! as UIViewController
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let baseTabBarController = storyboard.instantiateViewController(withIdentifier: "BaseTabBarController") as! UITabBarController
-        window?.rootViewController = baseTabBarController
         window?.rootViewController?.present(vc, animated: true, completion: {
             self.window?.rootViewController = vc
         })

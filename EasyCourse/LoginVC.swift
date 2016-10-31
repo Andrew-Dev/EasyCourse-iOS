@@ -99,7 +99,10 @@ class LoginVC: UIViewController, moveToVCProtocol {
         } else if index == 3 {
             let sb = UIStoryboard(name: "Main", bundle: nil)
             let mainTabBarController = sb.instantiateViewController(withIdentifier: "BaseTabBarController") as! UITabBarController
-            self.present(mainTabBarController, animated: true, completion: nil)
+            self.present(mainTabBarController, animated: true, completion: {
+                let aa = UIApplication.shared.delegate as! AppDelegate
+                aa.window?.rootViewController = mainTabBarController
+            })
         }
         self.view.setNeedsLayout()
         mainScrollView.setContentOffset(CGPoint(x: (self.view.frame.width * CGFloat(index + 1)), y: 0), animated: true)
