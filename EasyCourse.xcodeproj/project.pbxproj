@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4945155F1DB71A6A003508CA /* loading.png in Resources */ = {isa = PBXBuildFile; fileRef = 4945155E1DB71A6A003508CA /* loading.png */; };
+		498AAFBD1DB70C8D00972AB2 /* ImagePresenterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498AAFBC1DB70C8D00972AB2 /* ImagePresenterViewController.swift */; };
 		607454C92A25EA07E84A634D /* Pods_EasyCourse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 285A98B99E4E74B8D3BBADE7 /* Pods_EasyCourse.framework */; };
 		F7364C7D1DA6E0EF007A967F /* LoadingTVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7364C7B1DA6E0EF007A967F /* LoadingTVCell.swift */; };
 		F7364C7E1DA6E0EF007A967F /* LoadingTVCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F7364C7C1DA6E0EF007A967F /* LoadingTVCell.xib */; };
@@ -72,6 +74,8 @@
 
 /* Begin PBXFileReference section */
 		285A98B99E4E74B8D3BBADE7 /* Pods_EasyCourse.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_EasyCourse.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4945155E1DB71A6A003508CA /* loading.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = loading.png; sourceTree = "<group>"; };
+		498AAFBC1DB70C8D00972AB2 /* ImagePresenterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePresenterViewController.swift; sourceTree = "<group>"; };
 		CCA52E0697DF4E7A4BBCB7B6 /* Pods-EasyCourse.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EasyCourse.debug.xcconfig"; path = "Pods/Target Support Files/Pods-EasyCourse/Pods-EasyCourse.debug.xcconfig"; sourceTree = "<group>"; };
 		DE96EBA49BC6989A41637D04 /* Pods-EasyCourse.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EasyCourse.release.xcconfig"; path = "Pods/Target Support Files/Pods-EasyCourse/Pods-EasyCourse.release.xcconfig"; sourceTree = "<group>"; };
 		F7364C7B1DA6E0EF007A967F /* LoadingTVCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingTVCell.swift; sourceTree = "<group>"; };
@@ -189,6 +193,7 @@
 		F76A9B8A1D85FF3B0065C25C /* EasyCourse */ = {
 			isa = PBXGroup;
 			children = (
+				4945155E1DB71A6A003508CA /* loading.png */,
 				F76A9BF71D86288F0065C25C /* Extension&Helper */,
 				F76A9BB91D8620DB0065C25C /* Util */,
 				F76A9BB61D8620990065C25C /* API */,
@@ -333,6 +338,7 @@
 		F76A9BF71D86288F0065C25C /* Extension&Helper */ = {
 			isa = PBXGroup;
 			children = (
+				498AAFBC1DB70C8D00972AB2 /* ImagePresenterViewController.swift */,
 				F76A9BF81D8628A30065C25C /* Extension.swift */,
 				F76A9BFA1D8628C80065C25C /* Reachability.swift */,
 				F76A9BFE1D86E22C0065C25C /* PopAnimator.swift */,
@@ -394,8 +400,9 @@
 				TargetAttributes = {
 					F76A9B871D85FF3B0065C25C = {
 						CreatedOnToolsVersion = 7.3.1;
-						DevelopmentTeam = MYSFRJD98Y;
+						DevelopmentTeam = NJKXF7XV99;
 						LastSwiftMigration = 0800;
+						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.Keychain = {
 								enabled = 1;
@@ -442,6 +449,7 @@
 				F76A9BA81D861E990065C25C /* Login.storyboard in Resources */,
 				F76A9BD31D8622680065C25C /* LoginUnivChooseCell.xib in Resources */,
 				F76A9BDF1D86236D0065C25C /* LoginLangChooseTVCell.xib in Resources */,
+				4945155F1DB71A6A003508CA /* loading.png in Resources */,
 				F76A9B911D85FF3B0065C25C /* Main.storyboard in Resources */,
 				F76A9BA11D861D580065C25C /* Room.storyboard in Resources */,
 				F76A9BC41D8621D80065C25C /* LoginUnivComponentVC.xib in Resources */,
@@ -493,7 +501,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -532,6 +540,7 @@
 				F76A9BBB1D8620E50065C25C /* Constant.swift in Sources */,
 				F76A9BAD1D86200F0065C25C /* Message.swift in Sources */,
 				F76A9BDA1D8623240065C25C /* LoginCourseChooseTVCell.swift in Sources */,
+				498AAFBD1DB70C8D00972AB2 /* ImagePresenterViewController.swift in Sources */,
 				F76A9BBD1D8621030065C25C /* ServerConstant.swift in Sources */,
 				F7ADFB381D8CEFFF00AD53C3 /* UserDetailTableVC.swift in Sources */,
 				F7ADFB221D889C1000AD53C3 /* UserRoomsVC.swift in Sources */,
@@ -677,11 +686,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = EasyCourse/EasyCourse.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Jintao Zeng (4UAT7C35XK)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = NJKXF7XV99;
 				INFOPLIST_FILE = EasyCourse/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = ZengJintao.EasyCourse;
+				PRODUCT_BUNDLE_IDENTIFIER = aarpasi.EasyCourse;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "2d854b06-698e-46a0-878a-8b60cf0ef9b3";
+				PROVISIONING_PROFILE = "";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
@@ -694,11 +705,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = EasyCourse/EasyCourse.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Jintao Zeng (4UAT7C35XK)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = NJKXF7XV99;
 				INFOPLIST_FILE = EasyCourse/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = ZengJintao.EasyCourse;
+				PRODUCT_BUNDLE_IDENTIFIER = aarpasi.EasyCourse;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "2d854b06-698e-46a0-878a-8b60cf0ef9b3";
+				PROVISIONING_PROFILE = "";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;

@@ -9,7 +9,7 @@ PODS:
   - Bolts/AppLinks (1.8.4):
     - Bolts/Tasks
   - Bolts/Tasks (1.8.4)
-  - CryptoSwift (0.6.3)
+  - CryptoSwift (0.6.1)
   - DACircularProgress (2.3.1)
   - DKImagePickerController (3.4.0):
     - DKImagePickerController/Camera (= 3.4.0)
@@ -29,12 +29,13 @@ PODS:
     - FacebookCore (~> 0.2)
     - FBSDKCoreKit (~> 4.15)
     - FBSDKShareKit (~> 4.15)
-  - FBSDKCoreKit (4.16.1):
+  - FBSDKCoreKit (4.16.0):
     - Bolts (~> 1.7)
   - FBSDKLoginKit (4.16.1):
     - FBSDKCoreKit
   - FBSDKShareKit (4.16.1):
     - FBSDKCoreKit
+  - ImageScrollView (1.3)
   - JGProgressHUD (1.4)
   - JVFloatLabeledTextField (1.1.1)
   - KeychainSwift (7.0.0)
@@ -44,6 +45,7 @@ PODS:
     - DACircularProgress (~> 2.3)
     - MBProgressHUD (~> 0.9)
     - SDWebImage (!= 3.7.2, ~> 3.7)
+  - MXPagerView (0.1.3)
   - Realm (2.0.2):
     - Realm/Headers (= 2.0.2)
   - Realm/Headers (2.0.2)
@@ -60,45 +62,59 @@ DEPENDENCIES:
   - AlamofireImage
   - AsyncSwift
   - CryptoSwift
-  - DKImagePickerController
+  - DKImagePickerController (from `https://github.com/zhangao0086/DKImagePickerController.git`, branch `master`)
   - FacebookCore
   - FacebookLogin
   - FacebookShare
+  - ImageScrollView
   - JGProgressHUD
   - JVFloatLabeledTextField
   - KeychainSwift
   - LDONavigationSubtitleView
   - MWPhotoBrowser
+  - MXPagerView
   - RealmSwift
   - Socket.IO-Client-Swift
   - XLPagerTabStrip
+
+EXTERNAL SOURCES:
+  DKImagePickerController:
+    :branch: master
+    :git: https://github.com/zhangao0086/DKImagePickerController.git
+
+CHECKOUT OPTIONS:
+  DKImagePickerController:
+    :commit: 11d2e8356cb3647f3e403b0817bdfbcd92164780
+    :git: https://github.com/zhangao0086/DKImagePickerController.git
 
 SPEC CHECKSUMS:
   Alamofire: 7682d43245de14874acd142ec137b144aa1dd335
   AlamofireImage: bb8c8351c51cb1633bb6be69b6dbbaff37ce65b7
   AsyncSwift: 6ba6ed9ecb51344458063f7c86fe447ab824e313
   Bolts: 8a7995239dbe724f9cba2248b766d48b7ebdd322
-  CryptoSwift: 623f81faf4bc34caf78b792f8625fda9fc309abd
+  CryptoSwift: abdbc1bf32c89117c6b403810a7b30f742d86e68
   DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
   DKImagePickerController: 5e64adbe34c27cc63bc38cccdaf3a40c3b4f729c
   FacebookCore: 2cb3f0fbff218e9d3119cec84bae983b232412de
   FacebookLogin: c9d606504735780a9e3002465a615512e0a691a5
   FacebookShare: 8e9ee8ea06505e6a1d3d719b0cc63e840fb8aaeb
-  FBSDKCoreKit: 6feac4e8921ccd7afa83fb1df6291dc6eec42c7c
+  FBSDKCoreKit: 7a6baaed4a2b2a244ba253346713bdbc74df135b
   FBSDKLoginKit: 469a56cebe2e1ed62b1621d0b155970fd6aac2d8
   FBSDKShareKit: 53af0239b5bd2ebf191f32f75991245a208cc982
+  ImageScrollView: 2f2d7139fb5a7d0c0b021eb8b086d8c3dc54c233
   JGProgressHUD: 1617b0940cf80bb53e8f7d6f0fd69252ea45d6d4
   JVFloatLabeledTextField: 0e5524b097f102036214dd8279edc8ecf08b5e18
   KeychainSwift: b6947435dd78cc442c64a84ae648dd0e871cf448
   LDONavigationSubtitleView: f6a0e0b859f577b6a684e43d8f09a0c7238caef3
   MBProgressHUD: 1569cf7ace17a8bac47aabfbb8580a49690386d1
   MWPhotoBrowser: 5836d7aa041dc05a13de380c246826578adc5ea5
+  MXPagerView: db0c020aeada6a0c704f18f8053468560e346982
   Realm: 0f5a194af0b7e6158b83db41b4ee1a00be7ddf1a
   RealmSwift: 0eb5070d851cba7c66e841ca756d83609dc78bc8
   SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
   Socket.IO-Client-Swift: 136598e4a81a42b0e6855e7f94a0e5a6efdc5ff8
   XLPagerTabStrip: c46e802a8dcac29edbcea573de8fe920e052455b
 
-PODFILE CHECKSUM: 6afad55fc09e4a8bfd1bcc0fe5c52d1da687a7c2
+PODFILE CHECKSUM: d67a53a55c040b7361eb9ba053c7a8d2ad290002
 
-COCOAPODS: 1.1.0.rc.2
+COCOAPODS: 1.0.1

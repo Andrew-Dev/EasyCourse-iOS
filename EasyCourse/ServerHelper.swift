@@ -52,7 +52,7 @@ class ServerHelper: NSObject {
         photoCache.add(image, withIdentifier: urlString)
     }
     
-    func cachedImage(_ urlString: String) -> Image? {
+    func cachedImage(_ urlString: String) -> UIImage? {
         return photoCache.image(withIdentifier: urlString)
     }
     

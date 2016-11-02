@@ -454,8 +454,7 @@ extension RoomsDialogVC: UIViewControllerTransitioningDelegate, popUpImageProtoc
     
     
     func popUpImage(_ imageView:UIImageView, message:Message) {
-        let browser = MWPhotoBrowser(delegate: self)
-        
+        /*let browser = MWPhotoBrowser(delegate: self)
         if let currentIndex = liveImageMessage.index(of: message) {
             browser?.setCurrentPhotoIndex(UInt(currentIndex))
         } else {
@@ -467,9 +466,31 @@ extension RoomsDialogVC: UIViewControllerTransitioningDelegate, popUpImageProtoc
         browser?.enableSwipeToDismiss = false
         let nc = UINavigationController(rootViewController: browser!)
 
-        selectedImageView = imageView
+        
         nc.transitioningDelegate = self
-        present(nc, animated: true, completion: nil)
+        present(nc, animated: true, completion: nil)*/
+ 
+        selectedImageView = imageView
+        
+        
+        print(liveImageMessage)
+        
+        let imagePresenter = ImagePresenterViewController()
+
+        
+        if let currentIndex = liveImageMessage.index(of: message) {
+            print("message index: " + String(currentIndex))
+            imagePresenter.startImageIndex = currentIndex
+        } else {
+            return
+        }
+        
+        imagePresenter.liveImageMessage = liveImageMessage
+        
+        let nc = UINavigationController(rootViewController: imagePresenter)
+        nc.isNavigationBarHidden = true
+        nc.transitioningDelegate = self
+        present(nc, animated: true,completion:nil)
     }
     
     func animationController(
