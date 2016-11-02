@@ -15,7 +15,7 @@ class Room: Object {
     dynamic var isToUser = false
     dynamic var isJoinIn = false
     
-    //store room ID or other user ID
+    //store room ID or other 
     dynamic var id:String? = nil
     dynamic var roomname:String? = nil
     let messageList = List<Message>()
@@ -42,12 +42,21 @@ class Room: Object {
         return "id"
     }
     
-//    func getMessage() -> Results<(Message)> {
-//        return try! Realm().objects(Message.self).filter("roomId = '\(self.id!)'").sorted(byProperty: "createdAt", ascending: true)
-//    }
-//    
+    func getMessage() -> Results<(Message)> {
+        if self.isToUser {
+            return try! Realm().objects(Message.self).filter("(senderId = '\(self.id!)' OR toRoom = '\(self.id!)') AND isToUser = true").sorted(byProperty: "createdAt", ascending: true)
+        } else {
+            return try! Realm().objects(Message.self).filter("toRoom = '\(self.id!)' AND isToUser = false").sorted(byProperty: "createdAt", ascending: true)
+        }
+    }
+
     func getMessageContainsImage() -> Results<(Message)> {
-        return try! Realm().objects(Message.self).filter("toRoom = '\(self.id!)' AND imageUrl != nil").sorted(byProperty: "createdAt", ascending: true)
+//        return try! Realm().objects(Message.self).filter("toRoom = '\(self.id!)' AND imageUrl != nil").sorted(byProperty: "createdAt", ascending: true)
+        if self.isToUser {
+            return try! Realm().objects(Message.self).filter("(senderId = '\(self.id!)' OR toRoom = '\(self.id!)') AND isToUser = true AND imageUrl != nil").sorted(byProperty: "createdAt", ascending: true)
+        } else {
+            return try! Realm().objects(Message.self).filter("toRoom = '\(self.id!)' AND isToUser = false AND imageUrl != nil").sorted(byProperty: "createdAt", ascending: true)
+        }
     }
     
     func initRoomWithData(_ data:NSDictionary, isToUser: Bool) -> Room? {

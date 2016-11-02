@@ -40,7 +40,7 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     var otherUser:User?
     
     //Data
-    var liveMessage:List<(Message)>!
+    var liveMessage:Results<(Message)>!
     var liveImageMessage:Results<(Message)>!
     var localRoom:Room!
     var msgPage = 0
@@ -60,8 +60,8 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     override func viewDidLoad() {
         super.viewDidLoad()
         //Load data
-//        liveMessage = localRoom.getMessage()
-        liveMessage = localRoom.messageList
+        liveMessage = localRoom.getMessage()
+//        liveMessage = localRoom.messageList
         liveImageMessage = localRoom.getMessageContainsImage()
         
         //UI
@@ -158,7 +158,9 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     }
     
     func loadMessage() {
-        
+        try! Realm().write {
+            localRoom.unread = 0
+        }
         messageTableView.reloadData()
         scrollToBottom(true)
     }
@@ -384,8 +386,10 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     }
     
     func displayViews(_ id:String) {
-        tappedUserId = id
-        self.performSegue(withIdentifier: "gotoUserDetailPage", sender: self)
+        if !localRoom.isToUser {
+            tappedUserId = id
+            self.performSegue(withIdentifier: "gotoUserDetailPage", sender: self)
+        }
     }
     
 }

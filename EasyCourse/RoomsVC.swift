@@ -63,8 +63,11 @@ class RoomsVC: UIViewController {
         sortedRooms = []
         rooms.forEach { (room) in
 
-            let lastMessage = try! Realm().objects(Message.self).filter("toRoom = '\(room.id!)'").sorted(byProperty: "createdAt", ascending: true).last
-            sortedRooms.append((room,lastMessage))
+//            let lastMessage = try! Realm().objects(Message.self).filter("toRoom = '\(room.id!)'").sorted(byProperty: "createdAt", ascending: true).last
+            if room.id != User.currentUser?.id {
+                let lastMessage = room.getMessage().last
+                sortedRooms.append((room,lastMessage))
+            }
             
         }
         sortedRooms.sort { (a: (Room, Message?), b: (Room, Message?)) -> Bool in
