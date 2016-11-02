@@ -8,6 +8,8 @@
 
 import UIKit
 import JGProgressHUD
+import RealmSwift
+import Async
 
 class UserDetailTableVC: UITableViewController {
 
@@ -15,7 +17,9 @@ class UserDetailTableVC: UITableViewController {
     
     @IBOutlet weak var usernameLabel: UILabel!
     
-    @IBOutlet weak var reportLabel: UILabel!
+    @IBOutlet weak var messageBtn: UIButton!
+    
+    @IBOutlet weak var reportBtn: UIButton!
     
     var user:User?
     var userId:String?
@@ -50,40 +54,64 @@ class UserDetailTableVC: UITableViewController {
 
     // MARK: - Table view data source
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if (indexPath as NSIndexPath).section == 1 && (indexPath as NSIndexPath).row == 0 {
-            let alert = UIAlertController(title: "Report", message: "Please fill the reason", preferredStyle: .alert)
-            alert.addTextField(configurationHandler: { (textField) in
-                textField.placeholder = "Reason"
-            })
-            let report = UIAlertAction(title: "Report", style: .destructive, handler: { (UIAlertAction) in
-                ServerConst.sharedInstance.reportToServer(self.user!.id!, reason: alert.textFields![0].text, completion: { (success, error) in
-                    print("report successful \(success)")
-                    let hud = JGProgressHUD()
-                    hud.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
-                    hud.textLabel.text = "Posting"
-                    hud.show(in: self.view)
-                    if success {
-                        hud.indicatorView = JGProgressHUDSuccessIndicatorView()
-                        hud.textLabel.text = "Success!"
-                        hud.dismiss(afterDelay: 2, animated: true)
-                    } else {
-                        hud.indicatorView = JGProgressHUDErrorIndicatorView()
-                        hud.textLabel.text = "Fail to report"
-                        hud.tapOutsideBlock = { (hu) in
-                            hud.dismiss()
-                        }
-                        hud.tapOnHUDViewBlock = { (hu) in
-                            hud.dismiss()
-                        }
-                    }
-                })
-            })
-            let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-            alert.addAction(report)
-            alert.addAction(cancel)
-            self.present(alert, animated: true, completion: nil)
-        }
+
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    @IBAction func messageBtnPressed(_ sender: UIButton) {
+        let vc = self.storyboard?.instantiateViewController(withIdentifier: "RoomsDialogVC") as! RoomsDialogVC
+        let realm = try! Realm()
+        if let room = realm.object(ofType: Room.self, forPrimaryKey: self.userId) {
+            vc.localRoom = room
+            self.navigationController?.pushViewController(vc, animated: true)
+        } else {
+            try! realm.write({
+                let room = Room()
+                room.id = self.userId
+                room.isGroupChat = false
+                realm.add(room, update: true)
+                vc.localRoom = room
+                self.navigationController?.pushViewController(vc, animated: true)
+            })
+        }
+        
+
+
+    }
+    
+    
+    @IBAction func reportBtnPressed(_ sender: UIButton) {
+        let alert = UIAlertController(title: "Report", message: "Please fill the reason", preferredStyle: .alert)
+        alert.addTextField(configurationHandler: { (textField) in
+            textField.placeholder = "Reason"
+        })
+        let report = UIAlertAction(title: "Report", style: .destructive, handler: { (UIAlertAction) in
+            ServerConst.sharedInstance.reportToServer(self.user!.id!, reason: alert.textFields![0].text, completion: { (success, error) in
+                print("report successful \(success)")
+                let hud = JGProgressHUD()
+                hud.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
+                hud.textLabel.text = "Posting"
+                hud.show(in: self.view)
+                if success {
+                    hud.indicatorView = JGProgressHUDSuccessIndicatorView()
+                    hud.textLabel.text = "Success!"
+                    hud.dismiss(afterDelay: 2, animated: true)
+                } else {
+                    hud.indicatorView = JGProgressHUDErrorIndicatorView()
+                    hud.textLabel.text = "Fail to report"
+                    hud.tapOutsideBlock = { (hu) in
+                        hud.dismiss()
+                    }
+                    hud.tapOnHUDViewBlock = { (hu) in
+                        hud.dismiss()
+                    }
+                }
+            })
+        })
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        alert.addAction(report)
+        alert.addAction(cancel)
+        self.present(alert, animated: true, completion: nil)
     }
     
 

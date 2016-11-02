@@ -97,6 +97,7 @@ class UserTableVC: UITableViewController {
     @IBAction func logoutBtnPressed(_ sender: UIButton) {
         SocketIOManager.sharedInstance.logout { (success, error) in
             //
+            
         }
     }
     

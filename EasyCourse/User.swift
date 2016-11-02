@@ -25,6 +25,9 @@ class User: Object {
     dynamic var email:String? = nil
     dynamic var universityID:String? = nil
     
+    //Related to user
+    dynamic var friendStatus = 0
+    
     override static func primaryKey() -> String? {
         return "id"
     }
@@ -94,6 +97,7 @@ class User: Object {
         self.email = data["email"] as? String
         self.profilePictureUrl = data["avatarUrl"] as? String
         self.universityID = data["university"] as? String
+        self.friendStatus = data["status"] as? Int ?? 0
         return self
     }
     
@@ -121,13 +125,32 @@ class User: Object {
             Course.syncCourse(courses)
         }
         
+        var rooms:[Room] = []
         if let roomArray = data["joinedRoom"] as? [NSDictionary] {
-            var rooms:[Room] = []
             for roomData in roomArray {
-                rooms.append(Room.initRoom(roomData)!)
+                let room = Room()
+                if room.initRoomWithData(roomData, isGroup: true) != nil {
+                    rooms.append(room)
+                    room.saveToDatabase()
+                }
+                
             }
-            Room.syncRoom(rooms)
         }
+        
+        if let contactsArray = data["contacts"] as? [NSDictionary] {
+            for contactData in contactsArray {
+                let room = Room()
+                if room.initRoomWithData(contactData, isGroup: false) != nil {
+                    rooms.append(room)
+                    room.saveToDatabase()
+                }
+                let user = User()
+                user.initUserFromServerWithData(contactData).saveToDatabase()
+            }
+        }
+        
+        Room.syncRoom(rooms)
+
         
         if let silentRoomIdArray = data["silentRoom"] as? [String] {
             let realm = try! Realm()
@@ -182,13 +205,43 @@ class User: Object {
             Course.syncCourse(courses)
         }
         
+        var rooms:[Room] = []
         if let roomArray = data["joinedRoom"] as? [NSDictionary] {
-            var rooms:[Room] = []
             for roomData in roomArray {
-                rooms.append(Room.initRoom(roomData)!)
+                let room = Room()
+                if room.initRoomWithData(roomData, isGroup: true) != nil {
+                    rooms.append(room)
+                    room.saveToDatabase()
+                }
+                
             }
-            Room.syncRoom(rooms)
         }
+        
+        if let contactsArray = data["contacts"] as? [NSDictionary] {
+            for contactData in contactsArray {
+                let room = Room()
+                if room.initRoomWithData(contactData, isGroup: false) != nil {
+                    rooms.append(room)
+                    room.saveToDatabase()
+                }
+                let user = User()
+                user.initUserFromServerWithData(contactData).saveToDatabase()
+            }
+        }
+        
+        Room.syncRoom(rooms)
+
+        if let silentRoomIdArray = data["silentRoom"] as? [String] {
+            let realm = try! Realm()
+            for roomId in silentRoomIdArray {
+                if let room = realm.object(ofType: Room.self, forPrimaryKey: roomId) {
+                    try! realm.write {
+                        room.silent = true
+                    }
+                }
+            }
+        }
+
     }
     
     //TODO: save other users method
@@ -222,7 +275,6 @@ class User: Object {
         try! realm.write({
             realm.add(self, update: true)
         })
-        
     }
     
 }

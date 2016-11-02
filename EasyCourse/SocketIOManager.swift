@@ -22,8 +22,13 @@ class SocketIOManager: NSObject {
     
     func establishConnection() {
         socket = SocketIOClient(socketURL: URL(string: Constant.baseURL)!, config: [.connectParams(["token" : User.token!])])
+//        socket = SocketIOClient(socketURL: URL(string: Constant.baseURL)!, config: [.connectParams(["token" : "asdf"])])
+        socket.on("auth:error") { (obj, ack) in
+            print("auth error")
+            
+        }
         socket.connect()
-        socket.emit("syncUser", 1)
+        
         self.publicListener()
         
     }
@@ -63,8 +68,9 @@ class SocketIOManager: NSObject {
     }
     
     func sendMessage(_ message:Message) {
-        var param = ["id":"\(message.id!)", "room":"\(message.roomId!)"]
-        
+        var param = ["id":"\(message.id!)"]
+        if let toRoom = message.toRoom { param["toRoom"] = toRoom }
+        if let toUser = message.toUser { param["toUser"] = toUser }
         if let text = message.text { param["text"] = text }
         if let imageUrl = message.imageUrl { param["imageUrl"] = imageUrl }
         if let imageWidth = message.imageWidth.value { param["imageWidth"] = "\(imageWidth)" }
@@ -85,12 +91,14 @@ class SocketIOManager: NSObject {
             for object in objects {
                 if (object as AnyObject).isKind(of: NSArray.self) {
                     for obj in object as! NSArray {
-                        if let room = Room.initRoom(obj as! NSDictionary) {
+                        let room = Room()
+                        if room.initRoomWithData(obj as! NSDictionary, isGroup: true) != nil {
                             finalRooms.append(room)
                         }
                     }
                 } else {
-                    if let room = Room.initRoom(object as! NSDictionary) {
+                    let room = Room()
+                    if room.initRoomWithData(object as! NSDictionary, isGroup: true) != nil {
                         finalRooms.append(room)
                     }
                 }
@@ -152,19 +160,12 @@ class SocketIOManager: NSObject {
         socket.on("connect") {data, ack in
             print("socket connected")
             self.socket.emit("syncUser", 1)
-            var updateTime = NSDate().timeIntervalSince1970
-            if let lastUpdatedTime = try! Realm().objects(Message.self).last?.createdAt {
-                updateTime = lastUpdatedTime.timeIntervalSince1970
-            }
-            let a = try! Realm().objects(Message.self).last?.text
-            print("lastupdateTime: \(a), \(updateTime)")
-            self.socket.emit("getHistMessage", updateTime)
             
             
         }
         
         socket.on("syncUser") { (objects, ack) in
-//            print("object get : \(objects)")
+            print("object get : \(objects)")
             
             if User.currentUser == nil {
                 User.currentUser = User().initCurrentUserWithData(objects[0] as! NSDictionary)
@@ -173,8 +174,29 @@ class SocketIOManager: NSObject {
             }
             
             NotificationCenter.default.post(name: Constant.NotificationKey.SyncUser, object: nil)
-            
             print("syncUser received")
+            
+            // Get Hist Message
+            var updateTime = NSDate().timeIntervalSince1970
+            if let lastUpdatedTime = try! Realm().objects(Message.self).last?.createdAt {
+                updateTime = lastUpdatedTime.timeIntervalSince1970
+            }
+            let a = try! Realm().objects(Message.self).last?.text
+            print("lastupdateTime: \(a), \(updateTime)")
+            self.socket.emit("getHistMessage", updateTime)
+            
+            // Get Contact Info
+//            let realm = try! Realm()
+//            let currentUserContacts = realm.objects(Room.self).filter("isGroupChat == false")
+//            var incompleteContactsID:[String] = []
+//            currentUserContacts.forEach({ (room) in
+//                if realm.object(ofType: User.self, forPrimaryKey: room.id) == nil {
+//                    incompleteContactsID.append(room.id!)
+//                }
+//            })
+//            print("incomplete user: \(incompleteContactsID)")
+//            self.socket.emit("getUserInfo", ["userList":incompleteContactsID])
+            
         }
         
         socket.on("message") { (objects, ack) in
@@ -257,6 +279,12 @@ class SocketIOManager: NSObject {
         
         socket.on("auth:error") { (obj, ack) in
             print("auth error")
+            
+        }
+        
+        socket.on("getUserInfo:succuss") { (obj, ack) in
+            print("get user info: \(obj)")
+            
             
         }
     }

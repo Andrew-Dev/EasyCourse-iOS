@@ -22,7 +22,8 @@ class Message: Object {
     let imageWidth = RealmOptional<Float>()
     let imageHeight = RealmOptional<Float>()
     
-    dynamic var roomId:String? = nil
+    dynamic var toRoom:String? = nil
+    dynamic var toUser:String? = nil
     dynamic var createdAt:Date? = nil
     
     override static func primaryKey() -> String? {
@@ -41,7 +42,8 @@ class Message: Object {
 //            message.senderName = data["senderName"] as? String
             self.text = data["text"] as? String
             self.imageUrl = data["imageUrl"] as? String
-            self.roomId = data["room"] as? String
+            self.toRoom = data["toRoom"] as? String
+            self.toUser = data["toUser"] as? String
             self.imageWidth.value = data["imageWidth"] as? Float
             self.imageHeight.value = data["imageHeight"] as? Float
             if let interval = data["createdAt"] as? Double {
@@ -54,11 +56,15 @@ class Message: Object {
 //        return self
     }
     
-    func initForCurrentUser(_ text: String?, imageUrl: String?, image: UIImage?, roomId: String) {
+    func initForCurrentUser(_ text: String?, imageUrl: String?, image: UIImage?, toRoom: String?, isGroupChat: Bool) {
         self.text = text
         self.imageUrl = imageUrl
         
-        self.roomId = roomId
+        if isGroupChat {
+            self.toRoom = toRoom
+        } else {
+            self.toUser = toRoom
+        }
         if image != nil {
             self.imageHeight.value = Float(image!.size.height)
             self.imageWidth.value = Float(image!.size.width)
@@ -106,7 +112,8 @@ class Message: Object {
     func saveToDatabase() {
         
         let realm = try! Realm()
-        if let room = realm.object(ofType: Room.self, forPrimaryKey: self.roomId) {
+        let roomID = self.toRoom ?? self.toUser
+        if let room = realm.object(ofType: Room.self, forPrimaryKey: roomID) {
             
             if realm.object(ofType: Message.self, forPrimaryKey: self.id) == nil {
                 print("save msg to db: \(self.text))")

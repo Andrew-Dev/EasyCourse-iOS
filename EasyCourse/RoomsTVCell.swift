@@ -42,9 +42,22 @@ class RoomsTVCell: UITableViewCell {
     }
     
     func configureCell(_ room:Room, lastMessage: Message?) {
-        roomNameLabel.text = room.roomname
+        roomProfilePicture.image = Design.defaultAvatarImage
         timeLabel.text = ""
         lastMessageLabel.text = ""
+        
+        if room.isGroupChat {
+            roomNameLabel.text = room.roomname
+        } else {
+            let user = try! Realm().object(ofType: User.self, forPrimaryKey: room.id)
+            roomNameLabel.text = user?.username ?? "User"
+            if let userImgUrlStr = user?.profilePictureUrl {
+                let URL = Foundation.URL(string: userImgUrlStr)
+                self.roomProfilePicture.af_setImage(withURL: URL!, placeholderImage: nil, imageTransition: .crossDissolve(0.2), runImageTransitionIfCached: false, completion: nil)
+            }
+        }
+        
+        
         if room.unread != 0 {
             unreadLabel.isHidden = false
             unreadLabel.text = "\(room.unread)"

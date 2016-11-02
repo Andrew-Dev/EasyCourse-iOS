@@ -125,7 +125,7 @@
         <!--Rooms DialogVC-->
         <scene sceneID="TuO-mN-wMv">
             <objects>
-                <viewController hidesBottomBarWhenPushed="YES" id="gFd-09-GZk" customClass="RoomsDialogVC" customModule="EasyCourse" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="RoomsDialogVC" hidesBottomBarWhenPushed="YES" id="gFd-09-GZk" customClass="RoomsDialogVC" customModule="EasyCourse" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="zO3-ft-KlK"/>
                         <viewControllerLayoutGuide type="bottom" id="576-x6-a4u"/>
@@ -601,6 +601,9 @@
                                     <state key="normal" title="Report">
                                         <color key="titleColor" red="0.81693892050000005" green="0.1528218328" blue="0.12873357269999999" alpha="1" colorSpace="calibratedRGB"/>
                                     </state>
+                                    <connections>
+                                        <action selector="reportBtnPressed:" destination="HC5-CX-QTV" eventType="touchUpInside" id="zjw-HL-biI"/>
+                                    </connections>
                                 </button>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nBE-sC-JJN">
                                     <color key="backgroundColor" red="0.30374173599999998" green="0.6518486604" blue="1" alpha="1" colorSpace="calibratedRGB"/>
@@ -611,6 +614,9 @@
                                     <state key="normal" title="Message">
                                         <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     </state>
+                                    <connections>
+                                        <action selector="messageBtnPressed:" destination="HC5-CX-QTV" eventType="touchUpInside" id="ou2-PT-KcR"/>
+                                    </connections>
                                 </button>
                             </subviews>
                             <constraints>
@@ -663,6 +669,8 @@
                     <size key="freeformSize" width="600" height="800"/>
                     <connections>
                         <outlet property="avatarImageView" destination="R4n-ua-4sF" id="UNX-J8-Ddy"/>
+                        <outlet property="messageBtn" destination="nBE-sC-JJN" id="vhq-or-kpe"/>
+                        <outlet property="reportBtn" destination="Ube-MP-SAm" id="P4Z-W6-Cla"/>
                         <outlet property="usernameLabel" destination="HtH-Dc-Gdw" id="WZV-Zr-gle"/>
                     </connections>
                 </tableViewController>
