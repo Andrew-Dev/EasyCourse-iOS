@@ -65,14 +65,14 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
         liveImageMessage = localRoom.getMessageContainsImage()
         
         //UI
-        if localRoom.isGroupChat {
+        if localRoom.isToUser {
+            otherUser = try! Realm().object(ofType: User.self, forPrimaryKey: localRoom.id)
+            self.navigationItem.title = otherUser?.username
+        } else {
             let customTitleView = LDONavigationSubtitleView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 44))
             customTitleView.subtitle = "\(localRoom.memberCounts.value!) people"
             customTitleView.title = localRoom.roomname!
             self.navigationItem.titleView = customTitleView
-        } else {
-            otherUser = try! Realm().object(ofType: User.self, forPrimaryKey: localRoom.id)
-            self.navigationItem.title = otherUser?.username
         }
         
         messageTableView.delegate = self
@@ -271,7 +271,7 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     @IBAction func sendBtnPressed(_ sender: UIButton) {
         sendBtn.isEnabled = false
         let message = Message()
-        message.initForCurrentUser(inputTextView.text, imageUrl: nil, image: nil, toRoom: localRoom.id!, isGroupChat: localRoom.isGroupChat)
+        message.initForCurrentUser(inputTextView.text, imageUrl: nil, image: nil, toRoom: localRoom.id!, isToUser: localRoom.isToUser)
         message.saveToDatabase()
         inputTextView.text = ""
         UIView.animate(withDuration: 0.2, animations: {
@@ -315,7 +315,7 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
                         print("url: \(imageUrl) progress: \(progress) err: \(error)")
                         if imageUrl != nil {
                             let message = Message()
-                            message.initForCurrentUser(nil, imageUrl: imageUrl!, image: image, toRoom: self.localRoom.id!, isGroupChat: self.localRoom.isGroupChat)
+                            message.initForCurrentUser(nil, imageUrl: imageUrl!, image: image, toRoom: self.localRoom.id!, isToUser: self.localRoom.isToUser)
                             message.saveToDatabase()
                             SocketIOManager.sharedInstance.sendMessage(message)
                         }

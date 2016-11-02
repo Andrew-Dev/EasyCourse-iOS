@@ -25,7 +25,6 @@ class Constant: NSObject {
         static let currentUserTokenKey = "kCurrentUserTokenKey"
         static let deviceTokenKey = "deviceTokenKey"
         static let silentRoomKey = "deviceTokenKey"
-        
     }
     
     
@@ -42,6 +41,6 @@ class Constant: NSObject {
         case receivedResult
     }
     
-//    static let baseURL = "https://zengjintaotest.com/api"
-    static let baseURL = "http://localhost:3000/api"
+    static let baseURL = "https://zengjintaotest.com/api"
+//    static let baseURL = "http://localhost:3000/api"
 }

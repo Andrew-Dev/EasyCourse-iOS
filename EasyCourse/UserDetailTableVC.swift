@@ -68,7 +68,7 @@ class UserDetailTableVC: UITableViewController {
             try! realm.write({
                 let room = Room()
                 room.id = self.userId
-                room.isGroupChat = false
+                room.isToUser = true
                 realm.add(room, update: true)
                 vc.localRoom = room
                 self.navigationController?.pushViewController(vc, animated: true)

@@ -9,13 +9,13 @@ PODS:
   - Bolts/AppLinks (1.8.4):
     - Bolts/Tasks
   - Bolts/Tasks (1.8.4)
-  - CryptoSwift (0.6.3)
+  - CryptoSwift (0.6.5)
   - DACircularProgress (2.3.1)
-  - DKImagePickerController (3.4.0):
-    - DKImagePickerController/Camera (= 3.4.0)
-    - DKImagePickerController/ImageManager (= 3.4.0)
-  - DKImagePickerController/Camera (3.4.0)
-  - DKImagePickerController/ImageManager (3.4.0)
+  - DKImagePickerController (3.4.2):
+    - DKImagePickerController/Camera (= 3.4.2)
+    - DKImagePickerController/ImageManager (= 3.4.2)
+  - DKImagePickerController/Camera (3.4.2)
+  - DKImagePickerController/ImageManager (3.4.2)
   - FacebookCore (0.2.0):
     - Bolts (~> 1.8)
     - FBSDKCoreKit (~> 4.15)
@@ -29,11 +29,11 @@ PODS:
     - FacebookCore (~> 0.2)
     - FBSDKCoreKit (~> 4.15)
     - FBSDKShareKit (~> 4.15)
-  - FBSDKCoreKit (4.16.1):
+  - FBSDKCoreKit (4.17.0):
     - Bolts (~> 1.7)
-  - FBSDKLoginKit (4.16.1):
+  - FBSDKLoginKit (4.17.0):
     - FBSDKCoreKit
-  - FBSDKShareKit (4.16.1):
+  - FBSDKShareKit (4.17.0):
     - FBSDKCoreKit
   - JGProgressHUD (1.4)
   - JVFloatLabeledTextField (1.1.1)
@@ -44,15 +44,15 @@ PODS:
     - DACircularProgress (~> 2.3)
     - MBProgressHUD (~> 0.9)
     - SDWebImage (!= 3.7.2, ~> 3.7)
-  - Realm (2.0.2):
-    - Realm/Headers (= 2.0.2)
-  - Realm/Headers (2.0.2)
-  - RealmSwift (2.0.2):
-    - Realm (= 2.0.2)
+  - Realm (2.0.3):
+    - Realm/Headers (= 2.0.3)
+  - Realm/Headers (2.0.3)
+  - RealmSwift (2.0.3):
+    - Realm (= 2.0.3)
   - SDWebImage (3.8.2):
     - SDWebImage/Core (= 3.8.2)
   - SDWebImage/Core (3.8.2)
-  - Socket.IO-Client-Swift (8.0.2)
+  - Socket.IO-Client-Swift (8.1.1)
   - XLPagerTabStrip (6.0.0)
 
 DEPENDENCIES:
@@ -78,25 +78,25 @@ SPEC CHECKSUMS:
   AlamofireImage: bb8c8351c51cb1633bb6be69b6dbbaff37ce65b7
   AsyncSwift: 6ba6ed9ecb51344458063f7c86fe447ab824e313
   Bolts: 8a7995239dbe724f9cba2248b766d48b7ebdd322
-  CryptoSwift: 623f81faf4bc34caf78b792f8625fda9fc309abd
+  CryptoSwift: d86b1d97d39b4a361ba44c77180b221e9c5b864f
   DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
-  DKImagePickerController: 5e64adbe34c27cc63bc38cccdaf3a40c3b4f729c
+  DKImagePickerController: 8fc8a42120cb0c9b7982af04d47e0e5b25b5186f
   FacebookCore: 2cb3f0fbff218e9d3119cec84bae983b232412de
   FacebookLogin: c9d606504735780a9e3002465a615512e0a691a5
   FacebookShare: 8e9ee8ea06505e6a1d3d719b0cc63e840fb8aaeb
-  FBSDKCoreKit: 6feac4e8921ccd7afa83fb1df6291dc6eec42c7c
-  FBSDKLoginKit: 469a56cebe2e1ed62b1621d0b155970fd6aac2d8
-  FBSDKShareKit: 53af0239b5bd2ebf191f32f75991245a208cc982
+  FBSDKCoreKit: 30a21d2d7b92984b3d80497113433c00824c35e9
+  FBSDKLoginKit: 42b7129ac0373ca99eaf4cbebf4d07bd42371f59
+  FBSDKShareKit: 9b573d03fbee36cbaf42d5bb1f2bc019e0d72347
   JGProgressHUD: 1617b0940cf80bb53e8f7d6f0fd69252ea45d6d4
   JVFloatLabeledTextField: 0e5524b097f102036214dd8279edc8ecf08b5e18
   KeychainSwift: b6947435dd78cc442c64a84ae648dd0e871cf448
   LDONavigationSubtitleView: f6a0e0b859f577b6a684e43d8f09a0c7238caef3
   MBProgressHUD: 1569cf7ace17a8bac47aabfbb8580a49690386d1
   MWPhotoBrowser: 5836d7aa041dc05a13de380c246826578adc5ea5
-  Realm: 0f5a194af0b7e6158b83db41b4ee1a00be7ddf1a
-  RealmSwift: 0eb5070d851cba7c66e841ca756d83609dc78bc8
+  Realm: 5f008bfe3c8c47142eddfc30b8c1584cde22db24
+  RealmSwift: 5afb451f65b682242f272dbb52d5c6f6e343c980
   SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
-  Socket.IO-Client-Swift: 136598e4a81a42b0e6855e7f94a0e5a6efdc5ff8
+  Socket.IO-Client-Swift: 5c18fa2af9df8a19d20e4df815141103c1f7079b
   XLPagerTabStrip: c46e802a8dcac29edbcea573de8fe920e052455b
 
 PODFILE CHECKSUM: 6afad55fc09e4a8bfd1bcc0fe5c52d1da687a7c2

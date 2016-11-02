@@ -316,7 +316,7 @@ class ServerConst {
     
     func getUserInfo(_ id:String, refresh: Bool, completion: @escaping (_ user:User?, _ joinedCourse:[String], _ error:Error?) -> ()) {
         //TODO: check from database or cache
-        print("get user info api for user: \(id)")
+//        print("get user info api for user: \(id)")
         if !refresh {
             if let user = try! Realm().object(ofType: User.self, forPrimaryKey: id) {
 //                print("user get in database")

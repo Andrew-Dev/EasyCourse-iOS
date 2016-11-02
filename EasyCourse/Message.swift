@@ -23,7 +23,7 @@ class Message: Object {
     let imageHeight = RealmOptional<Float>()
     
     dynamic var toRoom:String? = nil
-    dynamic var toUser:String? = nil
+    dynamic var isToUser = true
     dynamic var createdAt:Date? = nil
     
     override static func primaryKey() -> String? {
@@ -42,8 +42,14 @@ class Message: Object {
 //            message.senderName = data["senderName"] as? String
             self.text = data["text"] as? String
             self.imageUrl = data["imageUrl"] as? String
-            self.toRoom = data["toRoom"] as? String
-            self.toUser = data["toUser"] as? String
+            if let toRoom = data["toRoom"] as? String {
+                self.toRoom = toRoom
+                self.isToUser = false
+            }
+            if let toUser = data["toUser"] as? String {
+                self.toRoom = toUser
+                self.isToUser = true
+            }
             self.imageWidth.value = data["imageWidth"] as? Float
             self.imageHeight.value = data["imageHeight"] as? Float
             if let interval = data["createdAt"] as? Double {
@@ -56,15 +62,12 @@ class Message: Object {
 //        return self
     }
     
-    func initForCurrentUser(_ text: String?, imageUrl: String?, image: UIImage?, toRoom: String?, isGroupChat: Bool) {
+    func initForCurrentUser(_ text: String?, imageUrl: String?, image: UIImage?, toRoom: String?, isToUser: Bool) {
         self.text = text
         self.imageUrl = imageUrl
         
-        if isGroupChat {
-            self.toRoom = toRoom
-        } else {
-            self.toUser = toRoom
-        }
+        self.toRoom = toRoom
+        self.isToUser = isToUser
         if image != nil {
             self.imageHeight.value = Float(image!.size.height)
             self.imageWidth.value = Float(image!.size.width)
@@ -90,20 +93,30 @@ class Message: Object {
 //        }
 //    }
     
-    internal func saveSenderUserInfo(_ data:NSDictionary) {
+    internal class func saveSenderUserInfo(_ data:NSDictionary) {
 //        print("start cache")
         if let senderId = data["sender"] as? String,
             let username = data["senderName"] as? String {
             
-            let user = User()
-            user.id = senderId
-            user.username = username
-            if let profilePictureUrl = data["avatarUrl"] as? String {
-                user.profilePictureUrl = profilePictureUrl
-            }
             let realm = try! Realm()
-            try! realm.write {
-                realm.add(user, update: true)
+            if let dbUser = realm.object(ofType: User.self, forPrimaryKey: senderId) {
+                try! realm.write {
+                    dbUser.username = username
+                    if let profilePictureUrl = data["avatarUrl"] as? String {
+                        dbUser.profilePictureUrl = profilePictureUrl
+                    }
+                }
+            } else {
+                let user = User()
+                user.id = senderId
+                user.username = username
+                if let profilePictureUrl = data["avatarUrl"] as? String {
+                    user.profilePictureUrl = profilePictureUrl
+                }
+                
+                try! realm.write {
+                    realm.add(user, update: true)
+                }
             }
         }
     }
@@ -112,7 +125,7 @@ class Message: Object {
     func saveToDatabase() {
         
         let realm = try! Realm()
-        let roomID = self.toRoom ?? self.toUser
+        let roomID = self.toRoom
         if let room = realm.object(ofType: Room.self, forPrimaryKey: roomID) {
             
             if realm.object(ofType: Message.self, forPrimaryKey: self.id) == nil {
@@ -125,8 +138,13 @@ class Message: Object {
                 print("message already exist")
             }
         } else {
+            let room = Room()
+            room.id = self.toRoom
+            room.messageList.append(self)
+            room.unread += 1
+            room.isToUser = true
             try! realm.write({
-                realm.add(self, update: true)
+                realm.add(room, update: true)
             })
         }
     }

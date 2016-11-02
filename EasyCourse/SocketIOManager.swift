@@ -69,8 +69,13 @@ class SocketIOManager: NSObject {
     
     func sendMessage(_ message:Message) {
         var param = ["id":"\(message.id!)"]
-        if let toRoom = message.toRoom { param["toRoom"] = toRoom }
-        if let toUser = message.toUser { param["toUser"] = toUser }
+        if let toRoom = message.toRoom {
+            if message.isToUser {
+                param["toUser"] = toRoom
+            } else {
+                param["toRoom"] = toRoom
+            }
+        }
         if let text = message.text { param["text"] = text }
         if let imageUrl = message.imageUrl { param["imageUrl"] = imageUrl }
         if let imageWidth = message.imageWidth.value { param["imageWidth"] = "\(imageWidth)" }
@@ -92,13 +97,13 @@ class SocketIOManager: NSObject {
                 if (object as AnyObject).isKind(of: NSArray.self) {
                     for obj in object as! NSArray {
                         let room = Room()
-                        if room.initRoomWithData(obj as! NSDictionary, isGroup: true) != nil {
+                        if room.initRoomWithData(obj as! NSDictionary, isToUser: false) != nil {
                             finalRooms.append(room)
                         }
                     }
                 } else {
                     let room = Room()
-                    if room.initRoomWithData(object as! NSDictionary, isGroup: true) != nil {
+                    if room.initRoomWithData(object as! NSDictionary, isToUser: false) != nil {
                         finalRooms.append(room)
                     }
                 }
@@ -177,13 +182,14 @@ class SocketIOManager: NSObject {
             print("syncUser received")
             
             // Get Hist Message
-            var updateTime = NSDate().timeIntervalSince1970
-            if let lastUpdatedTime = try! Realm().objects(Message.self).last?.createdAt {
-                updateTime = lastUpdatedTime.timeIntervalSince1970
+//            var updatedTime = NSDate().timeIntervalSince1970
+            var params:[String:Any] = [:]
+            if let lastUpdatedTime = try! Realm().objects(Message.self).filter("successSent != false").last?.createdAt {
+                params["updatedTime"] = lastUpdatedTime.timeIntervalSince1970
             }
             let a = try! Realm().objects(Message.self).last?.text
-            print("lastupdateTime: \(a), \(updateTime)")
-            self.socket.emit("getHistMessage", updateTime)
+            print("lastupdateTime: \(a), \(params["updatedTime"])")
+            self.socket.emit("getHistMessage", params)
             
             // Get Contact Info
 //            let realm = try! Realm()
@@ -204,22 +210,24 @@ class SocketIOManager: NSObject {
                 //                print("one object: \(object)")
 
                 if (object as AnyObject).isKind(of: NSArray.self) {
-                    print("new message [array]")
+                    let a = object as! NSArray
+                    print("new message [array] cnt=\(a.count)")
                     for obj in object as! NSArray {
                         print("message obj: \(obj)")
                         let newMessage = Message()
                         newMessage.initMessage(obj as! NSDictionary)
                         
                         if newMessage.senderId != User.currentUser!.id {
-                            Message().saveSenderUserInfo(obj as! NSDictionary)
+                            Message.saveSenderUserInfo(obj as! NSDictionary)
                             newMessage.saveToDatabase()
                         }
                     }
                 } else {
+                    print("message obj: \(object)")
                     print("new message [single]")
                     let newMessage = Message()
                     newMessage.initMessage(object as! NSDictionary)
-                    Message().saveSenderUserInfo(object as! NSDictionary)
+                    Message.saveSenderUserInfo(object as! NSDictionary)
                     newMessage.saveToDatabase()
 //                    if newMessage.senderId != User.currentUser!.id {
 //                        Message().saveSenderUserInfo(object as! NSDictionary)
