@@ -13,7 +13,7 @@ import MWPhotoBrowser
 import LDONavigationSubtitleView
 
 protocol popUpImageProtocol : NSObjectProtocol {
-    func  popUpImage(_ imageView:UIImageView, message:Message) -> Void
+    func popUpImage(_ imageView:UIImageView, message:Message) -> Void
 }
 
 class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSource, cellTableviewProtocol {

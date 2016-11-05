@@ -19,7 +19,7 @@ class RoomsVC: UIViewController {
     
     lazy var message = try! Realm().objects(Message.self)
     lazy var rooms = try! Realm().objects(Room.self)
-    var sortedRooms:[(Room,Message?)] = []
+    var sortedRooms:[(room:Room,lastMessage:Message?)] = []
     var roomUpdateNotif: NotificationToken? = nil
     var messageUpdateNotif: NotificationToken? = nil
     
@@ -30,10 +30,13 @@ class RoomsVC: UIViewController {
         roomTableView.dataSource = self
         roomTableView.tableFooterView = UIView()
         sortRooms()
-        print("message coutn: \(message.count)")
         if rooms.count == 0 {
             SocketIOManager.sharedInstance.syncUser()
         }
+        
+        let addRoomBtn = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(self.showAddRoom))
+        navigationItem.rightBarButtonItem = addRoomBtn
+        
         roomUpdateNotif = rooms.addNotificationBlock({ (result) in
             self.sortRooms()
             self.roomTableView.reloadData()
@@ -89,6 +92,10 @@ class RoomsVC: UIViewController {
             
         }
         
+    }
+    
+    func showAddRoom() {
+        self.performSegue(withIdentifier: "showAddRoom", sender: self)
     }
 }
 

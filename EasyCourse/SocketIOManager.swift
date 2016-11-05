@@ -112,6 +112,31 @@ class SocketIOManager: NSObject {
         }
     }
     
+    func createRoom(_ name:String, course:String?, completion: @escaping (_ success:Bool, _ error:NSError?) -> ()) {
+        var params = ["name":name]
+        if course != nil {
+            params["course"] = course
+        }
+        socket.emit("createRoom", params)
+        socket.once("createRoom:success") { (obj, ack) in
+            print("respons: \(obj[0])")
+            if let roomData = obj[0] as? NSDictionary {
+                let room = Room()
+                room.initRoomWithData(roomData, isToUser: false)?.saveToDatabase()
+                completion(true, nil)
+            } else {
+                completion(false, nil)
+            }
+            
+        }
+        socket.once("createRoom:error") { (obj, ack) in
+//            self.socket.emit("syncUser", 1)
+            print("respons: \(obj)")
+            completion(false, nil)
+        }
+    }
+
+    
     func quitRoom(_ roomId:String, completion: @escaping (_ success:Bool, _ error:NSError?) -> ()) {
         socket.emit("quitRoom", roomId)
         socket.once("quitRoom") { (obj, ack) in

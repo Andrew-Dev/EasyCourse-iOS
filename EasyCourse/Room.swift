@@ -10,19 +10,20 @@ import UIKit
 import RealmSwift
 
 class Room: Object {
-    //BASIC
-    //true if it is one to one message
+    //When isToUser == true, the room is one to one message
     dynamic var isToUser = false
+    //When user quit this room on other platform, this room will not be deleted.
+    //Instead, changing isJoinIn to false.
     dynamic var isJoinIn = false
     
-    //store room ID or other 
+    //Basic info of the room
     dynamic var id:String? = nil
     dynamic var roomname:String? = nil
     let messageList = List<Message>()
     dynamic var unread = 0
     dynamic var silent = false
     
-    //GROUP CHATTING
+    //Group chatting
     dynamic var courseID:String? = nil
     dynamic var courseName:String? = nil
     dynamic var university:String? = nil
@@ -30,7 +31,7 @@ class Room: Object {
     let memberCounts = RealmOptional<Int>()
     let language = RealmOptional<Int>()
     
-    //user built room
+    //User built room
     dynamic var founderID:String? = nil
     dynamic var isPublic = false
     

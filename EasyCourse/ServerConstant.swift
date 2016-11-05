@@ -118,6 +118,7 @@ class ServerConst {
                 }
                 //TODO: add mobile header
                 let apiUrl = URL(string: "\(Constant.baseURL)/facebook/token/?access_token=\(FBSDKAccessToken.current().tokenString!)")
+
                 Alamofire.request(apiUrl!).responseJSON { response in
                     print(response.result.error)
                     if response.result.error != nil {
