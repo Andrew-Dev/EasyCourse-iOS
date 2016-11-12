@@ -13,6 +13,9 @@
 		F7364C7D1DA6E0EF007A967F /* LoadingTVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7364C7B1DA6E0EF007A967F /* LoadingTVCell.swift */; };
 		F7364C7E1DA6E0EF007A967F /* LoadingTVCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F7364C7C1DA6E0EF007A967F /* LoadingTVCell.xib */; };
 		F7364C801DA7EE3C007A967F /* InfiniteScrollActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7364C7F1DA7EE3C007A967F /* InfiniteScrollActivityView.swift */; };
+		F7364C831DCBBF6B007A967F /* RoomsAddRoomVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7364C821DCBBF6B007A967F /* RoomsAddRoomVC.swift */; };
+		F7364C851DCBFD64007A967F /* RoomsAddRoomNameTVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7364C841DCBFD63007A967F /* RoomsAddRoomNameTVCell.swift */; };
+		F7607D431DCC0E6200FC16AB /* RoomsAddRoomNameListTVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7607D421DCC0E6200FC16AB /* RoomsAddRoomNameListTVCell.swift */; };
 		F76A9B8C1D85FF3B0065C25C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F76A9B8B1D85FF3B0065C25C /* AppDelegate.swift */; };
 		F76A9B911D85FF3B0065C25C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F76A9B8F1D85FF3B0065C25C /* Main.storyboard */; };
 		F76A9B961D85FF3B0065C25C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F76A9B941D85FF3B0065C25C /* LaunchScreen.storyboard */; };
@@ -81,7 +84,10 @@
 		F7364C7B1DA6E0EF007A967F /* LoadingTVCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingTVCell.swift; sourceTree = "<group>"; };
 		F7364C7C1DA6E0EF007A967F /* LoadingTVCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LoadingTVCell.xib; sourceTree = "<group>"; };
 		F7364C7F1DA7EE3C007A967F /* InfiniteScrollActivityView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InfiniteScrollActivityView.swift; sourceTree = "<group>"; };
+		F7364C821DCBBF6B007A967F /* RoomsAddRoomVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomsAddRoomVC.swift; sourceTree = "<group>"; };
+		F7364C841DCBFD63007A967F /* RoomsAddRoomNameTVCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomsAddRoomNameTVCell.swift; sourceTree = "<group>"; };
 		F742AC3D1D9EFB6300AA61D7 /* EasyCourse.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = EasyCourse.entitlements; sourceTree = "<group>"; };
+		F7607D421DCC0E6200FC16AB /* RoomsAddRoomNameListTVCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomsAddRoomNameListTVCell.swift; sourceTree = "<group>"; };
 		F76A9B881D85FF3B0065C25C /* EasyCourse.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EasyCourse.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F76A9B8B1D85FF3B0065C25C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F76A9B901D85FF3B0065C25C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -172,6 +178,17 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		F7364C811DCAA382007A967F /* Assets */ = {
+			isa = PBXGroup;
+			children = (
+				F76A9B971D85FF3B0065C25C /* Info.plist */,
+				F7A556491D90DEC9003E258D /* Assets.xcassets */,
+				F742AC3D1D9EFB6300AA61D7 /* EasyCourse.entitlements */,
+				4945155E1DB71A6A003508CA /* loading.png */,
+			);
+			name = Assets;
+			sourceTree = "<group>";
+		};
 		F76A9B7F1D85FF3B0065C25C = {
 			isa = PBXGroup;
 			children = (
@@ -193,7 +210,6 @@
 		F76A9B8A1D85FF3B0065C25C /* EasyCourse */ = {
 			isa = PBXGroup;
 			children = (
-				4945155E1DB71A6A003508CA /* loading.png */,
 				F76A9BF71D86288F0065C25C /* Extension&Helper */,
 				F76A9BB91D8620DB0065C25C /* Util */,
 				F76A9BB61D8620990065C25C /* API */,
@@ -202,11 +218,8 @@
 				F76A9BA51D861DF90065C25C /* User */,
 				F76A9BA41D861DF40065C25C /* Login */,
 				F76A9B9E1D861C810065C25C /* Storyboard */,
+				F7364C811DCAA382007A967F /* Assets */,
 				F76A9B8B1D85FF3B0065C25C /* AppDelegate.swift */,
-				F7A556491D90DEC9003E258D /* Assets.xcassets */,
-				F76A9B941D85FF3B0065C25C /* LaunchScreen.storyboard */,
-				F76A9B971D85FF3B0065C25C /* Info.plist */,
-				F742AC3D1D9EFB6300AA61D7 /* EasyCourse.entitlements */,
 			);
 			path = EasyCourse;
 			sourceTree = "<group>";
@@ -214,6 +227,7 @@
 		F76A9B9E1D861C810065C25C /* Storyboard */ = {
 			isa = PBXGroup;
 			children = (
+				F76A9B941D85FF3B0065C25C /* LaunchScreen.storyboard */,
 				F76A9BA71D861E990065C25C /* Login.storyboard */,
 				F76A9B8F1D85FF3B0065C25C /* Main.storyboard */,
 				F76A9B9F1D861D580065C25C /* Room.storyboard */,
@@ -247,6 +261,7 @@
 		F76A9BA61D861E0C0065C25C /* Room */ = {
 			isa = PBXGroup;
 			children = (
+				F7CE24401DCE7F350004957E /* CreateRoom */,
 				F76A9BE81D86265F0065C25C /* Dialog */,
 				F76A9BE21D8625AC0065C25C /* RoomsVC.swift */,
 				F76A9BE61D8626350065C25C /* RoomsTVCell.swift */,
@@ -365,6 +380,16 @@
 			name = UserCourses;
 			sourceTree = "<group>";
 		};
+		F7CE24401DCE7F350004957E /* CreateRoom */ = {
+			isa = PBXGroup;
+			children = (
+				F7364C821DCBBF6B007A967F /* RoomsAddRoomVC.swift */,
+				F7607D421DCC0E6200FC16AB /* RoomsAddRoomNameListTVCell.swift */,
+				F7364C841DCBFD63007A967F /* RoomsAddRoomNameTVCell.swift */,
+			);
+			name = CreateRoom;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -400,9 +425,9 @@
 				TargetAttributes = {
 					F76A9B871D85FF3B0065C25C = {
 						CreatedOnToolsVersion = 7.3.1;
-						DevelopmentTeam = NJKXF7XV99;
+						DevelopmentTeam = MYSFRJD98Y;
 						LastSwiftMigration = 0800;
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.Keychain = {
 								enabled = 1;
@@ -501,7 +526,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -519,6 +544,7 @@
 				F7A5564C1D9B3E6A003E258D /* UserSetting.swift in Sources */,
 				F76A9BFF1D86E22C0065C25C /* PopAnimator.swift in Sources */,
 				F76A9BE51D8625FF0065C25C /* RoomsDialogVC.swift in Sources */,
+				F7364C851DCBFD64007A967F /* RoomsAddRoomNameTVCell.swift in Sources */,
 				F7ADFB2D1D88AAB600AD53C3 /* UserRoomsTVCell.swift in Sources */,
 				F76A9BC31D8621D80065C25C /* LoginUnivComponentVC.swift in Sources */,
 				F76A9BE31D8625AC0065C25C /* RoomsVC.swift in Sources */,
@@ -540,8 +566,10 @@
 				F76A9BBB1D8620E50065C25C /* Constant.swift in Sources */,
 				F76A9BAD1D86200F0065C25C /* Message.swift in Sources */,
 				F76A9BDA1D8623240065C25C /* LoginCourseChooseTVCell.swift in Sources */,
+				F7364C831DCBBF6B007A967F /* RoomsAddRoomVC.swift in Sources */,
 				498AAFBD1DB70C8D00972AB2 /* ImagePresenterViewController.swift in Sources */,
 				F76A9BBD1D8621030065C25C /* ServerConstant.swift in Sources */,
+				F7607D431DCC0E6200FC16AB /* RoomsAddRoomNameListTVCell.swift in Sources */,
 				F7ADFB381D8CEFFF00AD53C3 /* UserDetailTableVC.swift in Sources */,
 				F7ADFB221D889C1000AD53C3 /* UserRoomsVC.swift in Sources */,
 				F7ADFB321D8AE17400AD53C3 /* UserCoursesTVCell.swift in Sources */,
@@ -613,6 +641,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = MYSFRJD98Y;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -660,6 +689,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = MYSFRJD98Y;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -687,12 +717,13 @@
 				CODE_SIGN_ENTITLEMENTS = EasyCourse/EasyCourse.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Jintao Zeng (4UAT7C35XK)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = NJKXF7XV99;
+				DEVELOPMENT_TEAM = MYSFRJD98Y;
 				INFOPLIST_FILE = EasyCourse/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = aarpasi.EasyCourse;
+				PRODUCT_BUNDLE_IDENTIFIER = ZengJintao.EasyCourse;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "2d854b06-698e-46a0-878a-8b60cf0ef9b3";
+				PROVISIONING_PROFILE_SPECIFIER = EasyCourseDevelopmentPushProvision;
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
@@ -706,12 +737,13 @@
 				CODE_SIGN_ENTITLEMENTS = EasyCourse/EasyCourse.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Jintao Zeng (4UAT7C35XK)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = NJKXF7XV99;
+				DEVELOPMENT_TEAM = MYSFRJD98Y;
 				INFOPLIST_FILE = EasyCourse/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = aarpasi.EasyCourse;
+				PRODUCT_BUNDLE_IDENTIFIER = ZengJintao.EasyCourse;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "2d854b06-698e-46a0-878a-8b60cf0ef9b3";
+				PROVISIONING_PROFILE_SPECIFIER = EasyCourseDevelopmentPushProvision;
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;

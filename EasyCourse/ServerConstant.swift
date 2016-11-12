@@ -118,6 +118,7 @@ class ServerConst {
                 }
                 //TODO: add mobile header
                 let apiUrl = URL(string: "\(Constant.baseURL)/facebook/token/?access_token=\(FBSDKAccessToken.current().tokenString!)")
+
                 Alamofire.request(apiUrl!).responseJSON { response in
                     print(response.result.error)
                     if response.result.error != nil {
@@ -316,7 +317,7 @@ class ServerConst {
     
     func getUserInfo(_ id:String, refresh: Bool, completion: @escaping (_ user:User?, _ joinedCourse:[String], _ error:Error?) -> ()) {
         //TODO: check from database or cache
-        print("get user info api for user: \(id)")
+//        print("get user info api for user: \(id)")
         if !refresh {
             if let user = try! Realm().object(ofType: User.self, forPrimaryKey: id) {
 //                print("user get in database")

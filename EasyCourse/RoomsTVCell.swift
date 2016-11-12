@@ -46,15 +46,15 @@ class RoomsTVCell: UITableViewCell {
         timeLabel.text = ""
         lastMessageLabel.text = ""
         
-        if room.isGroupChat {
-            roomNameLabel.text = room.roomname
-        } else {
+        if room.isToUser {
             let user = try! Realm().object(ofType: User.self, forPrimaryKey: room.id)
             roomNameLabel.text = user?.username ?? "User"
             if let userImgUrlStr = user?.profilePictureUrl {
                 let URL = Foundation.URL(string: userImgUrlStr)
                 self.roomProfilePicture.af_setImage(withURL: URL!, placeholderImage: nil, imageTransition: .crossDissolve(0.2), runImageTransitionIfCached: false, completion: nil)
             }
+        } else {
+            roomNameLabel.text = room.roomname
         }
         
         

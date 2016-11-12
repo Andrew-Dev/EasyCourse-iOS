@@ -25,7 +25,6 @@ class Constant: NSObject {
         static let currentUserTokenKey = "kCurrentUserTokenKey"
         static let deviceTokenKey = "deviceTokenKey"
         static let silentRoomKey = "deviceTokenKey"
-        
     }
     
     

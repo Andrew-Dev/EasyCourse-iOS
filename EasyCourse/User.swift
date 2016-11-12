@@ -128,21 +128,16 @@ class User: Object {
         var rooms:[Room] = []
         if let roomArray = data["joinedRoom"] as? [NSDictionary] {
             for roomData in roomArray {
-                let room = Room()
-                if room.initRoomWithData(roomData, isGroup: true) != nil {
+                if let room = Room.createOrUpdateRoomWithData(data: roomData, isToUser: false) {
                     rooms.append(room)
-                    room.saveToDatabase()
                 }
-                
             }
         }
         
         if let contactsArray = data["contacts"] as? [NSDictionary] {
             for contactData in contactsArray {
-                let room = Room()
-                if room.initRoomWithData(contactData, isGroup: false) != nil {
+                if let room = Room.createOrUpdateRoomWithData(data: contactData, isToUser: true) {
                     rooms.append(room)
-                    room.saveToDatabase()
                 }
                 let user = User()
                 user.initUserFromServerWithData(contactData).saveToDatabase()
@@ -208,10 +203,8 @@ class User: Object {
         var rooms:[Room] = []
         if let roomArray = data["joinedRoom"] as? [NSDictionary] {
             for roomData in roomArray {
-                let room = Room()
-                if room.initRoomWithData(roomData, isGroup: true) != nil {
+                if let room = Room.createOrUpdateRoomWithData(data: roomData, isToUser: false) {
                     rooms.append(room)
-                    room.saveToDatabase()
                 }
                 
             }
@@ -219,10 +212,8 @@ class User: Object {
         
         if let contactsArray = data["contacts"] as? [NSDictionary] {
             for contactData in contactsArray {
-                let room = Room()
-                if room.initRoomWithData(contactData, isGroup: false) != nil {
+                if let room = Room.createOrUpdateRoomWithData(data: contactData, isToUser: true) {
                     rooms.append(room)
-                    room.saveToDatabase()
                 }
                 let user = User()
                 user.initUserFromServerWithData(contactData).saveToDatabase()

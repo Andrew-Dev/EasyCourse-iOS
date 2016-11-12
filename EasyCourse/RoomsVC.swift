@@ -19,7 +19,7 @@ class RoomsVC: UIViewController {
     
     lazy var message = try! Realm().objects(Message.self)
     lazy var rooms = try! Realm().objects(Room.self)
-    var sortedRooms:[(Room,Message?)] = []
+    var sortedRooms:[(room:Room,lastMessage:Message?)] = []
     var roomUpdateNotif: NotificationToken? = nil
     var messageUpdateNotif: NotificationToken? = nil
     
@@ -30,10 +30,13 @@ class RoomsVC: UIViewController {
         roomTableView.dataSource = self
         roomTableView.tableFooterView = UIView()
         sortRooms()
-        print("message coutn: \(message.count)")
         if rooms.count == 0 {
             SocketIOManager.sharedInstance.syncUser()
         }
+        
+        let addRoomBtn = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(self.showAddRoom))
+        navigationItem.rightBarButtonItem = addRoomBtn
+        
         roomUpdateNotif = rooms.addNotificationBlock({ (result) in
             self.sortRooms()
             self.roomTableView.reloadData()
@@ -63,8 +66,11 @@ class RoomsVC: UIViewController {
         sortedRooms = []
         rooms.forEach { (room) in
 
-            let lastMessage = try! Realm().objects(Message.self).filter("toRoom = '\(room.id!)' or toUser = '\(room.id!)'").sorted(byProperty: "createdAt", ascending: true).last
-            sortedRooms.append((room,lastMessage))
+//            let lastMessage = try! Realm().objects(Message.self).filter("toRoom = '\(room.id!)'").sorted(byProperty: "createdAt", ascending: true).last
+            if room.id != User.currentUser?.id {
+                let lastMessage = room.getMessage().last
+                sortedRooms.append((room,lastMessage))
+            }
             
         }
         sortedRooms.sort { (a: (Room, Message?), b: (Room, Message?)) -> Bool in
@@ -86,6 +92,10 @@ class RoomsVC: UIViewController {
             
         }
         
+    }
+    
+    func showAddRoom() {
+        self.performSegue(withIdentifier: "showAddRoom", sender: self)
     }
 }
 

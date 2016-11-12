@@ -10,19 +10,20 @@ import UIKit
 import RealmSwift
 
 class Room: Object {
-    //BASIC
-    //true if it is one to one message
-    dynamic var isGroupChat = true
+    //When isToUser == true, the room is one to one message
+    dynamic var isToUser = false
+    //When user quit this room on other platform, this room will not be deleted.
+    //Instead, changing isJoinIn to false.
     dynamic var isJoinIn = false
     
-    //store room ID or other user ID
+    //Basic info of the room
     dynamic var id:String? = nil
     dynamic var roomname:String? = nil
     let messageList = List<Message>()
     dynamic var unread = 0
     dynamic var silent = false
     
-    //GROUP CHATTING
+    //Group chatting
     dynamic var courseID:String? = nil
     dynamic var courseName:String? = nil
     dynamic var university:String? = nil
@@ -30,7 +31,7 @@ class Room: Object {
     let memberCounts = RealmOptional<Int>()
     let language = RealmOptional<Int>()
     
-    //user built room
+    //User built room
     dynamic var founderID:String? = nil
     dynamic var isPublic = false
     
@@ -42,15 +43,24 @@ class Room: Object {
         return "id"
     }
     
-//    func getMessage() -> Results<(Message)> {
-//        return try! Realm().objects(Message.self).filter("roomId = '\(self.id!)'").sorted(byProperty: "createdAt", ascending: true)
-//    }
-//    
+    func getMessage() -> Results<(Message)> {
+        if self.isToUser {
+            return try! Realm().objects(Message.self).filter("(senderId = '\(self.id!)' OR toRoom = '\(self.id!)') AND isToUser = true").sorted(byProperty: "createdAt", ascending: true)
+        } else {
+            return try! Realm().objects(Message.self).filter("toRoom = '\(self.id!)' AND isToUser = false").sorted(byProperty: "createdAt", ascending: true)
+        }
+    }
+
     func getMessageContainsImage() -> Results<(Message)> {
-        return try! Realm().objects(Message.self).filter("toRoom = '\(self.id!)' AND imageUrl != nil").sorted(byProperty: "createdAt", ascending: true)
+//        return try! Realm().objects(Message.self).filter("toRoom = '\(self.id!)' AND imageUrl != nil").sorted(byProperty: "createdAt", ascending: true)
+        if self.isToUser {
+            return try! Realm().objects(Message.self).filter("(senderId = '\(self.id!)' OR toRoom = '\(self.id!)') AND isToUser = true AND imageUrl != nil").sorted(byProperty: "createdAt", ascending: true)
+        } else {
+            return try! Realm().objects(Message.self).filter("toRoom = '\(self.id!)' AND isToUser = false AND imageUrl != nil").sorted(byProperty: "createdAt", ascending: true)
+        }
     }
     
-    func initRoomWithData(_ data:NSDictionary, isGroup: Bool) -> Room? {
+    func initRoomWithData(_ data:NSDictionary, isToUser: Bool) -> Room? {
         if let id = data["_id"] as? String {
             self.id = id
             self.roomname = data["name"] as? String
@@ -62,13 +72,62 @@ class Room: Object {
             self.isSystem.value = data["isSystem"] as? Bool
             self.language.value = data["language"] as? Int
             self.isPublic = data["isPublic"] as? Bool ?? false
-            self.isGroupChat = isGroup
+            self.isToUser = isToUser
             self.isJoinIn = true
             return self
         } else {
             return nil
         }
     }
+    
+    internal class func createOrUpdateRoomWithData(data:NSDictionary, isToUser: Bool) -> Room? {
+        if let id = data["_id"] as? String {
+            let realm = try! Realm()
+            var room = realm.object(ofType: Room.self, forPrimaryKey: id)
+            if room == nil {
+                room = Room()
+                room!.id = id
+                try! realm.write {
+                    realm.add(room!, update: true)
+                }
+            }
+            try! realm.write {
+                if let name = data["name"] as? String {
+                    room!.roomname = name
+                }
+                if let memberCounts = data["memberCounts"] as? Int {
+                    room!.memberCounts.value = memberCounts
+                }
+                if let course = data["course"] as? String {
+                    room!.courseID = course
+                }
+                if let courseName = data["courseName"] as? String {
+                    room!.courseName = courseName
+                }
+                if let university = data["university"] as? String {
+                    room!.university = university
+                }
+                if let founder = data["founder"] as? String {
+                    room!.founderID = founder
+                }
+                if let isSystem = data["isSystem"] as? Bool {
+                    room!.isSystem.value = isSystem
+                }
+                if let language = data["language"] as? Int {
+                    room!.language.value = language
+                }
+                if let isPublic = data["isPublic"] as? Bool {
+                    room!.isPublic = isPublic
+                }
+                room!.isToUser = isToUser
+                room!.isJoinIn = true
+            }
+            return room
+        } else {
+            return nil
+        }
+    }
+
     
 //    func initContactsWithData(_ data: NSDictionary) -> Room? {
 //        if let id = data["_id"] as? String {
@@ -137,10 +196,11 @@ class Room: Object {
 //                realm.delete(room)
                 room.isJoinIn = false
             }
-//            for room in rooms where localRoomsIDArray.index(of: room.id!) == nil {
-//                print("add room \(room.roomname)")
-//                realm.add(room, update: true)
-//            }
+            for room in rooms where localRoomsIDArray.index(of: room.id!) == nil {
+                print("add room \(room.roomname)")
+                room.isJoinIn = true
+                realm.add(room, update: true)
+            }
         })
     }
     

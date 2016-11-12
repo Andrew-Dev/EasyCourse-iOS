@@ -21,7 +21,7 @@ class UserRoomsVC: UIViewController, cellTableviewProtocol {
     
     @IBOutlet weak var searchView: UIView!
     
-    let userRooms = try! Realm().objects(Room.self)
+    let userRooms = try! Realm().objects(Room.self).filter("isToUser == false")
     var filterRooms:[Room] = []
 //    var isSearching = false
     var notificationToken: NotificationToken? = nil

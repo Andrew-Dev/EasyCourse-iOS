@@ -47,7 +47,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         UITabBar.appearance().isTranslucent = false
         UITabBar.appearance().tintColor = Design.color.lighterDarkGunPowder()
-        
+                
         let types: UIUserNotificationType = [.alert, .badge, .sound]
         let settings = UIUserNotificationSettings(types: types, categories: nil)
         application.registerUserNotificationSettings(settings)
