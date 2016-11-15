@@ -30,9 +30,9 @@ class RoomsVC: UIViewController {
         roomTableView.dataSource = self
         roomTableView.tableFooterView = UIView()
         sortRooms()
-        if rooms.count == 0 {
-            SocketIOManager.sharedInstance.syncUser()
-        }
+//        if rooms.count == 0 {
+//            SocketIOManager.sharedInstance.syncUser()
+//        }
         
         let addRoomBtn = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(self.showAddRoom))
         navigationItem.rightBarButtonItem = addRoomBtn

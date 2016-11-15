@@ -71,7 +71,7 @@ class UserRoomsTVCell: UITableViewCell {
             }
         } else {
             print("click join")
-            SocketIOManager.sharedInstance.joinRoom([cellRoom!.id!], completion: { (success, error) in
+            SocketIOManager.sharedInstance.joinRoom(cellRoom!.id!, completion: { (success, error) in
                 self.delegate!.reloadTableView()
             })
         }

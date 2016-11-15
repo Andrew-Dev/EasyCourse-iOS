@@ -185,7 +185,14 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
                 cell.delegate = self
                 cell.configureCell(liveMessage[msgIndex], lastMessage: lastMessage)
                 return cell
-                
+            } else if liveMessage[msgIndex].sharedRoom != nil {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "MessageOutgoingGroupCell", for: indexPath) as! MessageOutgoingGroupCell
+                var lastMessage:Message?
+                if msgIndex != 0 {
+                    lastMessage = liveMessage[msgIndex - 1]
+                }
+                cell.configureCell(liveMessage[msgIndex], lastMessage: lastMessage)
+                return cell
             } else {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "MessageOutgoingTextCell", for: indexPath) as! MessageOutgoingTextCell
                 var lastMessage:Message?
@@ -194,7 +201,6 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
                 }
                 cell.configureCell(liveMessage[msgIndex], lastMessage: lastMessage)
                 return cell
-                
             }
             
         } else {
@@ -226,12 +232,6 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     func scrollToBottom(_ animated: Bool) {
         if liveMessage.count > 1 {
             let cellCnt = min((msgPage+1) * msgOffset, liveMessage.count)
-//            print("message count = \(liveMessage.count) || \((msgPage+1) * msgOffset)")
-//            print("scroll: \(cellCnt - 1)")
-//            self.messageTableView.scrollToRowAtIndexPath(IndexPath(forRow: cellCnt - 1, inSection: 0), atScrollPosition: .Bottom, animated: animated)
-            
-            
-            
             self.messageTableView.scrollToRow(at: IndexPath(row: cellCnt - 1, section: 0), at: .bottom, animated: animated)
         }
     }
@@ -273,14 +273,16 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     @IBAction func sendBtnPressed(_ sender: UIButton) {
         sendBtn.isEnabled = false
         let message = Message()
-        message.initForCurrentUser(inputTextView.text, imageUrl: nil, image: nil, toRoom: localRoom.id!, isToUser: localRoom.isToUser)
+        message.initForCurrentUser(inputTextView.text, imageUrl: nil, image: nil, sharedRoom: nil, toRoom: localRoom.id!, isToUser: localRoom.isToUser)
         message.saveToDatabase()
         inputTextView.text = ""
         UIView.animate(withDuration: 0.2, animations: {
             self.inputViewHeightConstraint.constant = 49
             self.view.layoutIfNeeded()
         }) 
-        SocketIOManager.sharedInstance.sendMessage(message)
+        SocketIOManager.sharedInstance.sendMessage(message) { (success, error) in
+            //TODO: message response
+        }
         
         
     }
@@ -317,9 +319,11 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
                         print("url: \(imageUrl) progress: \(progress) err: \(error)")
                         if imageUrl != nil {
                             let message = Message()
-                            message.initForCurrentUser(nil, imageUrl: imageUrl!, image: image, toRoom: self.localRoom.id!, isToUser: self.localRoom.isToUser)
+                            message.initForCurrentUser(nil, imageUrl: imageUrl!, image: image, sharedRoom: nil, toRoom: self.localRoom.id!, isToUser: self.localRoom.isToUser)
                             message.saveToDatabase()
-                            SocketIOManager.sharedInstance.sendMessage(message)
+                            SocketIOManager.sharedInstance.sendMessage(message, completion: { (success, error) in
+                                //TODO: Message sent response
+                            })
                         }
                         
                     })
@@ -327,6 +331,11 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
                 
             }
         }
+    }
+    
+    
+    @IBAction func accGroupBtnPressed(_ sender: UIButton) {
+        self.performSegue(withIdentifier: "openAccGroup", sender: self)
     }
     
     
@@ -368,6 +377,10 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
         } else if segue.identifier == "gotoRoomDetailPage" {
             let vc = segue.destination as! RoomDetailTableVC
             vc.room = localRoom
+        } else if segue.identifier == "openAccGroup" {
+            let navController = segue.destination as! UINavigationController
+            let vc = navController.viewControllers[0] as! RoomsDialogAccGroupVC
+            vc.toRoom = localRoom
         }
      }
  

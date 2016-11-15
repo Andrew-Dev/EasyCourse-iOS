@@ -26,7 +26,15 @@ class User: Object {
     dynamic var universityID:String? = nil
     
     //Related to user
-    dynamic var friendStatus = 0
+    // 0 means other is on user's friend pending list.(others can send message to user, but push notification only sent at the first message)
+    // 1 means user regards other as friend.(others can sent message to user)
+    // 2 means user blocks other. (others cannot sent message to user)
+    dynamic var userFriendStatus = 0
+    
+    // 0 means user is on other's friend pending list.(user can send message to other, but push notification only sent at the first message)
+    // 1 means other regards user as friend.(user can sent message to other)
+    // 2 means other blocks user. (user cannot sent message to other)
+    dynamic var otherFriendStatus = 0
     
     override static func primaryKey() -> String? {
         return "id"
@@ -97,7 +105,7 @@ class User: Object {
         self.email = data["email"] as? String
         self.profilePictureUrl = data["avatarUrl"] as? String
         self.universityID = data["university"] as? String
-        self.friendStatus = data["status"] as? Int ?? 0
+        self.otherFriendStatus = data["status"] as? Int ?? 0
         return self
     }
     

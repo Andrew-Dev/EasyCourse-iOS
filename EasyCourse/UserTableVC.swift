@@ -27,6 +27,9 @@ class UserTableVC: UITableViewController {
         self.view.layoutIfNeeded()
         avatarImageView.layer.cornerRadius = avatarImageView.frame.width/2
         avatarImageView.layer.masksToBounds = true
+        logoutBtn.layer.cornerRadius = logoutBtn.frame.height/2
+        logoutBtn.layer.masksToBounds = true
+        logoutBtnWidthConstraint.constant = UIScreen.main.bounds.width * 0.8
         
         
         let dictionary = Bundle.main.infoDictionary!
@@ -51,13 +54,6 @@ class UserTableVC: UITableViewController {
             self.avatarImageView.image = Design.defaultAvatarImage
         }
         usernameLabel.text = User.currentUser?.username
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        logoutBtn.layer.cornerRadius = logoutBtn.frame.height/2
-        logoutBtn.layer.masksToBounds = true
-        logoutBtnWidthConstraint.constant = UIScreen.main.bounds.width * 0.8
     }
 
     override func didReceiveMemoryWarning() {

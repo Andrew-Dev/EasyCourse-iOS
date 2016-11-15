@@ -10,6 +10,7 @@
 		4945155F1DB71A6A003508CA /* loading.png in Resources */ = {isa = PBXBuildFile; fileRef = 4945155E1DB71A6A003508CA /* loading.png */; };
 		498AAFBD1DB70C8D00972AB2 /* ImagePresenterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498AAFBC1DB70C8D00972AB2 /* ImagePresenterViewController.swift */; };
 		607454C92A25EA07E84A634D /* Pods_EasyCourse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 285A98B99E4E74B8D3BBADE7 /* Pods_EasyCourse.framework */; };
+		F72F22C51DD95A39009E7C6C /* NetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F72F22C41DD95A39009E7C6C /* NetworkError.swift */; };
 		F7364C7D1DA6E0EF007A967F /* LoadingTVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7364C7B1DA6E0EF007A967F /* LoadingTVCell.swift */; };
 		F7364C7E1DA6E0EF007A967F /* LoadingTVCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F7364C7C1DA6E0EF007A967F /* LoadingTVCell.xib */; };
 		F7364C801DA7EE3C007A967F /* InfiniteScrollActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7364C7F1DA7EE3C007A967F /* InfiniteScrollActivityView.swift */; };
@@ -73,6 +74,9 @@
 		F7ADFB341D8BA2DF00AD53C3 /* UserEditProfileTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7ADFB331D8BA2DF00AD53C3 /* UserEditProfileTableVC.swift */; };
 		F7ADFB361D8CD84500AD53C3 /* ServerHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7ADFB351D8CD84500AD53C3 /* ServerHelper.swift */; };
 		F7ADFB381D8CEFFF00AD53C3 /* UserDetailTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7ADFB371D8CEFFF00AD53C3 /* UserDetailTableVC.swift */; };
+		F7CE24431DCE8E7B0004957E /* MessageOutgoingGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CE24421DCE8E7B0004957E /* MessageOutgoingGroupCell.swift */; };
+		F7CE24451DCE8E8F0004957E /* MessageIncomingGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CE24441DCE8E8F0004957E /* MessageIncomingGroupCell.swift */; };
+		F7CE24471DCE98780004957E /* RoomsDialogAccGroupVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CE24461DCE98780004957E /* RoomsDialogAccGroupVC.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -81,6 +85,7 @@
 		498AAFBC1DB70C8D00972AB2 /* ImagePresenterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePresenterViewController.swift; sourceTree = "<group>"; };
 		CCA52E0697DF4E7A4BBCB7B6 /* Pods-EasyCourse.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EasyCourse.debug.xcconfig"; path = "Pods/Target Support Files/Pods-EasyCourse/Pods-EasyCourse.debug.xcconfig"; sourceTree = "<group>"; };
 		DE96EBA49BC6989A41637D04 /* Pods-EasyCourse.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EasyCourse.release.xcconfig"; path = "Pods/Target Support Files/Pods-EasyCourse/Pods-EasyCourse.release.xcconfig"; sourceTree = "<group>"; };
+		F72F22C41DD95A39009E7C6C /* NetworkError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkError.swift; sourceTree = "<group>"; };
 		F7364C7B1DA6E0EF007A967F /* LoadingTVCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingTVCell.swift; sourceTree = "<group>"; };
 		F7364C7C1DA6E0EF007A967F /* LoadingTVCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LoadingTVCell.xib; sourceTree = "<group>"; };
 		F7364C7F1DA7EE3C007A967F /* InfiniteScrollActivityView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InfiniteScrollActivityView.swift; sourceTree = "<group>"; };
@@ -147,6 +152,9 @@
 		F7ADFB331D8BA2DF00AD53C3 /* UserEditProfileTableVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserEditProfileTableVC.swift; sourceTree = "<group>"; };
 		F7ADFB351D8CD84500AD53C3 /* ServerHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerHelper.swift; sourceTree = "<group>"; };
 		F7ADFB371D8CEFFF00AD53C3 /* UserDetailTableVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDetailTableVC.swift; sourceTree = "<group>"; };
+		F7CE24421DCE8E7B0004957E /* MessageOutgoingGroupCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageOutgoingGroupCell.swift; sourceTree = "<group>"; };
+		F7CE24441DCE8E8F0004957E /* MessageIncomingGroupCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageIncomingGroupCell.swift; sourceTree = "<group>"; };
+		F7CE24461DCE98780004957E /* RoomsDialogAccGroupVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomsDialogAccGroupVC.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -287,6 +295,7 @@
 				F76A9BBC1D8621030065C25C /* ServerConstant.swift */,
 				F76A9BB71D8620A10065C25C /* SocketIOManager.swift */,
 				F7ADFB351D8CD84500AD53C3 /* ServerHelper.swift */,
+				F72F22C41DD95A39009E7C6C /* NetworkError.swift */,
 			);
 			name = API;
 			sourceTree = "<group>";
@@ -340,12 +349,10 @@
 			isa = PBXGroup;
 			children = (
 				F76A9BE41D8625FF0065C25C /* RoomsDialogVC.swift */,
-				F76A9BE91D86266E0065C25C /* MessageIncomingTextCell.swift */,
-				F76A9BEF1D8626BD0065C25C /* MessageIncomingImageCell.swift */,
-				F76A9BEB1D8626890065C25C /* MessageOutgoingImageCell.swift */,
-				F76A9BED1D8626A20065C25C /* MessageOutgoingTextCell.swift */,
+				F7CE24411DCE8DB10004957E /* MessageBubbleCells */,
 				F7ADFB371D8CEFFF00AD53C3 /* UserDetailTableVC.swift */,
 				F7A5564D1D9D7E43003E258D /* RoomDetailTableVC.swift */,
+				F7CE24461DCE98780004957E /* RoomsDialogAccGroupVC.swift */,
 			);
 			name = Dialog;
 			sourceTree = "<group>";
@@ -388,6 +395,19 @@
 				F7364C841DCBFD63007A967F /* RoomsAddRoomNameTVCell.swift */,
 			);
 			name = CreateRoom;
+			sourceTree = "<group>";
+		};
+		F7CE24411DCE8DB10004957E /* MessageBubbleCells */ = {
+			isa = PBXGroup;
+			children = (
+				F76A9BE91D86266E0065C25C /* MessageIncomingTextCell.swift */,
+				F76A9BEF1D8626BD0065C25C /* MessageIncomingImageCell.swift */,
+				F7CE24441DCE8E8F0004957E /* MessageIncomingGroupCell.swift */,
+				F76A9BEB1D8626890065C25C /* MessageOutgoingImageCell.swift */,
+				F76A9BED1D8626A20065C25C /* MessageOutgoingTextCell.swift */,
+				F7CE24421DCE8E7B0004957E /* MessageOutgoingGroupCell.swift */,
+			);
+			name = MessageBubbleCells;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -539,10 +559,12 @@
 				F7364C801DA7EE3C007A967F /* InfiniteScrollActivityView.swift in Sources */,
 				F76A9BE71D8626350065C25C /* RoomsTVCell.swift in Sources */,
 				F76A9BF61D86281E0065C25C /* Design.swift in Sources */,
+				F7CE24451DCE8E8F0004957E /* MessageIncomingGroupCell.swift in Sources */,
 				F7A5564E1D9D7E43003E258D /* RoomDetailTableVC.swift in Sources */,
 				F7ADFB241D889C2100AD53C3 /* UserCoursesVC.swift in Sources */,
 				F7A5564C1D9B3E6A003E258D /* UserSetting.swift in Sources */,
 				F76A9BFF1D86E22C0065C25C /* PopAnimator.swift in Sources */,
+				F7CE24431DCE8E7B0004957E /* MessageOutgoingGroupCell.swift in Sources */,
 				F76A9BE51D8625FF0065C25C /* RoomsDialogVC.swift in Sources */,
 				F7364C851DCBFD64007A967F /* RoomsAddRoomNameTVCell.swift in Sources */,
 				F7ADFB2D1D88AAB600AD53C3 /* UserRoomsTVCell.swift in Sources */,
@@ -553,6 +575,7 @@
 				F76A9BEE1D8626A20065C25C /* MessageOutgoingTextCell.swift in Sources */,
 				F76A9BFB1D8628C80065C25C /* Reachability.swift in Sources */,
 				F7ADFB281D889D4A00AD53C3 /* UserTermsVC.swift in Sources */,
+				F7CE24471DCE98780004957E /* RoomsDialogAccGroupVC.swift in Sources */,
 				F76A9BEC1D8626890065C25C /* MessageOutgoingImageCell.swift in Sources */,
 				F7ADFB341D8BA2DF00AD53C3 /* UserEditProfileTableVC.swift in Sources */,
 				F76A9BEA1D86266E0065C25C /* MessageIncomingTextCell.swift in Sources */,
@@ -560,6 +583,7 @@
 				F7ADFB201D888EC100AD53C3 /* UserTableVC.swift in Sources */,
 				F76A9C011D8706450065C25C /* RealmTools.swift in Sources */,
 				F76A9BBF1D86219E0065C25C /* LoginVC.swift in Sources */,
+				F72F22C51DD95A39009E7C6C /* NetworkError.swift in Sources */,
 				F7ADFB2A1D889D8600AD53C3 /* UserRecruiteVC.swift in Sources */,
 				F76A9BB51D8620700065C25C /* Course.swift in Sources */,
 				F76A9BD61D8622AB0065C25C /* LoginCourseListCVCell.swift in Sources */,

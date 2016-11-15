@@ -175,8 +175,14 @@ class ServerConst {
                 completion(false, response.error)
             } else {
                 print("=====choose course finish")
-                SocketIOManager.sharedInstance.syncUser()
-                completion(true, nil)
+                SocketIOManager.sharedInstance.syncUser([:], completion: { (success, error) in
+                    if success {
+                        completion(true, nil)
+                    } else {
+                        completion(false, nil)
+                    }
+                })
+//                completion(true, nil)
             }
         }
     }

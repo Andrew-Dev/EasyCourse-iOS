@@ -67,6 +67,7 @@ class RoomsAddRoomVC: UIViewController {
     func saveBtnPressed() {
         SocketIOManager.sharedInstance.createRoom(roomName, course: belongedCourse?.id) { (success, error) in
             print("success \(success)")
+            //TODO: error situation
         }
         self.dismiss(animated: true, completion: nil)
     }
