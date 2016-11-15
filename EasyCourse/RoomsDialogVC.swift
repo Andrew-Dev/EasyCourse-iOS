@@ -364,7 +364,11 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     
      // MARK: - Navigation
     func gotoDetail() {
-        self.performSegue(withIdentifier: "gotoRoomDetailPage", sender: self)
+        if !localRoom.isToUser {
+            self.performSegue(withIdentifier: "gotoRoomDetailPage", sender: self)
+        } else {
+            self.performSegue(withIdentifier: "gotoUserRoomDetailPage", sender: self)
+        }
     }
     
      override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -381,6 +385,10 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
             let navController = segue.destination as! UINavigationController
             let vc = navController.viewControllers[0] as! RoomsDialogAccGroupVC
             vc.toRoom = localRoom
+        } else if segue.identifier == "gotoUserRoomDetailPage" {
+            let vc = segue.destination as! UserRoomDetailTableVC
+            vc.room = localRoom
+            vc.user = otherUser
         }
      }
  

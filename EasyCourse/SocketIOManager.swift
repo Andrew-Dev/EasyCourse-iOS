@@ -76,23 +76,6 @@ class SocketIOManager: NSObject {
             }
             
         }
-        
-//        socket.once("userDidLogout") { (obj, act) in
-//            print("logout : \(obj)")
-//            if obj[0] as? Bool == false {
-//                completion(false, nil)
-//                print("fail log out")
-//            } else {
-//                
-//                print("success log out")
-//                User.currentUser = nil
-//                User.token = nil
-//                RealmTools.setDefaultRealmForUser(nil)
-//                NotificationCenter.default.post(name: Constant.NotificationKey.UserDidLogout, object: nil)
-//                self.closeConnection()
-//                completion(true, nil)
-//            }
-//        }
     }
     
     func sendMessage(_ message:Message, completion: @escaping (_ success:Bool, _ error:NetworkError?) -> ()) {
@@ -109,7 +92,6 @@ class SocketIOManager: NSObject {
         if let imageWidth = message.imageWidth.value { param["imageWidth"] = "\(imageWidth)" }
         if let imageHeight = message.imageHeight.value { param["imageHeight"] = "\(imageHeight)" }
 //        print("param message \(param)")
-//        socket.emit("message", param)
         socket.emitWithAck("message", param).timingOut(after: timeoutSec) { (data) in
             if let err = self.checkAckError(data, onlyCheckNetwork: true) {
                 print("get in check")

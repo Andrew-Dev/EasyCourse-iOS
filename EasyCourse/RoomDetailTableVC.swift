@@ -15,10 +15,30 @@ class RoomDetailTableVC: UITableViewController {
     var room:Room!
     
     @IBOutlet weak var notificationSwitch: UISwitch!
+    @IBOutlet weak var roomPictureView: UIImageView!
+    @IBOutlet weak var roomNameLabel: UILabel!
+    @IBOutlet weak var subgroupsFounderLabel: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         notificationSwitch.isOn = room.silent
+        roomNameLabel.text = room.roomname
+        roomPictureView.image = Design.defaultRoomImage
+        if room.isSystem.value! {
+            subgroupsFounderLabel.text = "Subgroups"
+        } else {
+            subgroupsFounderLabel.text = "Founder"
+            /*ServerConst.sharedInstance.getUserInfo(room.founderID!, refresh: true, completion: {(user,courses,error) in
+                if error == nil {
+                    if user == nil || user?.username == nil {
+                        print("user nil")
+                    } else {
+                        self.subgroupsFounderLabel.text = "Founder: " + (user?.username!)!
+                    }
+                }
+            })*/
+        }
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -30,6 +50,14 @@ class RoomDetailTableVC: UITableViewController {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        let cell = tableView.cellForRow(at: indexPath)
+        if cell?.tag == 1 {
+            if room.isSystem.value! {
+                self.performSegue(withIdentifier: "subgroupsSegue", sender: self)
+            }
+        } else if cell?.tag == 2 {
+            self.performSegue(withIdentifier: "classmatesSegue", sender: self)
+        }
     }
     
     
