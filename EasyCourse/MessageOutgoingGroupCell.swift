@@ -25,9 +25,24 @@ class MessageOutgoingGroupCell: UITableViewCell {
     
     @IBOutlet weak var roomImageView: UIImageView!
     
+    @IBOutlet weak var bubbleMaxWidthConstraint: NSLayoutConstraint!
+    
+    var delegate: popUpMessageProtocol?
+    var message:Message?
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
+        self.layoutIfNeeded()
+        messageBubbleView.layer.cornerRadius = 10
+        messageBubbleView.layer.masksToBounds = true
+        userAvatarImageView.layer.cornerRadius = userAvatarImageView.frame.size.width/2
+        userAvatarImageView.layer.masksToBounds = true
+        bubbleMaxWidthConstraint.constant = UIScreen.main.bounds.width * 0.6
+        
+        let tapGestureRecognizer = UITapGestureRecognizer(target:self, action:#selector(self.groupTapped))
+        messageBubbleView.isUserInteractionEnabled = true
+        messageBubbleView.addGestureRecognizer(tapGestureRecognizer)
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -37,8 +52,17 @@ class MessageOutgoingGroupCell: UITableViewCell {
     }
     
     func configureCell(_ message:Message, lastMessage: Message?) {
-        let roomName = try! Realm().object(ofType: Room.self, forPrimaryKey: message.sharedRoom)?.roomname
-        roomNameLabel.text = roomName ?? "room"
+        self.message = message
+        
+        if let room = try! Realm().object(ofType: Room.self, forPrimaryKey: message.sharedRoom) {
+            roomNameLabel.text = room.roomname ?? "room"
+        } else {
+            SocketIOManager.sharedInstance.getRoomInfo(message.sharedRoom!, refresh: false, completion: { (room, error) in
+                if room != nil {
+                    self.roomNameLabel.text = room?.roomname ?? "room"
+                }
+            })
+        }
         
         if let avatarData = User.currentUser?.profilePicture {
             self.userAvatarImageView.image = UIImage(data: avatarData as Data)
@@ -58,6 +82,10 @@ class MessageOutgoingGroupCell: UITableViewCell {
             timeSeperatorHeightConstraint.constant = 0
         }
         
+    }
+    
+    func groupTapped() {
+        delegate?.popUpSharedRoom(message!)
     }
 
 }

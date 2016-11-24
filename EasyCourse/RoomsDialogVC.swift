@@ -11,9 +11,11 @@ import RealmSwift
 import DKImagePickerController
 import MWPhotoBrowser
 import LDONavigationSubtitleView
+import JGProgressHUD
 
-protocol popUpImageProtocol : NSObjectProtocol {
+protocol popUpMessageProtocol : NSObjectProtocol {
     func popUpImage(_ imageView:UIImageView, message:Message) -> Void
+    func popUpSharedRoom(_  message:Message) -> Void
 }
 
 class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSource, cellTableviewProtocol {
@@ -42,7 +44,19 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     //Data
     var liveMessage:Results<(Message)>!
     var liveImageMessage:Results<(Message)>!
-    var localRoom:Room!
+    var localRoomId:String!
+    var localRoom:Room {
+        get {
+            let realm = try! Realm()
+            let room = realm.object(ofType: Room.self, forPrimaryKey: localRoomId)
+            if room != nil {
+                return room!
+            } else {
+                self.navigationController?.popToRootViewController(animated: true)
+                return Room()
+            }
+        }
+    }
     var msgPage = 0
     var msgOffset = 10
     
@@ -56,6 +70,7 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
 
     //Notif
     var messageUpdateNotif: NotificationToken? = nil
+    var roomUpdateNotif: NotificationToken? = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -120,6 +135,39 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
             self.loadMessage()
         })
         
+        //TODO: delete room
+//        roomUpdateNotif = try! Realm().objects(Room.self).addNotificationBlock({ (result) in
+//            print("get room notif")
+//            self.loadMessage()
+//            switch result {
+//            case .update(_, let deletions, _, _):
+//                    print("delete: \(deletions)")
+//                self.navigationController?.popToRootViewController(animated: true)
+//            default:
+//                break
+//            }
+////            if result
+//        })
+        
+//        roomUpdateNotif = try! Realm().objects(Room.self).addNotificationBlock { [weak self] (changes: RealmCollectionChange) in
+//            switch changes {
+//            case .initial:
+//                // Results are now populated and can be accessed without blocking the UI
+//                print("initial")
+//                break
+//            case .update(let a, let deletions, let insertions, let modifications):
+//                // Query results have changed, so apply them to the UITableView
+//                print("delete: \(a)m \(deletions)")
+//                break
+//            case .error(let error):
+//                // An error occurred while opening the Realm file on the background worker thread
+//                fatalError("\(error)")
+//                break
+//            }
+//        }
+        
+
+        
         NotificationCenter.default.addObserver(self, selector: #selector(self.gobackToLastView), name: Constant.NotificationKey.RoomDelete, object: nil)
         
     }
@@ -128,7 +176,15 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     
     deinit {
         messageUpdateNotif?.stop()
+        roomUpdateNotif?.stop()
         NotificationCenter.default.removeObserver(self)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if try! Realm().object(ofType: Room.self, forPrimaryKey: localRoomId) == nil {
+            navigationController?.popToRootViewController(animated: true)
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -191,6 +247,7 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
                 if msgIndex != 0 {
                     lastMessage = liveMessage[msgIndex - 1]
                 }
+                cell.delegate = self
                 cell.configureCell(liveMessage[msgIndex], lastMessage: lastMessage)
                 return cell
             } else {
@@ -214,6 +271,15 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
                 cell.configureCell(liveMessage[msgIndex], lastMessage: lastMessage)
                 return cell
                 
+            } else if liveMessage[msgIndex].sharedRoom != nil {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "MessageIncomingGroupCell", for: indexPath) as! MessageIncomingGroupCell
+                var lastMessage:Message?
+                if msgIndex != 0 {
+                    lastMessage = liveMessage[msgIndex - 1]
+                }
+                cell.delegate = self
+                cell.configureCell(liveMessage[msgIndex], lastMessage: lastMessage)
+                return cell
             } else {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "MessageIncomingTextCell", for: indexPath) as! MessageIncomingTextCell
                 var lastMessage:Message?
@@ -475,7 +541,7 @@ extension RoomsDialogVC: MWPhotoBrowserDelegate {
 }
 
 
-extension RoomsDialogVC: UIViewControllerTransitioningDelegate, popUpImageProtocol {
+extension RoomsDialogVC: UIViewControllerTransitioningDelegate, popUpMessageProtocol {
     
     
     func popUpImage(_ imageView:UIImageView, message:Message) {
@@ -533,5 +599,27 @@ extension RoomsDialogVC: UIViewControllerTransitioningDelegate, popUpImageProtoc
     func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         transition.presenting = false
         return transition
+    }
+    
+    func popUpSharedRoom(_ message: Message) {
+        print("share room tapped")
+        let hud = JGProgressHUD(style: .extraLight)
+        hud?.textLabel.text = "Loading"
+        hud?.show(in: self.navigationController?.view, animated: true)
+        SocketIOManager.sharedInstance.getRoomInfo(message.sharedRoom!, refresh: false) { (room, error) in
+            if room != nil {
+                hud?.dismiss(animated: true)
+                let vc = self.storyboard?.instantiateViewController(withIdentifier: "RoomDetailTableVC") as! RoomDetailTableVC
+                vc.room = room
+                vc.viewFromPopUp = true
+                let navVC = UINavigationController(rootViewController: vc)
+                self.present(navVC, animated: true, completion: nil)
+            } else {
+                hud?.indicatorView = JGProgressHUDErrorIndicatorView()
+                hud?.textLabel.text = error?.description
+                hud?.dismiss(afterDelay: 2, animated: true)
+            }
+        }
+        
     }
 }

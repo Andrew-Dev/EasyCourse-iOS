@@ -8,6 +8,8 @@
 
 import UIKit
 import FBSDKCoreKit
+import Async
+import SwiftMessages
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -76,14 +78,34 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         SocketIOManager.sharedInstance.closeConnection()
     }
     
+    
+    
     func applicationWillEnterForeground(_ application: UIApplication) {
         // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
+//        Async.background(after: 2, {
+//            if SocketIOManager.sharedInstance.socket.status != .connected {
+//                print("show alert")
+//                let view = MessageView.viewFromNib(layout: .StatusLine)
+//                var config = SwiftMessages.Config()
+//                config.presentationContext = .window(windowLevel: UIWindowLevelNormal)
+//                config.preferredStatusBarStyle = .lightContent
+//                config.duration = .forever
+//                view.configureContent(body: "Connecting")
+//                view.configureTheme(.warning)
+//                SwiftMessages.sharedInstance.show(config: config, view: view)
+//                
+//            }
+////            MessageAlert.sharedInstance.setupConnectionStatus()
+//        })
     }
     
     func applicationDidBecomeActive(_ application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
         if User.currentUser != nil {
             SocketIOManager.sharedInstance.establishConnection()
+            Async.main(after: 2, {
+                MessageAlert.sharedInstance.setupConnectionStatus()
+            })
         }
         FBSDKAppEvents.activateApp()
     }

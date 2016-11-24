@@ -160,9 +160,9 @@ class ImagePresenterViewController: UIViewController, MXPagerViewDelegate, MXPag
     }
 
     func asynchronouslyLoadImageIntoView(imageScrollView: ImageScrollView, imageUrl: String) {
-        ServerHelper.sharedInstance.getNetworkImage(imageUrl, completion: { (data, error) in
-            if data != nil {
-                imageScrollView.display(image: UIImage(data: data!)!)
+        ServerHelper.sharedInstance.getNetworkImage(imageUrl, completion: { (image, error) in
+            if image != nil {
+                imageScrollView.display(image: image!)
             } else {
                 //TODO: deal with no picture
             }

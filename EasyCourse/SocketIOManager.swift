@@ -9,7 +9,8 @@
 import UIKit
 import SocketIO
 import RealmSwift
-//import Async
+import AwesomeCache
+import SwiftyJSON
 
 class SocketIOManager: NSObject {
     
@@ -18,18 +19,25 @@ class SocketIOManager: NSObject {
     let timeoutSec = 5
     var socket:SocketIOClient!
     
+    enum loadtype {
+        case cacheAndLoad, cacheOnly, loadOnly
+    }
+    
     override init() {
         super.init()
     }
     
+    
+    
     func establishConnection() {
         socket = SocketIOClient(socketURL: URL(string: Constant.baseURL)!, config: [.connectParams(["token" : User.token!])])
 //        socket = SocketIOClient(socketURL: URL(string: Constant.baseURL)!, config: [.connectParams(["token" : "asdf"])])
-//        socket.on("auth:error") { (obj, ack) in
-//            print("auth error")
-//            
-//        }
+
+        
         socket.connect()
+//        socket.connect(timeoutAfter: 3) { 
+//            MessageAlert.sharedInstance.setupConnectionStatus()
+//        }
        
         self.publicListener()
         
@@ -46,7 +54,6 @@ class SocketIOManager: NSObject {
         var params:[String:Any] = [:]
         if UserSetting.userDeviceToken != nil {
             params["deviceToken"] = UserSetting.userDeviceToken!
-//            socket.emit("logout", ["deviceToken":UserSetting.userDeviceToken!])
         }
         
         socket.emitWithAck("logout", params).timingOut(after: timeoutSec) { (data) in
@@ -76,6 +83,7 @@ class SocketIOManager: NSObject {
             }
             
         }
+
     }
     
     func sendMessage(_ message:Message, completion: @escaping (_ success:Bool, _ error:NetworkError?) -> ()) {
@@ -91,6 +99,7 @@ class SocketIOManager: NSObject {
         if let imageUrl = message.imageUrl { param["imageUrl"] = imageUrl }
         if let imageWidth = message.imageWidth.value { param["imageWidth"] = "\(imageWidth)" }
         if let imageHeight = message.imageHeight.value { param["imageHeight"] = "\(imageHeight)" }
+        if let sharedRoom = message.sharedRoom { param["sharedRoom"] = "\(sharedRoom)" }
 //        print("param message \(param)")
         socket.emitWithAck("message", param).timingOut(after: timeoutSec) { (data) in
             if let err = self.checkAckError(data, onlyCheckNetwork: true) {
@@ -124,7 +133,7 @@ class SocketIOManager: NSObject {
         let localLimit = limit ?? 20
         let localSkip = skip ?? 0
 
-        socket.emitWithAck("searchRoom", ["text":text, "university":(User.currentUser?.universityID)!, "limit":localLimit, "skip":localSkip]).timingOut(after: timeoutSec) { (data) in
+        socket.emitWithAck("searchRoom", ["text":text, "university":(User.currentUser?.universityId)!, "limit":localLimit, "skip":localSkip]).timingOut(after: timeoutSec) { (data) in
 
             if let err = self.checkAckError(data, onlyCheckNetwork: false) {
                 return completion([], err)
@@ -163,8 +172,17 @@ class SocketIOManager: NSObject {
         }
     }
     
-    func getRoomInfo(_ roomId:String, completion: @escaping (_ room:Room?, _ error:NetworkError?) -> ()) {
+    func getRoomInfo(_ roomId:String, refresh:Bool, completion: @escaping (_ room:Room?, _ error:NetworkError?) -> ()) {
         print("get room inf: \(roomId)")
+        
+        if !refresh {
+            if let room = ServerHelper.sharedInstance.getRoomFromCache(id: roomId) {
+                print("get room from cache")
+                return completion(room, nil)
+            }
+        }
+        
+        
         let params = ["roomId":roomId]
         socket.emitWithAck("getRoomInfo", params).timingOut(after: timeoutSec) { (data) in
             if let err = self.checkAckError(data, onlyCheckNetwork: false) {
@@ -180,18 +198,56 @@ class SocketIOManager: NSObject {
                 return completion(nil, NetworkError.ParseJSONError)
             }
             print("data: \(roomData)")
+            
+            ServerHelper.sharedInstance.cacheObject(.RoomInfo, id: roomId, data: roomData)
             let room = Room().initRoomWithData(roomData, isToUser: false)
             return completion(room, nil)
             
-
-//            if let roomData = data[0] as? NSDictionary,
-//                let room = Room().initRoomWithData(roomData["room"], isToUser: false) {
-//                print("data: \(room)")
-//                return completion(room, nil)
-//            } else {
-//                return completion(nil, NetworkError.ParseJSONError)
-//            }
+        }
+    }
+    
+    func getRoomMembers(_ roomId:String, limit:Int, skip:Int, refresh:Bool, completion: @escaping (_ userList:[User]?, _ error:NetworkError?) -> ()) {
+        print("get room inf: \(roomId)")
+        
+        if !refresh {
+            //TODO
+        }
+        
+        
+        let params = ["roomId":roomId]
+        socket.emitWithAck("getRoomMembers", params).timingOut(after: timeoutSec) { (data) in
+            if let err = self.checkAckError(data, onlyCheckNetwork: false) {
+                print("get room info error")
+                return completion(nil, err)
+            }
             
+            guard let room = try! Realm().object(ofType: Room.self, forPrimaryKey: roomId) else {
+                return completion(nil, NetworkError.LocalError(reason: "No room in local"))
+            }
+            
+            let json = JSON(data)
+            if let userArray = json[0]["users"].arrayObject {
+                var userList:[User] = []
+                userArray.forEach({ (userData) in
+//                    print("user Data: \(userData)")
+                    if let userDataDic = userData as? NSDictionary {
+                        if let user = User.createOrUpdateUserWithData(userDataDic) {
+                            userList.append(user)
+                            if room.memberList.index(of: user) == nil {
+                                try! Realm().write {
+                                    room.memberList.append(user)
+                                }
+                            } else {
+                                print("existed")
+                            }
+                        }
+                    }
+                })
+                return completion(userList, nil)
+            } else {
+                print("error: \(json[0]["users"].error?.localizedDescription)")
+                return completion(nil, NetworkError.ParseJSONError)
+            }
             
         }
     }
@@ -223,7 +279,7 @@ class SocketIOManager: NSObject {
     }
 
     
-    func quitRoom(_ roomId:String, completion: @escaping (_ success:Bool, _ error:NetworkError?) -> ()) {
+    func quitRoom(_ roomId:String, deleteRoom: Bool, completion: @escaping (_ success:Bool, _ error:NetworkError?) -> ()) {
         let params = ["roomId":roomId]
         socket.emitWithAck("quitRoom", params).timingOut(after: timeoutSec) { (data) in
             if let err = self.checkAckError(data, onlyCheckNetwork: false) {
@@ -240,30 +296,20 @@ class SocketIOManager: NSObject {
             
             if success {
                 print("success quit room")
-                let realm = try! Realm()
-                if let quitRoom = realm.object(ofType: Room.self, forPrimaryKey: roomId) {
-                    try! realm.write {
-                        realm.delete(quitRoom)
+                
+                if deleteRoom {
+                    let realm = try! Realm()
+                    if let quitRoom = realm.object(ofType: Room.self, forPrimaryKey: roomId) {
+                        try! realm.write {
+                            realm.delete(quitRoom)
+                        }
                     }
+
                 }
                 completion(true, nil)
             } else {
                 completion(false, NetworkError.ServerError(reason: nil))
             }
-            
-            
-//            if let arg0 = data[0] as? Bool, arg0 == true {
-//                print("success quit room")
-//                let realm = try! Realm()
-//                if let quitRoom = realm.object(ofType: Room.self, forPrimaryKey: roomId) {
-//                    try! realm.write {
-//                        realm.delete(quitRoom)
-//                    }
-//                }
-//                completion(true, nil)
-//            } else {
-//                completion(false, NetworkError.ParseJSONError)
-//            }
             
         }
     }
@@ -282,6 +328,7 @@ class SocketIOManager: NSObject {
             guard let roomData = arg0["room"] as? NSDictionary else {
                 return completion(nil, NetworkError.ParseJSONError)
             }
+            print("join room data: \(roomData)")
             
             let room = Room()
             room.initRoomWithData(roomData, isToUser: false)?.saveToDatabase()
@@ -326,8 +373,8 @@ class SocketIOManager: NSObject {
         if username != nil { data["displayName"] = username! }
         if userProfileImageUrl != nil { data["avatarUrl"] = userProfileImageUrl! }
         if data != [:] {
-            print("update data: \(data)")
             self.syncUser(data, completion: { (success, error) in
+                print("user get: \(data)")
                 if success {
                     completion(true, nil)
                 } else {
@@ -341,7 +388,7 @@ class SocketIOManager: NSObject {
     func syncUser(_ data:[String:Any], completion: @escaping (_ success:Bool, _ error:NetworkError?) -> ()) {
         socket.emitWithAck("syncUser", data).timingOut(after: timeoutSec) { (data) in
             if let err = self.checkAckError(data, onlyCheckNetwork: false) {
-                print("syncUser error")
+                print("syncUser error \(err)")
                 return completion(false, err)
             }
             
@@ -352,12 +399,14 @@ class SocketIOManager: NSObject {
             guard let userData = arg0["user"] as? NSDictionary else {
                 return completion(false, NetworkError.ParseJSONError)
             }
+//            print("user data: \(data)")
             
-            if User.currentUser == nil {
-                User.currentUser = User().initCurrentUserWithData(userData)
-            } else {
-                User.currentUser!.syncCurrentUserWithData(userData)
-            }
+//            if User.currentUser == nil {
+//                User.currentUser = User().initCurrentUserWithData(userData)
+//            } else {
+//                User.currentUser!.syncCurrentUserWithData(userData)
+//            }
+            User.currentUser = User.createOrUpdateUserWithData(userData)
             
             NotificationCenter.default.post(name: Constant.NotificationKey.SyncUser, object: nil)
             print("syncUser received")
@@ -370,28 +419,43 @@ class SocketIOManager: NSObject {
         if let lastUpdatedTime = try! Realm().objects(Message.self).filter("successSent != false").last?.createdAt {
             params["lastUpdateTime"] = lastUpdatedTime.timeIntervalSince1970 * 1000
         }
+
         let a = try! Realm().objects(Message.self).last?.text
         print("lastupdateTime: \(a), \(params["lastUpdateTime"])")
         socket.emitWithAck("getHistMessage", params).timingOut(after: timeoutSec) { (data) in
             if let err = self.checkAckError(data, onlyCheckNetwork: false) {
-                print("syncUser error")
+                print("get histmsg error")
                 return completion(false, err)
             }
-            if let messageArray = data[0] as? NSArray {
-                for obj in messageArray {
-                    print("hist message obj: \(obj)")
-                    self.saveMessageToDatabase(data: obj)
-                }
-            } else {
-                completion(false, NetworkError.ParseJSONError)
+            
+            guard let arg0 = data[0] as? NSDictionary else {
+                return completion(false, NetworkError.ParseJSONError)
             }
-            return completion(true, nil)
+            
+            guard let messageArray = arg0["msg"] as? NSArray else {
+                return completion(false, NetworkError.ParseJSONError)
+            }
+            
+            for obj in messageArray {
+                print("hist message obj: \(obj)")
+                self.saveMessageToDatabase(data: obj)
+            }
+            
+            completion(true, nil)
             
         }
     }
     
-    func getUserInfo(_ userId:String, completion: @escaping (_ user:User?, _ error:NetworkError?) -> ()) {
-        print("get room inf: \(userId)")
+    func getUserInfo(_ userId:String, refresh:Bool, completion: @escaping (_ user:User?, _ error:NetworkError?) -> ()) {
+        print("get user inf: \(userId)")
+        // Cache user
+        if !refresh {
+            if let user = try! Realm().object(ofType: User.self, forPrimaryKey: userId) {
+                print("user get in database")
+                return completion(user, nil)
+            }
+        }
+        
         let params = ["userId":userId]
         socket.emitWithAck("getUserInfo", params).timingOut(after: timeoutSec) { (data) in
             if let err = self.checkAckError(data, onlyCheckNetwork: false) {
@@ -399,14 +463,18 @@ class SocketIOManager: NSObject {
                 return completion(nil, err)
             }
             print("data: \(data)")
-
-            if let userData = data[0] as? NSDictionary {
-                let user = User()
-                user.initUserFromServerWithData(userData).saveToDatabase()
-                return completion(user, nil)
-            } else {
+            
+            guard let arg0 = data[0] as? NSDictionary else {
                 return completion(nil, NetworkError.ParseJSONError)
             }
+            
+            guard let userData = arg0["user"] as? NSDictionary else {
+                return completion(nil, NetworkError.ParseJSONError)
+            }
+
+            let user = User.createOrUpdateUserWithData(userData)
+//            user.initUserFromServerWithData(userData)?.saveToDatabase()
+            return completion(user, nil)
         }
     }
     
@@ -414,6 +482,7 @@ class SocketIOManager: NSObject {
     func publicListener() {
         socket.on("connect") {data, ack in
             print("socket connected")
+            MessageAlert.sharedInstance.setupConnectionStatus()
             self.syncUser([:], completion: { (success, error) in
                 if success {
                     self.getHistMessage({ (histSuccess, histError) in
@@ -465,9 +534,26 @@ class SocketIOManager: NSObject {
             print(obj)
         }
         
-        socket.on("auth:error") { (obj, ack) in
-            print("auth error")
-            
+
+        
+        socket.on("disconnect") { (data, ack) in
+            print("disconnect here \(self.socket.status.rawValue)")
+            MessageAlert.sharedInstance.setupConnectionStatus()
+        }
+        
+        socket.on("reconnect") { (data, ack) in
+            print("reconnect here \(self.socket.status.rawValue)")
+            MessageAlert.sharedInstance.setupConnectionStatus()
+        }
+        
+        socket.on("reconnectAttempt") { (data, ack) in
+            print("reconnectAttempt here \(self.socket.status.rawValue)")
+            MessageAlert.sharedInstance.setupConnectionStatus()
+        }
+        
+        socket.on("error") { (data, ack) in
+            print("error here \(data) \(self.socket.status.rawValue)")
+            MessageAlert.sharedInstance.setupConnectionStatus()
         }
         
 

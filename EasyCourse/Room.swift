@@ -129,48 +129,6 @@ class Room: Object {
     }
 
     
-//    func initContactsWithData(_ data: NSDictionary) -> Room? {
-//        if let id = data["_id"] as? String {
-//            self.id = id
-//            self.isGroupChat = false
-//            return self
-//        } else {
-//            return nil
-//        }
-//    }
-    
-//    internal class func initRoomAndSave(_ data:NSDictionary) {
-//        let room = Room()
-//        if let id = data["_id"] as? String {
-//            room.id = id
-//            room.roomname = data["name"] as? String
-//            room.memberCounts.value = data["memberCounts"] as? Int
-//            room.courseID = data["course"] as? String
-//            room.courseName = data["courseName"] as? String
-//            room.university = data["university"] as? String
-//            room.founderID = data["founder"] as? String
-//            room.isSystem.value = data["isSystem"] as? Bool
-//            room.language.value = data["language"] as? Int
-//            
-//            let realm = try! Realm()
-//            try! realm.write {
-//                realm.add(room, update: true)
-//            }
-//        }
-//    }
-    
-    //    internal class func removeAllRoom() {
-    //        let realm = try! Realm()
-    //        let allRoom = realm.objects(Room)
-    ////        realm.beginWrite()
-    //        try! realm.write {
-    //            for room in allRoom {
-    //                realm.delete(room)
-    //            }
-    //        }
-    //
-    //    }
-    
     internal class func syncRoom(_ rooms:[Room]) {
         var syncRoomsIDArray = [String]()
         var localRoomsIDArray = [String]()
@@ -227,11 +185,14 @@ class Room: Object {
     }
     
     func saveToDatabase() {
+        print("room: \(self)")
         let realm = try! Realm()
         try! realm.write({
             realm.add(self, update: true)
         })
     }
+    
+
 
     
 }

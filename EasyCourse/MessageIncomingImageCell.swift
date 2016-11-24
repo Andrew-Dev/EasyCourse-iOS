@@ -18,7 +18,6 @@ class MessageIncomingImageCell: UITableViewCell {
     
     @IBOutlet weak var userAvatarImageView: UIImageView!
     
-    
     @IBOutlet weak var userNameLabel: UILabel!
     
     @IBOutlet weak var timeLabel: UILabel!
@@ -29,7 +28,7 @@ class MessageIncomingImageCell: UITableViewCell {
     
     @IBOutlet weak var messageBubbleWidthConstraint: NSLayoutConstraint!
     
-    var delegate: popUpImageProtocol?
+    var delegate: popUpMessageProtocol?
     var message:Message?
     
     override func awakeFromNib() {
@@ -70,9 +69,9 @@ class MessageIncomingImageCell: UITableViewCell {
             messageImageView.image = img
         } else {
             print("uncached img")
-            ServerHelper.sharedInstance.getNetworkImage(message.imageUrl!, completion: { (data, error) in
-                if data != nil {
-                    self.messageImageView.image = UIImage(data: data!)
+            ServerHelper.sharedInstance.getNetworkImage(message.imageUrl!, completion: { (image, error) in
+                if image != nil {
+                    self.messageImageView.image = image!
                     self.messageImageView.alpha = 0
                     UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseIn, animations: {
                         self.messageImageView.alpha = 1

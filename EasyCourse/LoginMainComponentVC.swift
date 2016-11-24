@@ -511,7 +511,7 @@ class LoginMainComponentVC: UIViewController, UITextFieldDelegate {
     func gotoNextScreen() {
         let realm = try! Realm()
         print("goto next screen: user=\(User.currentUser), course: \(realm.objects(Course.self))")
-        if User.currentUser?.universityID == nil {
+        if User.currentUser?.universityId == nil {
             delegate?.moveToVC(0)
         } else if realm.objects(Course.self).count == 0 {
             delegate?.moveToVC(1)
