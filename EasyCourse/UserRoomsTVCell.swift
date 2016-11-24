@@ -66,12 +66,17 @@ class UserRoomsTVCell: UITableViewCell {
     @IBAction func operationBtnPressed(_ sender: UIButton) {
         if userJoinedThisRoom {
             print("click quit")
-            SocketIOManager.sharedInstance.quitRoom(cellRoom!.id!) { (success, error) in
+//            SocketIOManager.sharedInstance.quitRoom(cellRoom!.id!) { (success, error) in
+//                self.delegate!.reloadTableView()
+//            }
+            SocketIOManager.sharedInstance.quitRoom(cellRoom!.id!, deleteRoom: true, completion: { (success, error) in
+                
                 self.delegate!.reloadTableView()
-            }
+            })
         } else {
-            print("click join")
+            print("click join \(cellRoom?.roomname), \(cellRoom?.id)")
             SocketIOManager.sharedInstance.joinRoom(cellRoom!.id!, completion: { (success, error) in
+                print("click join success: \(success) \(error)")
                 self.delegate!.reloadTableView()
             })
         }

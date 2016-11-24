@@ -12,6 +12,7 @@ enum NetworkError: Error, CustomStringConvertible {
     case NoResponse
     case ServerError(reason: String?)
     case ParseJSONError
+    case LocalError(reason: String)
     
     var description: String {
         switch self {
@@ -24,6 +25,8 @@ enum NetworkError: Error, CustomStringConvertible {
             fallthrough
         case .ParseJSONError:
             return "Server error"
+        case .LocalError(let reason):
+            return "Local error. Reason: \(reason)"
         default:
             return "Network error"
         }

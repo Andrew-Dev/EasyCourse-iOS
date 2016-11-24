@@ -26,7 +26,7 @@ class MessageOutgoingImageCell: UITableViewCell {
     
     @IBOutlet weak var messageBubbleWidthConstraint: NSLayoutConstraint!
     
-    var delegate: popUpImageProtocol?
+    var delegate: popUpMessageProtocol?
     var message:Message?
     
     override func awakeFromNib() {

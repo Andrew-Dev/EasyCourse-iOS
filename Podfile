@@ -8,7 +8,7 @@ target 'EasyCourse' do
   # Pods for EasyCourse
 
     # UI
-    pod 'XLPagerTabStrip'
+#    pod 'XLPagerTabStrip'
     pod 'JGProgressHUD'
     pod 'JVFloatLabeledTextField'
     pod 'DKImagePickerController'
@@ -16,15 +16,18 @@ target 'EasyCourse' do
     pod 'LDONavigationSubtitleView'
     pod 'ImageScrollView'
     pod 'MXPagerView'
+    pod 'SwiftMessages'
 
     # Util
     pod 'AsyncSwift'
     pod 'CryptoSwift'
+    pod 'SwiftyJSON'
 
     # Storage
     pod 'RealmSwift'
     pod 'KeychainSwift'
     #pod 'Cache'
+    pod 'AwesomeCache'
 
     # Network
     pod 'Alamofire'
@@ -33,6 +36,7 @@ target 'EasyCourse' do
     pod 'FacebookCore'
     pod 'FacebookLogin'
     pod 'FacebookShare'
+#    pod 'ReachabilitySwift'
 
     post_install do |installer|
         installer.pods_project.targets.each do |target|

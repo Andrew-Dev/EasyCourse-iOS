@@ -110,7 +110,7 @@ class LoginUnivComponentVC: UIViewController, UITableViewDelegate, UITableViewDa
             ServerConst.sharedInstance.postUpdateUser(["university":universities[indexPath.row].id! as AnyObject]) { (success, error) in
                 if success {
                     try! Realm().write({
-                        User.currentUser?.universityID = self.universities[indexPath.row].id
+                        User.currentUser?.universityId = self.universities[indexPath.row].id
                     })
                     self.delegate?.moveToVC(1)
                 } else {

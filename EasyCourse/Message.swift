@@ -123,7 +123,6 @@ class Message: Object {
     func saveToDatabase() {
         
         let realm = try! Realm()
-//        let roomID = self.toRoom
         let roomID = self.isToUser ? self.senderId : self.toRoom
         if let room = realm.object(ofType: Room.self, forPrimaryKey: roomID) {
             
