@@ -65,15 +65,15 @@ class RoomsTVCell: UITableViewCell {
             unreadLabel.isHidden = true
         }
         if lastMessage != nil {
-            var content = "user: "
+            var content = "user"
             if lastMessage!.senderId == User.currentUser!.id {
-                content = "\((User.currentUser?.username)!): "
+                content = "\((User.currentUser?.username)!)"
             } else {
                 ServerConst.sharedInstance.getUserInfo(lastMessage!.senderId!,refresh: false) { (user, joinedCourse, error) in
                     if error != nil {
                         
                     } else if user != nil {
-                        content = "\(user!.username!): "
+                        content = "\(user!.username!)"
                     }
                 }
                 
@@ -81,11 +81,13 @@ class RoomsTVCell: UITableViewCell {
             }
             
             if lastMessage!.imageUrl != nil || lastMessage!.imageData != nil {
-                lastMessageLabel.text = content + "[image]"
+                lastMessageLabel.text = content + " share an image"
             } else if lastMessage!.text != nil {
-                lastMessageLabel.text = content + lastMessage!.text!
+                lastMessageLabel.text = content + ": " + lastMessage!.text!
+            } else if lastMessage?.sharedRoom != nil {
+                lastMessageLabel.text = content + " shared a room"
             } else {
-                lastMessageLabel.text = content + "..."
+                lastMessageLabel.text = content + ": ..."
             }
             timeLabel.text = Tools.sharedInstance.timeAgoSinceDatePrefered(lastMessage!.createdAt!)
         }

@@ -59,8 +59,8 @@ class UserEditProfileTableVC: UITableViewController, UIImagePickerControllerDele
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if (indexPath as NSIndexPath).section == 0 {
-            if (indexPath as NSIndexPath).row == 0 {
+        if indexPath.section == 0 {
+            if indexPath.row == 0 {
                 showChangeAvatarAlertView()
             }
         }
@@ -167,13 +167,25 @@ class UserEditProfileTableVC: UITableViewController, UIImagePickerControllerDele
             ServerConst.sharedInstance.uploadImage(self.profilePictureImageView.image!, uploadType: .avatar, room: nil, completion: { (imageUrl, progress, error) in
                 print("image URL: \(imageUrl)")
                 if imageUrl != nil {
-                    SocketIOManager.sharedInstance.updateUser(self.usernameTextField.text, userProfileImageUrl: imageUrl!)
-                    hud.textLabel.text = "Success"
-                    hud.indicatorView = JGProgressHUDSuccessIndicatorView()
-                    hud.dismiss(afterDelay: 1, animated: true)
-                    Async.main(after: 1, { 
-                        self.navigationController?.popViewController(animated: true)
+//                    SocketIOManager.sharedInstance.updateUser(self.usernameTextField.text, userProfileImageUrl: imageUrl!)
+                    SocketIOManager.sharedInstance.syncUser(self.usernameTextField.text, userProfileImageUrl: imageUrl!, completion: { (success, error) in
+                        if success {
+                            hud.textLabel.text = "Success"
+                            hud.indicatorView = JGProgressHUDSuccessIndicatorView()
+                            hud.dismiss(afterDelay: 1, animated: true)
+                            self.navigationController?.popViewController(animated: true)
+                        } else {
+                            hud.indicatorView = JGProgressHUDErrorIndicatorView()
+                            hud.textLabel.text = "Error"
+                            hud.tapOutsideBlock = { (hu) in
+                                hud.dismiss()
+                            }
+                            hud.tapOnHUDViewBlock = { (hu) in
+                                hud.dismiss()
+                            }
+                        }
                     })
+                    
                 } else if error != nil {
                     //TODO: fail situation
                     hud.indicatorView = JGProgressHUDErrorIndicatorView()
@@ -187,12 +199,22 @@ class UserEditProfileTableVC: UITableViewController, UIImagePickerControllerDele
                 }
             })
         } else {
-            SocketIOManager.sharedInstance.updateUser(self.usernameTextField.text, userProfileImageUrl: nil)
-            hud.textLabel.text = "Success"
-            hud.indicatorView = JGProgressHUDSuccessIndicatorView()
-            hud.dismiss(afterDelay: 1, animated: true)
-            Async.main(after: 1, {
-                self.navigationController?.popViewController(animated: true)
+            SocketIOManager.sharedInstance.syncUser(self.usernameTextField.text, userProfileImageUrl: nil, completion: { (success, error) in
+                if success {
+                    hud.textLabel.text = "Success"
+                    hud.indicatorView = JGProgressHUDSuccessIndicatorView()
+                    hud.dismiss(afterDelay: 1, animated: true)
+                    self.navigationController?.popViewController(animated: true)
+                } else {
+                    hud.indicatorView = JGProgressHUDErrorIndicatorView()
+                    hud.textLabel.text = "Error"
+                    hud.tapOutsideBlock = { (hu) in
+                        hud.dismiss()
+                    }
+                    hud.tapOnHUDViewBlock = { (hu) in
+                        hud.dismiss()
+                    }
+                }
             })
         }
     }

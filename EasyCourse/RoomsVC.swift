@@ -10,6 +10,7 @@ import UIKit
 import SocketIO
 import Alamofire
 import RealmSwift
+import SwiftMessages
 
 //import Cache
 
@@ -18,7 +19,8 @@ class RoomsVC: UIViewController {
     @IBOutlet weak var roomTableView: UITableView!
     
     lazy var message = try! Realm().objects(Message.self)
-    lazy var rooms = try! Realm().objects(Room.self)
+//    lazy var rooms = try! Realm().objects(Room.self)
+    lazy var rooms = User.currentUser!.joinedRoom
     var sortedRooms:[(room:Room,lastMessage:Message?)] = []
     var roomUpdateNotif: NotificationToken? = nil
     var messageUpdateNotif: NotificationToken? = nil
@@ -30,9 +32,9 @@ class RoomsVC: UIViewController {
         roomTableView.dataSource = self
         roomTableView.tableFooterView = UIView()
         sortRooms()
-        if rooms.count == 0 {
-            SocketIOManager.sharedInstance.syncUser()
-        }
+//        if rooms.count == 0 {
+//            SocketIOManager.sharedInstance.syncUser()
+//        }
         
         let addRoomBtn = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(self.showAddRoom))
         navigationItem.rightBarButtonItem = addRoomBtn
@@ -46,6 +48,7 @@ class RoomsVC: UIViewController {
             self.sortRooms()
             self.roomTableView.reloadData()
         })
+        
     }
     
     deinit {
@@ -87,7 +90,8 @@ class RoomsVC: UIViewController {
         if segue.identifier == "gotoLocalRoom" {
             if let indexPath = roomTableView.indexPathForSelectedRow {
                 let vc = segue.destination as! RoomsDialogVC
-                vc.localRoom = sortedRooms[(indexPath as NSIndexPath).row].0
+//                vc.localRoom = sortedRooms[indexPath.row].0
+                vc.localRoomId = sortedRooms[indexPath.row].0.id
             }
             
         }

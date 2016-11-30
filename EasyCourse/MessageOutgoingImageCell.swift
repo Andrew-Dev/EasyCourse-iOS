@@ -7,26 +7,6 @@
 //
 
 import UIKit
-fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
-  switch (lhs, rhs) {
-  case let (l?, r?):
-    return l < r
-  case (nil, _?):
-    return true
-  default:
-    return false
-  }
-}
-
-fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
-  switch (lhs, rhs) {
-  case let (l?, r?):
-    return l > r
-  default:
-    return rhs < lhs
-  }
-}
-
 
 class MessageOutgoingImageCell: UITableViewCell {
     
@@ -46,7 +26,7 @@ class MessageOutgoingImageCell: UITableViewCell {
     
     @IBOutlet weak var messageBubbleWidthConstraint: NSLayoutConstraint!
     
-    var delegate: popUpImageProtocol?
+    var delegate: popUpMessageProtocol?
     var message:Message?
     
     override func awakeFromNib() {
@@ -97,7 +77,7 @@ class MessageOutgoingImageCell: UITableViewCell {
         let formatter = DateFormatter()
         formatter.dateFormat = "MMM d, HH:mm"
         
-        if lastMessage == nil || message.createdAt?.timeIntervalSince((lastMessage?.createdAt)! as Date) > 60 * 5 {
+        if lastMessage == nil || message.createdAt!.timeIntervalSince(lastMessage!.createdAt!) > 60 * 5 {
             timeLabel.text = formatter.string(from: message.createdAt! as Date)
             timeSeperatorView.isHidden = false
             timeSeperatorHeightConstraint.constant = 18

@@ -17,7 +17,7 @@ class Course: Object {
     dynamic var title:String? = nil
     dynamic var courseDescription:String? = nil
     let creditHours = RealmOptional<Int>()
-    dynamic var universityID:String? = nil
+    dynamic var universityId:String? = nil
     
     override static func primaryKey() -> String? {
         return "id"
@@ -37,16 +37,46 @@ class Course: Object {
         }
     }
     
-    internal class func initCourse(_ data:NSDictionary) -> Course? {
-        let course = Course()
-        if let id = data["_id"] as? String {
-            course.id = id
-            course.coursename = data["name"] as? String
-            course.courseDescription = data["description"] as? String
-            course.title = data["title"] as? String
-            return course
-        } else {
+    //New
+    internal class func createOrUpdateCourse(_ data:NSDictionary) -> Course? {
+        
+        let realm = try! Realm()
+        guard let id = data["_id"] as? String else {
             return nil
+        }
+        
+        if let existedCourse = realm.object(ofType: Course.self, forPrimaryKey: id) {
+            existedCourse.mapCourseWithData(data)
+            return existedCourse
+        } else {
+            let course = Course()
+            course.mapCourseWithData(data)
+            return course
+        }
+
+    }
+    
+    //Updating object property
+    func mapCourseWithData(_ data:NSDictionary) {
+        try! Realm().write {
+            if let id = data["_id"] as? String, self.id == nil {
+                self.id = id
+            }
+            if let coursename = data["name"] as? String {
+                self.coursename = coursename
+            }
+            if let title = data["title"] as? String {
+                self.title = title
+            }
+            if let courseDescription = data["description"] as? String {
+                self.courseDescription = courseDescription
+            }
+            if let creditHours = data["creditHours"] as? Int {
+                self.creditHours.value = creditHours
+            }
+            if let university = data["university"] as? String {
+                self.universityId = university
+            }
         }
     }
     

@@ -175,8 +175,14 @@ class ServerConst {
                 completion(false, response.error)
             } else {
                 print("=====choose course finish")
-                SocketIOManager.sharedInstance.syncUser()
-                completion(true, nil)
+                SocketIOManager.sharedInstance.syncUser([:], completion: { (success, error) in
+                    if success {
+                        completion(true, nil)
+                    } else {
+                        completion(false, nil)
+                    }
+                })
+//                completion(true, nil)
             }
         }
     }
@@ -253,7 +259,7 @@ class ServerConst {
     
     //MARK: - Non user related
     func searchCourse(_ searchText:String?, limit:Int?, skip:Int?, completion: @escaping (_ courseArr:[Course], _ error:Error?) -> ()) {
-        let query = generateQuery(searchText, limit: limit, skip: skip, univ: User.currentUser!.universityID)
+        let query = generateQuery(searchText, limit: limit, skip: skip, univ: User.currentUser!.universityId)
         let apiUrl = URL(string: "\(Constant.baseURL)/course\(query)")
         print("url is \(apiUrl)")
         Alamofire.request(apiUrl!).responseJSON { (response) in
@@ -263,7 +269,7 @@ class ServerConst {
                 if let crsArr = response.result.value as? [NSDictionary] {
                     var finalArray:[Course] = []
                     for crs in crsArr {
-                        finalArray.append(Course.initCourse(crs)!)
+                        finalArray.append(Course.createOrUpdateCourse(crs)!)
                         print("get course: \(crs["name"])")
                     }
                     completion(finalArray, nil)
@@ -333,8 +339,8 @@ class ServerConst {
                 completion(nil, [], response.result.error)
             } else {
                 let resData = response.result.value as! NSDictionary
-                let user = User()
-                user.initUserFromServerWithData(resData).saveToDatabase()
+                let user = User.createOrUpdateUserWithData(resData)
+//                user.initUserFromServerWithData(resData)?.saveToDatabase()
 //                user.cacheUserInfo()
                 completion(user, [], nil)
             }
@@ -354,7 +360,7 @@ class ServerConst {
     
     fileprivate func setupCurrentUserWithData(_ data:NSDictionary) {
         RealmTools.setDefaultRealmForUser(data["_id"] as? String)
-        User.currentUser = User().initCurrentUserWithData(data)
+        User.currentUser = User.createOrUpdateUserWithData(data)
     }
     
     func saveDeviceTokenForUser(_ completion: @escaping (_ success:Bool, _ error:Error?) -> ()) {

@@ -18,6 +18,7 @@ class Message: Object {
     dynamic var text:String? = nil
     dynamic var imageUrl:String? = nil
     dynamic var imageData:Data? = nil
+    dynamic var sharedRoom:String? = nil
     let successSent = RealmOptional<Bool>()
     let imageWidth = RealmOptional<Float>()
     let imageHeight = RealmOptional<Float>()
@@ -36,12 +37,11 @@ class Message: Object {
     
     func initMessage(_ data:NSDictionary) {
         if let id = data["_id"] as? String {
-            //            print("init date: \(data["createdAt"] as? NSDate)")
             self.id = id
             self.senderId = data["sender"] as? String
-//            message.senderName = data["senderName"] as? String
             self.text = data["text"] as? String
             self.imageUrl = data["imageUrl"] as? String
+            self.sharedRoom = data["sharedRoom"] as? String
             if let toRoom = data["toRoom"] as? String {
                 self.toRoom = toRoom
                 self.isToUser = false
@@ -52,19 +52,17 @@ class Message: Object {
             }
             self.imageWidth.value = data["imageWidth"] as? Float
             self.imageHeight.value = data["imageHeight"] as? Float
-            if let interval = data["createdAt"] as? Double {
-                self.createdAt = Date(timeIntervalSince1970: interval)
-            } else {
-                //                message.createdAt = NSDate()
+            if let dateString = data["createdAt"] as? String {
+                self.createdAt = dateString.stringToDate()
             }
-            //            print("create at: \(message.createdAt)")
         }
 //        return self
     }
     
-    func initForCurrentUser(_ text: String?, imageUrl: String?, image: UIImage?, toRoom: String?, isToUser: Bool) {
+    func initForCurrentUser(_ text: String?, imageUrl: String?, image: UIImage?, sharedRoom: String?, toRoom: String?, isToUser: Bool) {
         self.text = text
         self.imageUrl = imageUrl
+        self.sharedRoom = sharedRoom
         
         self.toRoom = toRoom
         self.isToUser = isToUser
@@ -125,7 +123,6 @@ class Message: Object {
     func saveToDatabase() {
         
         let realm = try! Realm()
-//        let roomID = self.toRoom
         let roomID = self.isToUser ? self.senderId : self.toRoom
         if let room = realm.object(ofType: Room.self, forPrimaryKey: roomID) {
             

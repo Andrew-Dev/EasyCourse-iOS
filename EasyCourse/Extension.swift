@@ -33,4 +33,32 @@ public extension String {
     func indexOf(_ string: String) -> String.Index? {
         return range(of: string, options: .literal, range: nil, locale: nil)?.lowerBound
     }
+    
+    func stringToDate() -> Date? {
+        let formatter = DateFormatter()
+        
+        // Format 1
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        if let parsedDate = formatter.date(from: self) {
+            return parsedDate
+        }
+        
+        // Format 2
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:SSSZ"
+        if let parsedDate = formatter.date(from: self) {
+            return parsedDate
+        }
+        
+        // Couldn't parsed with any format. Just get the date
+        let splitedDate = self.components(separatedBy: "T")
+        if splitedDate.count > 0 {
+            formatter.dateFormat = "yyyy-MM-dd"
+            if let parsedDate = formatter.date(from: splitedDate[0]) {
+                return parsedDate
+            }
+        }
+        
+        // Nothing worked!
+        return nil
+    }
 }

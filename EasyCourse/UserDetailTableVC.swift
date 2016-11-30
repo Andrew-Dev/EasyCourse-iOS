@@ -62,7 +62,8 @@ class UserDetailTableVC: UITableViewController {
         let vc = self.storyboard?.instantiateViewController(withIdentifier: "RoomsDialogVC") as! RoomsDialogVC
         let realm = try! Realm()
         if let room = realm.object(ofType: Room.self, forPrimaryKey: self.userId) {
-            vc.localRoom = room
+//            vc.localRoom = room
+            vc.localRoomId = room.id
             self.navigationController?.pushViewController(vc, animated: true)
         } else {
             try! realm.write({
@@ -70,7 +71,8 @@ class UserDetailTableVC: UITableViewController {
                 room.id = self.userId
                 room.isToUser = true
                 realm.add(room, update: true)
-                vc.localRoom = room
+//                vc.localRoom = room
+                vc.localRoomId = room.id
                 self.navigationController?.pushViewController(vc, animated: true)
             })
         }

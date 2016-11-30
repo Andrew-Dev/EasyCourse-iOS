@@ -116,7 +116,7 @@ class LoginLangChooseVC: UIViewController {
                 hud?.textLabel.text = "Success"
                 hud?.dismiss(animated: true)
                 self.delegate?.moveToVC(3)
-                SocketIOManager.sharedInstance.syncUser()
+//                SocketIOManager.sharedInstance.syncUser()
             } else {
                 //TODO: error
                 hud?.indicatorView = JGProgressHUDErrorIndicatorView()
