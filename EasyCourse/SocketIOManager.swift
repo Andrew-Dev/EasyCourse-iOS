@@ -19,14 +19,13 @@ class SocketIOManager: NSObject {
     let timeoutSec = 5
     var socket:SocketIOClient!
     
-    enum loadtype {
-        case cacheAndLoad, cacheOnly, loadOnly
+    enum LoadType {
+        case cacheAndNetwork, NetworkOnly, cacheElseNetwork
     }
     
     override init() {
         super.init()
     }
-    
     
     
     func establishConnection() {
@@ -87,7 +86,7 @@ class SocketIOManager: NSObject {
     }
     
     func sendMessage(_ message:Message, completion: @escaping (_ success:Bool, _ error:NetworkError?) -> ()) {
-        var param = ["id":"\(message.id!)"]
+        var param = ["id":"\(message.id!)"] as [String:Any]
         if let toRoom = message.toRoom {
             if message.isToUser {
                 param["toUser"] = toRoom
@@ -96,9 +95,12 @@ class SocketIOManager: NSObject {
             }
         }
         if let text = message.text { param["text"] = text }
-        if let imageUrl = message.imageUrl { param["imageUrl"] = imageUrl }
-        if let imageWidth = message.imageWidth.value { param["imageWidth"] = "\(imageWidth)" }
-        if let imageHeight = message.imageHeight.value { param["imageHeight"] = "\(imageHeight)" }
+        if let imageData = message.imageData {
+            param["imageData"] = imageData
+            if let imageWidth = message.imageWidth.value { param["imageWidth"] = "\(imageWidth)" }
+            if let imageHeight = message.imageHeight.value { param["imageHeight"] = "\(imageHeight)" }
+        }
+        
         if let sharedRoom = message.sharedRoom { param["sharedRoom"] = "\(sharedRoom)" }
 //        print("param message \(param)")
         socket.emitWithAck("message", param).timingOut(after: timeoutSec) { (data) in
@@ -272,14 +274,21 @@ class SocketIOManager: NSObject {
             
             
             print("create data: \(roomData)")
-            let room = Room()
-            room.initRoomWithData(roomData, isToUser: false)?.saveToDatabase()
+            guard let room = Room.createOrUpdateRoomWithData(data: roomData, isToUser: false) else {
+                return completion(nil, NetworkError.ParseJSONError)
+            }
+//            room.initRoomWithData(roomData, isToUser: false)?.saveToDatabase()
+            if User.currentUser?.joinedRoom.index(of: room) == nil {
+                try! Realm().write {
+                    User.currentUser?.joinedRoom.append(room)
+                }
+            }
             completion(room, nil)
         }
     }
 
     
-    func quitRoom(_ roomId:String, deleteRoom: Bool, completion: @escaping (_ success:Bool, _ error:NetworkError?) -> ()) {
+    func quitRoom(_ roomId:String, completion: @escaping (_ success:Bool, _ error:NetworkError?) -> ()) {
         let params = ["roomId":roomId]
         socket.emitWithAck("quitRoom", params).timingOut(after: timeoutSec) { (data) in
             if let err = self.checkAckError(data, onlyCheckNetwork: false) {
@@ -297,15 +306,7 @@ class SocketIOManager: NSObject {
             if success {
                 print("success quit room")
                 
-                if deleteRoom {
-                    let realm = try! Realm()
-                    if let quitRoom = realm.object(ofType: Room.self, forPrimaryKey: roomId) {
-                        try! realm.write {
-                            realm.delete(quitRoom)
-                        }
-                    }
-
-                }
+                User.currentUser?.quitRoom(roomId)
                 completion(true, nil)
             } else {
                 completion(false, NetworkError.ServerError(reason: nil))
@@ -329,11 +330,172 @@ class SocketIOManager: NSObject {
                 return completion(nil, NetworkError.ParseJSONError)
             }
             print("join room data: \(roomData)")
-            
-            let room = Room()
-            room.initRoomWithData(roomData, isToUser: false)?.saveToDatabase()
-            completion(room, nil)
 
+            if let room = Room.createOrUpdateRoomWithData(data: roomData, isToUser: false) {
+                User.currentUser?.joinRoom(room)
+                completion(room, nil)
+            } else {
+                completion(nil, NetworkError.ParseJSONError)
+            }
+            
+
+        }
+    }
+    
+    func silentRoom(_ roomId: String, silent: Bool, completion: @escaping (_ success:Bool, _ error:NetworkError?) -> ()) {
+        let params = ["roomId":roomId, "silent":silent] as [String : Any]
+        socket.emitWithAck("silentRoom", params).timingOut(after: timeoutSec) { (data) in
+            print("data is : \(data)")
+            if let err = self.checkAckError(data, onlyCheckNetwork: false) {
+                return completion(false, err)
+            }
+            
+            let json = JSON(data)
+            if let success = json[0]["success"].bool, success {
+                return completion(true, nil)
+            } else {
+                print("get course error: \(json[0]["success"].error?.localizedDescription)")
+                return completion(false, NetworkError.ParseJSONError)
+            }
+            
+            
+        }
+    }
+    
+    func getCourseInfo(_ courseId:String, loadType:LoadType, completion: @escaping (_ course:Course?, _ error:NetworkError?) -> ()) {
+        
+        let realm = try! Realm()
+        if loadType != .NetworkOnly {
+            if let crs = realm.object(ofType: Course.self, forPrimaryKey: courseId) {
+                if loadType == .cacheAndNetwork {
+                    completion(crs, nil)
+                } else if loadType == .cacheElseNetwork {
+                    return completion(crs, nil)
+                }
+            }
+        }
+        
+        let params = ["courseId":courseId]
+        socket.emitWithAck("getCourseInfo", params).timingOut(after: timeoutSec) { (data) in
+            if let err = self.checkAckError(data, onlyCheckNetwork: false) {
+                return completion(nil, err)
+            }
+            
+            
+            let json = JSON(data)
+            guard let courseData = json[0]["course"].dictionaryObject else {
+                print("get course error: \(json[0]["course"].error?.localizedDescription)")
+                return completion(nil, NetworkError.ParseJSONError)
+            }
+            
+            if let course = Course.createOrUpdateCourse(courseData as NSDictionary) {
+                return completion(course, nil)
+            } else {
+                return completion(nil, NetworkError.ParseJSONError)
+            }
+            
+        }
+    }
+    
+    func getCourseSubrooms(_ text:String?, courseId:String, skip:Int, limit: Int, completion: @escaping (_ rooms: [Room]?, _ error:NetworkError?) -> ()) {
+
+        var params = ["courseId":courseId, "skip":skip, "limit":limit] as [String : Any]
+        if (text != nil) {
+            params["text"] = text!
+        }
+        socket.emitWithAck("searchCourseSubrooms", params).timingOut(after: timeoutSec) { (data) in
+            if let err = self.checkAckError(data, onlyCheckNetwork: false) {
+                return completion(nil, err)
+            }
+            
+            
+            let json = JSON(data)
+            guard let roomArrayData = json[0]["rooms"].arrayObject else {
+                print("get course error: \(json[0]["rooms"].error?.localizedDescription)")
+                return completion(nil, NetworkError.ParseJSONError)
+            }
+            
+            var roomArray:[Room] = []
+            for roomData in roomArrayData {
+                if let data = roomData as? NSDictionary,
+                    let room = Room.createOrUpdateRoomWithData(data: data, isToUser: false) {
+                    roomArray.append(room)
+                }
+            }
+            return completion(roomArray, nil)
+            
+        }
+    }
+    
+    func searchCourse(_ text:String, universityId:String, limit:Int?, skip:Int?, completion: @escaping (_ courses:[Course], _ error:NetworkError?) -> ()) {
+        var params = ["text":text, "university":universityId] as [String : Any]
+        if (skip != nil) {
+            params["skip"] = skip!
+        }
+        if (limit != nil) {
+            params["limit"] = limit!
+        }
+        socket.emitWithAck("searchCourse", params).timingOut(after: timeoutSec) { (data) in
+            if let err = self.checkAckError(data, onlyCheckNetwork: false) {
+                return completion([], err)
+            }
+            
+            
+            let json = JSON(data)
+            guard let courseArrayData = json[0]["course"].arrayObject else {
+                print("get course error: \(json[0]["course"].error?.localizedDescription)")
+                return completion([], NetworkError.ParseJSONError)
+            }
+            
+            var courseArray:[Course] = []
+            for courseData in courseArrayData {
+                if let data = courseData as? NSDictionary,
+                    let course = Course.createOrUpdateCourse(data) {
+                    courseArray.append(course)
+                }
+            }
+            return completion(courseArray, nil)
+            
+        }
+    }
+    
+    func joinCourse(_ courses: [String], languages: [String]?, completion: @escaping (_ success:Bool, _ error:NetworkError?) -> ()) {
+        var params = ["courses":courses]
+        if languages != nil { params["lang"] = languages! }
+        socket.emitWithAck("joinCourse", params).timingOut(after: timeoutSec) { (data) in
+            if let err = self.checkAckError(data, onlyCheckNetwork: false) {
+                return completion(false, err)
+            }
+            
+            guard let arg0 = data[0] as? NSDictionary else {
+                return completion(false, NetworkError.ParseJSONError)
+            }
+            
+            guard let success = arg0["success"] as? Bool else {
+                return completion(false, NetworkError.ParseJSONError)
+            }
+            
+            let json = JSON(data)
+
+            
+            if let courseData = json[0]["joinedCourse"].arrayObject {
+                print("get course error: \(json[0]["joinedCourse"].error?.localizedDescription)")
+                User.currentUser?.joinCourseWithData(courseData as? [NSDictionary])
+            }
+            
+            if let roomData = json[0]["joinedRoom"].arrayObject {
+                print("get course error: \(json[0]["joinedRoom"].error?.localizedDescription)")
+                User.currentUser?.joinRoomWithData(roomData as? [NSDictionary])
+            }
+            
+            if success {
+                print("success join course")
+                
+                completion(true, nil)
+            } else {
+                completion(false, NetworkError.ServerError(reason: nil))
+            }
+            
         }
     }
     
@@ -354,12 +516,7 @@ class SocketIOManager: NSObject {
             
             if success {
                 print("success drop course")
-                let realm = try! Realm()
-                if let dropCourse = realm.object(ofType: Course.self, forPrimaryKey: courseId) {
-                    try! realm.write {
-                        realm.delete(dropCourse)
-                    }
-                }
+                User.currentUser?.quitCourse(courseId)
                 completion(true, nil)
             } else {
                 completion(false, NetworkError.ServerError(reason: nil))
@@ -368,20 +525,22 @@ class SocketIOManager: NSObject {
         }
     }
     
-    func syncUser(_ username: String?, userProfileImageUrl:String?, completion: @escaping (_ success:Bool, _ error:NetworkError?) -> ()) {
-        var data:[String:String] = [:]
+    func syncUser(_ username: String?, userProfileImage:UIImage?, completion: @escaping (_ success:Bool, _ error:NetworkError?) -> ()) {
+        var data:[String:Any] = [:]
         if username != nil { data["displayName"] = username! }
-        if userProfileImageUrl != nil { data["avatarUrl"] = userProfileImageUrl! }
-        if data != [:] {
-            self.syncUser(data, completion: { (success, error) in
-                print("user get: \(data)")
-                if success {
-                    completion(true, nil)
-                } else {
-                    completion(false, error)
-                }
-            })
+        if userProfileImage != nil {
+            let imageData = UIImageJPEGRepresentation(userProfileImage!, 1)
+            data["avatarImage"] = imageData
         }
+        self.syncUser(data, completion: { (success, error) in
+            print("user get: \(data)")
+            if success {
+                completion(true, nil)
+            } else {
+                completion(false, error)
+            }
+        })
+
         
     }
     
@@ -409,7 +568,7 @@ class SocketIOManager: NSObject {
             User.currentUser = User.createOrUpdateUserWithData(userData)
             
             NotificationCenter.default.post(name: Constant.NotificationKey.SyncUser, object: nil)
-            print("syncUser received")
+            print("syncUser received\(data)")
             completion(true, nil)
         }
     }
@@ -478,6 +637,41 @@ class SocketIOManager: NSObject {
         }
     }
     
+    func getUniversityInfo(_ univId:String, loadType:LoadType, completion: @escaping (_ course:University?, _ error:NetworkError?) -> ()) {
+        
+        let realm = try! Realm()
+        if loadType != .NetworkOnly {
+            if let univ = realm.object(ofType: University.self, forPrimaryKey: univId) {
+                if loadType == .cacheAndNetwork {
+                    completion(univ, nil)
+                } else if loadType == .cacheElseNetwork {
+                    return completion(univ, nil)
+                }
+            }
+        }
+        
+        let params = ["univ":univId]
+        socket.emitWithAck("getUniversityInfo", params).timingOut(after: timeoutSec) { (data) in
+            if let err = self.checkAckError(data, onlyCheckNetwork: false) {
+                return completion(nil, err)
+            }
+            
+            
+            let json = JSON(data)
+            guard let univData = json[0]["univ"].dictionaryObject else {
+                print("get course error: \(json[0]["univ"].error?.localizedDescription)")
+                return completion(nil, NetworkError.ParseJSONError)
+            }
+            
+            if let univ = University.createOrUpdateUniversity(univData as NSDictionary) {
+                return completion(univ, nil)
+            } else {
+                return completion(nil, NetworkError.ParseJSONError)
+            }
+            
+        }
+    }
+    
     // MARK: - public listener
     func publicListener() {
         socket.on("connect") {data, ack in
@@ -491,6 +685,7 @@ class SocketIOManager: NSObject {
                 }
 
             })
+            
         }
         
         socket.on("message") { (objects, ack) in
@@ -583,18 +778,18 @@ class SocketIOManager: NSObject {
         
         if newMessage.senderId != User.currentUser!.id {
             Message.saveSenderUserInfo(data as! NSDictionary)
-            newMessage.saveToDatabase()
         }
+        newMessage.saveToDatabase()
     }
     
     private func updateMessageInDatabase(message:Message, resData:NSDictionary) throws {
         let realm = try! Realm()
-        if let otherUserStatus = resData["otherUserStatus"] as? Int, message.isToUser {
-            let otherUser = realm.object(ofType: User.self, forPrimaryKey: message.toRoom)
-            try! realm.write {
-                otherUser?.otherFriendStatus = otherUserStatus
-            }
-        }
+//        if let otherUserStatus = resData["otherUserStatus"] as? Int, message.isToUser {
+//            let otherUser = realm.object(ofType: User.self, forPrimaryKey: message.toRoom)
+//            try! realm.write {
+//                otherUser?.otherFriendStatus = otherUserStatus
+//            }
+//        }
         
         if let updatedMessage = resData["msg"] as? NSDictionary {
             try! realm.write {

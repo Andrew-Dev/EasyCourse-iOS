@@ -79,7 +79,7 @@ extension RoomsDialogAccGroupVC: UITableViewDelegate, UITableViewDataSource {
             let alertController = UIAlertController(title: "Send this room", message: rooms[indexPath.row].roomname, preferredStyle: .alert)
             let sendAction = UIAlertAction(title: "Send", style: .default, handler: { (action) in
                 let message = Message()
-                message.initForCurrentUser(nil, imageUrl: nil, image: nil, sharedRoom: self.rooms[indexPath.row].id, toRoom: self.toRoom.id, isToUser: self.toRoom.isToUser)
+                message.initForCurrentUser(nil, image: nil, sharedRoom: self.rooms[indexPath.row].id, toRoom: self.toRoom.id, isToUser: self.toRoom.isToUser)
                 message.saveToDatabase()
                 SocketIOManager.sharedInstance.sendMessage(message, completion: { (success, error) in
                     //TODO: message sent response

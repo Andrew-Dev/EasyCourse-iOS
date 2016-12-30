@@ -15,7 +15,7 @@ import AlamofireImage
 import SwiftyJSON
 
 var _currentUser:User?
-var _userLang:[Int] = []
+var _userLang:[String] = []
 
 class User: Object {
     
@@ -70,9 +70,9 @@ class User: Object {
         }
     }
     
-    class var userLang: [Int] {
+    class var userLang: [String] {
         get {
-            if let lang  = UserDefaults.standard.object(forKey: Constant.UserDefaultKey.currentUserLangKey) as? [Int] {
+            if let lang  = UserDefaults.standard.object(forKey: Constant.UserDefaultKey.currentUserLangKey) as? [String] {
                 _userLang = lang
             }
             return _userLang
@@ -121,8 +121,6 @@ class User: Object {
         }
         
         user?.mapUserWithData(data)
-        
-        
         
         return user
     }
@@ -178,7 +176,7 @@ class User: Object {
                         User.currentUser?.joinedRoom.append(room)
                     }
                 }
-                User.createOrUpdateUserWithData(contactData)
+//                User.createOrUpdateUserWithData(contactData)
             }
         }
         
@@ -193,6 +191,84 @@ class User: Object {
                 }
             }
         }
+    }
+    
+    func joinRoom(_ room:Room) {
+        let realm = try! Realm()
+        let roomIndex = self.joinedRoom.index { (userroom) -> Bool in
+            return userroom.id == room.id
+        }
+        if roomIndex == nil {
+            try! realm.write {
+                self.joinedRoom.append(room)
+            }
+        }
+    }
+    
+    func joinRoomWithData(_ roomData: [NSDictionary]?) {
+        if roomData == nil { return }
+        for roomData in roomData! {
+            if let room = Room.createOrUpdateRoomWithData(data: roomData, isToUser: false) {
+                self.joinRoom(room)
+            }
+        }
+    }
+    
+    func quitRoom(_ roomId:String) {
+        let realm = try! Realm()
+        let roomIndex = self.joinedRoom.index { (userroom) -> Bool in
+            return userroom.id == roomId
+        }
+        if roomIndex != nil {
+            try! realm.write {
+                self.joinedRoom.remove(objectAtIndex: roomIndex!)
+            }
+        }
+    }
+    
+    func joinCourse(_ course:Course) {
+        let realm = try! Realm()
+        let courseIndex = self.joinedCourse.index { (usercourse) -> Bool in
+            return usercourse.id == course.id
+        }
+        if courseIndex == nil {
+            try! realm.write {
+                self.joinedCourse.append(course)
+            }
+        }
+    }
+    
+    func joinCourseWithData(_ courseData:[NSDictionary]?) {
+        if courseData == nil { return }
+        for courseData in courseData! {
+            if let course = Course.createOrUpdateCourse(courseData) {
+                self.joinCourse(course)
+            }
+        }
+    }
+    
+    func quitCourse(_ courseId:String) {
+        let realm = try! Realm()
+        let courseIndex = self.joinedCourse.index { (usercourse) -> Bool in
+            return usercourse.id == courseId
+        }
+        if courseIndex != nil {
+            try! realm.write {
+                self.joinedCourse.remove(objectAtIndex: courseIndex!)
+                let rooms = realm.objects(Room.self).filter({ (room) -> Bool in
+                    return room.courseID == courseId
+                })
+                realm.delete(rooms)
+
+            }
+        }
+    }
+    
+    func hasJoinedCourse(_ courseId: String) -> Bool {
+        let courseIndex = self.joinedCourse.index { (usercourse) -> Bool in
+            return usercourse.id == courseId
+        }
+        return courseIndex == nil ? false : true
     }
     
     //=== remove all

@@ -17,7 +17,7 @@ class UserCoursesVC: UIViewController, cellTableviewProtocol {
     
     @IBOutlet weak var searchView: UIView!
     
-    let userCourses = try! Realm().objects(Course.self)
+    let userCourses = User.currentUser!.joinedCourse
     var filterCourses:[Course] = []
     var searchStatus = Constant.searchStatus.notSearching
 
@@ -79,15 +79,17 @@ class UserCoursesVC: UIViewController, cellTableviewProtocol {
     
 
 
-    /*
+    
     // MARK: - Navigation
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "gotoCourseDetail" {
+            let vc = segue.destination as! CourseDetailVC
+            if let cell = courseTableView.cellForRow(at: courseTableView.indexPathForSelectedRow!) as? UserCoursesTVCell {
+                vc.courseId = cell.cellCourse?.id
+            }
+        }
     }
-    */
     
     @IBAction func searchContentChanged(_ sender: UITextField) {
         
@@ -106,7 +108,7 @@ class UserCoursesVC: UIViewController, cellTableviewProtocol {
     func searchCourse(text:String, page:Int) {
         searchStatus = .isSearching
         self.courseTableView.reloadData()
-        ServerConst.sharedInstance.searchCourse(text, limit: pageOffset, skip: page, completion: { (courseArr, error) in
+        SocketIOManager.sharedInstance.searchCourse(text, universityId: User.currentUser!.universityId!, limit: pageOffset, skip: page) { (courseArr, error) in
             if error != nil {
                 self.searchStatus = .receivedError
             } else {
@@ -115,7 +117,7 @@ class UserCoursesVC: UIViewController, cellTableviewProtocol {
                 self.searchStatus = self.filterCourses.isEmpty ? .receivedEmptyResult : .receivedResult
             }
             self.courseTableView.reloadData()
-        })
+        }
     }
     
     func reloadTableView() {
@@ -175,6 +177,8 @@ extension UserCoursesVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if searchStatus == .receivedError {
             searchCourse(text: searchTextField.text ?? "", page:0)
+        } else if searchStatus == .receivedResult || searchStatus == .notSearching {
+            self.performSegue(withIdentifier: "gotoCourseDetail", sender: self)
         }
         tableView.deselectRow(at: indexPath, animated: true)
     }

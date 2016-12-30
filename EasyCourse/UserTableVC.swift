@@ -76,8 +76,6 @@ class UserTableVC: UITableViewController {
         case (0,0):
             self.performSegue(withIdentifier: "gotoUserProfileVC", sender: self)
         case (1,0):
-            self.performSegue(withIdentifier: "gotoUserRoomsVC", sender: self)
-        case (1,1):
             self.performSegue(withIdentifier: "gotoUserCoursesVC", sender: self)
         case (2,0):
             self.performSegue(withIdentifier: "gotoUserRecruiteVC", sender: self)

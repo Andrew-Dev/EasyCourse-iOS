@@ -19,14 +19,11 @@ enum NetworkError: Error, CustomStringConvertible {
         case .NoResponse:
             return "No response from server"
         case .ServerError(let reason):
-            if reason != nil {
-                return "Server error. Reason: \(reason)"
-            }
-            fallthrough
+            return reason ?? "Server error"
         case .ParseJSONError:
             return "Server error"
         case .LocalError(let reason):
-            return "Local error. Reason: \(reason)"
+            return reason 
         default:
             return "Network error"
         }

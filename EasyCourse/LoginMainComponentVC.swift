@@ -253,7 +253,6 @@ class LoginMainComponentVC: UIViewController, UITextFieldDelegate {
     
     @IBAction func facebookLoginBtnPressed(_ sender: UIButton) {
         self.view.endEditing(true)
-        //TODO: facebook log in
         let hud = JGProgressHUD()
         hud.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
         hud.textLabel.text = "Loading"

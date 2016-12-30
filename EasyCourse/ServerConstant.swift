@@ -301,18 +301,23 @@ class ServerConst {
         }
     }
     
-    func getDefaultLanguage(_ completion: @escaping (_ lang:[(String,Int)]?, _ error:Error?) -> ()) {
+    func getDefaultLanguage(_ completion: @escaping (_ lang:[(String, String, String)], _ error:Error?) -> ()) {
         let apiUrl = URL(string: "\(Constant.baseURL)/defaultlanguage")
         
         Alamofire.request(apiUrl!).responseJSON { (response) in
             if response.result.error != nil {
-                completion(nil, response.result.error)
+                completion([], response.result.error)
             } else {
-                if let langArray = response.result.value as? [String:NSDictionary] {
-                    var final:[(String, Int)] = []
+                print("langarray: \(response.result.value)")
+
+                if let langArray = response.result.value as? [NSDictionary] {
+                    var final:[(code: String, name: String, displayName: String)] = []
                     for lan in langArray {
-                        if let name = lan.1["name"] as? String, let code = lan.1["code"] as? Int {
-                            final.append((name,code))
+//                        print("each lan: \(lan.key)")
+                        if let code = lan["code"] as? String,
+                            let name = lan["name"] as? String,
+                            let displayName = lan["translation"] as? String {
+                            final.append((code, name, displayName))
                         }
                     }
                     completion(final, nil)

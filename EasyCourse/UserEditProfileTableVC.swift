@@ -164,30 +164,13 @@ class UserEditProfileTableVC: UITableViewController, UIImagePickerControllerDele
         hud.textLabel.text = "Uploading"
         hud.show(in: self.view)
         if profileImgModified {
-            ServerConst.sharedInstance.uploadImage(self.profilePictureImageView.image!, uploadType: .avatar, room: nil, completion: { (imageUrl, progress, error) in
-                print("image URL: \(imageUrl)")
-                if imageUrl != nil {
-//                    SocketIOManager.sharedInstance.updateUser(self.usernameTextField.text, userProfileImageUrl: imageUrl!)
-                    SocketIOManager.sharedInstance.syncUser(self.usernameTextField.text, userProfileImageUrl: imageUrl!, completion: { (success, error) in
-                        if success {
-                            hud.textLabel.text = "Success"
-                            hud.indicatorView = JGProgressHUDSuccessIndicatorView()
-                            hud.dismiss(afterDelay: 1, animated: true)
-                            self.navigationController?.popViewController(animated: true)
-                        } else {
-                            hud.indicatorView = JGProgressHUDErrorIndicatorView()
-                            hud.textLabel.text = "Error"
-                            hud.tapOutsideBlock = { (hu) in
-                                hud.dismiss()
-                            }
-                            hud.tapOnHUDViewBlock = { (hu) in
-                                hud.dismiss()
-                            }
-                        }
-                    })
-                    
-                } else if error != nil {
-                    //TODO: fail situation
+            SocketIOManager.sharedInstance.syncUser(self.usernameTextField.text, userProfileImage: self.profilePictureImageView.image!, completion: { (success, error) in
+                if success {
+                    hud.textLabel.text = "Success"
+                    hud.indicatorView = JGProgressHUDSuccessIndicatorView()
+                    hud.dismiss(afterDelay: 1, animated: true)
+                    self.navigationController?.popViewController(animated: true)
+                } else {
                     hud.indicatorView = JGProgressHUDErrorIndicatorView()
                     hud.textLabel.text = "Error"
                     hud.tapOutsideBlock = { (hu) in
@@ -198,8 +181,28 @@ class UserEditProfileTableVC: UITableViewController, UIImagePickerControllerDele
                     }
                 }
             })
+            
+            
+//            ServerConst.sharedInstance.uploadImage(self.profilePictureImageView.image!, uploadType: .avatar, room: nil, completion: { (imageUrl, progress, error) in
+//                print("image URL: \(imageUrl)")
+//                if imageUrl != nil {
+////                    SocketIOManager.sharedInstance.updateUser(self.usernameTextField.text, userProfileImageUrl: imageUrl!)
+//                    
+//                    
+//                } else if error != nil {
+//                    //TODO: fail situation
+//                    hud.indicatorView = JGProgressHUDErrorIndicatorView()
+//                    hud.textLabel.text = "Error"
+//                    hud.tapOutsideBlock = { (hu) in
+//                        hud.dismiss()
+//                    }
+//                    hud.tapOnHUDViewBlock = { (hu) in
+//                        hud.dismiss()
+//                    }
+//                }
+//            })
         } else {
-            SocketIOManager.sharedInstance.syncUser(self.usernameTextField.text, userProfileImageUrl: nil, completion: { (success, error) in
+            SocketIOManager.sharedInstance.syncUser(self.usernameTextField.text, userProfileImage: nil, completion: { (success, error) in
                 if success {
                     hud.textLabel.text = "Success"
                     hud.indicatorView = JGProgressHUDSuccessIndicatorView()

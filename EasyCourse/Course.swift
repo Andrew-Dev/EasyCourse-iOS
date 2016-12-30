@@ -58,6 +58,7 @@ class Course: Object {
     
     //Updating object property
     func mapCourseWithData(_ data:NSDictionary) {
+        print("course data; \(data)")
         try! Realm().write {
             if let id = data["_id"] as? String, self.id == nil {
                 self.id = id
@@ -74,11 +75,20 @@ class Course: Object {
             if let creditHours = data["creditHours"] as? Int {
                 self.creditHours.value = creditHours
             }
-            if let university = data["university"] as? String {
-                self.universityId = university
+            print("course univ: \(data["university"])")
+            if let university = data["university"] as? NSDictionary {
+                if let univId = university["_id"] as? String {
+                    self.universityId = univId
+                }
+            } else if let universityId = data["university"] as? String {
+                self.universityId = universityId
             }
         }
+        if let university = data["university"] as? NSDictionary {
+            University.createOrUpdateUniversity(university)
+        }
     }
+    
     
     internal class func removeAllCourse() {
         let realm = try! Realm()
@@ -90,36 +100,36 @@ class Course: Object {
         }
     }
     
-    internal class func syncCourse(_ courses:[Course]) {
-        var syncCoursesIDArray = [String]()
-        var localCoursesIDArray = [String]()
-        
-        let realm = try! Realm()
-        let localCourse = realm.objects(Course.self)
-        
-        localCourse.forEach { (course) in
-            localCoursesIDArray.append(course.id!)
-        }
-        
-        courses.forEach { (room) in
-            syncCoursesIDArray.append(room.id!)
-        }
-        
-        print("local course: \(localCoursesIDArray)")
-        print("get course: \(syncCoursesIDArray)")
-        
-        try! realm.write({
-            for course in localCourse where syncCoursesIDArray.index(of: course.id!) == nil {
-                print("delete course \(course.coursename)")
-                realm.delete(course)
-                
-            }
-            for course in courses where localCoursesIDArray.index(of: course.id!) == nil {
-                print("add course \(course.coursename)")
-                realm.add(course)
-            }
-        })
-    }
+//    internal class func syncCourse(_ courses:[Course]) {
+//        var syncCoursesIDArray = [String]()
+//        var localCoursesIDArray = [String]()
+//        
+//        let realm = try! Realm()
+//        let localCourse = realm.objects(Course.self)
+//        
+//        localCourse.forEach { (course) in
+//            localCoursesIDArray.append(course.id!)
+//        }
+//        
+//        courses.forEach { (room) in
+//            syncCoursesIDArray.append(room.id!)
+//        }
+//        
+//        print("local course: \(localCoursesIDArray)")
+//        print("get course: \(syncCoursesIDArray)")
+//        
+//        try! realm.write({
+//            for course in localCourse where syncCoursesIDArray.index(of: course.id!) == nil {
+//                print("delete course \(course.coursename)")
+//                realm.delete(course)
+//                
+//            }
+//            for course in courses where localCoursesIDArray.index(of: course.id!) == nil {
+//                print("add course \(course.coursename)")
+//                realm.add(course)
+//            }
+//        })
+//    }
     
     
 }

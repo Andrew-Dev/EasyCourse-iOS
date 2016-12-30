@@ -59,9 +59,8 @@ class Message: Object {
 //        return self
     }
     
-    func initForCurrentUser(_ text: String?, imageUrl: String?, image: UIImage?, sharedRoom: String?, toRoom: String?, isToUser: Bool) {
+    func initForCurrentUser(_ text: String?, image: UIImage?, sharedRoom: String?, toRoom: String?, isToUser: Bool) {
         self.text = text
-        self.imageUrl = imageUrl
         self.sharedRoom = sharedRoom
         
         self.toRoom = toRoom
@@ -98,7 +97,9 @@ class Message: Object {
             
             let realm = try! Realm()
             if let dbUser = realm.object(ofType: User.self, forPrimaryKey: senderId) {
+                print("ready to update user")
                 try! realm.write {
+                    print("updating user")
                     dbUser.username = username
                     if let profilePictureUrl = data["avatarUrl"] as? String {
                         dbUser.profilePictureUrl = profilePictureUrl
@@ -128,10 +129,12 @@ class Message: Object {
             
             if realm.object(ofType: Message.self, forPrimaryKey: self.id) == nil {
                 print("save msg to db: \(self.text))")
-                try! realm.write({
+                try! realm.write {
+                    print("saving: \(self.text))")
                     room.messageList.append(self)
                     room.unread += 1
-                })
+                }
+
             } else {
                 print("message already exist")
             }
@@ -141,9 +144,9 @@ class Message: Object {
             room.messageList.append(self)
             room.unread += 1
             room.isToUser = true
-            try! realm.write({
+            try! realm.write {
                 realm.add(room, update: true)
-            })
+            }
         }
     }
     

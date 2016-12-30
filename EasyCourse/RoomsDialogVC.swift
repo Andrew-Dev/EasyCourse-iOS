@@ -85,7 +85,9 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
             self.navigationItem.title = otherUser?.username
         } else {
             let customTitleView = LDONavigationSubtitleView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 44))
-            customTitleView.subtitle = "\(localRoom.memberCounts.value!) people"
+            if localRoom.memberCountsDescription != nil {
+                customTitleView.subtitle = "\(localRoom.memberCountsDescription!) people"
+            }
             customTitleView.title = localRoom.roomname!
             self.navigationItem.titleView = customTitleView
         }
@@ -232,7 +234,7 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
         let msgIndex = liveMessage.count - (cellCnt - indexPath.row)
 //        print("indexpath: \(indexPath.row) || msgIndex: \(msgIndex)")
         if liveMessage[msgIndex].senderId == User.currentUser?.id {
-            if liveMessage[msgIndex].imageUrl != nil {
+            if liveMessage[msgIndex].imageData != nil || liveMessage[msgIndex].imageUrl != nil {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "MessageOutgoingImageCell", for: indexPath) as! MessageOutgoingImageCell
                 var lastMessage:Message?
                 if msgIndex != 0 {
@@ -339,7 +341,7 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     @IBAction func sendBtnPressed(_ sender: UIButton) {
         sendBtn.isEnabled = false
         let message = Message()
-        message.initForCurrentUser(inputTextView.text, imageUrl: nil, image: nil, sharedRoom: nil, toRoom: localRoom.id!, isToUser: localRoom.isToUser)
+        message.initForCurrentUser(inputTextView.text, image: nil, sharedRoom: nil, toRoom: localRoom.id!, isToUser: localRoom.isToUser)
         message.saveToDatabase()
         inputTextView.text = ""
         UIView.animate(withDuration: 0.2, animations: {
@@ -380,19 +382,24 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
             self.scrollToBottom(true)
             for asset in assets {
                 asset.fetchOriginalImageWithCompleteBlock({ (image, info) in
-                    ServerConst.sharedInstance.uploadImage(image!, uploadType: .message, room: self.localRoom.id!, completion: { (imageUrl, progress, error) in
-                        //TODO:
-                        print("url: \(imageUrl) progress: \(progress) err: \(error)")
-                        if imageUrl != nil {
-                            let message = Message()
-                            message.initForCurrentUser(nil, imageUrl: imageUrl!, image: image, sharedRoom: nil, toRoom: self.localRoom.id!, isToUser: self.localRoom.isToUser)
-                            message.saveToDatabase()
-                            SocketIOManager.sharedInstance.sendMessage(message, completion: { (success, error) in
-                                //TODO: Message sent response
-                            })
-                        }
-                        
+                    let imageData = UIImageJPEGRepresentation(image!, 0)
+                    
+                    let message = Message()
+                    message.initForCurrentUser(nil, image: image, sharedRoom: nil, toRoom: self.localRoom.id!, isToUser: self.localRoom.isToUser)
+                    message.saveToDatabase()
+                    SocketIOManager.sharedInstance.sendMessage(message, completion: { (success, error) in
+                        //TODO: Message sent response
+                        print("success send image: \(success) + \(error)")
                     })
+                    
+//                    ServerConst.sharedInstance.uploadImage(image!, uploadType: .message, room: self.localRoom.id!, completion: { (imageUrl, progress, error) in
+//                        //TODO:
+//                        print("url: \(imageUrl) progress: \(progress) err: \(error)")
+//                        if imageUrl != nil {
+//                            
+//                        }
+//                        
+//                    })
                 })
                 
             }

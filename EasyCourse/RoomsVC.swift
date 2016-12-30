@@ -28,6 +28,15 @@ class RoomsVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        let realm = try! Realm()
+        let a = realm.object(ofType: University.self, forPrimaryKey: "585dc2720689616b0a79bf09")
+        let b = realm.objects(University.self)
+
+        print("a is \(a), b.count = \(b.count)")
+        b.forEach { (u) in
+            print("u is \(u)")
+        }
+        
         roomTableView.delegate = self
         roomTableView.dataSource = self
         roomTableView.tableFooterView = UIView()

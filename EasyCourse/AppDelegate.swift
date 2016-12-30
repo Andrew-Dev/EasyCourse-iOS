@@ -29,8 +29,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print("the set default id: \(id)")
         RealmTools.setDefaultRealmForUser(id)
         
-        print("user is \(User.currentUser)")
-
+        
+//        print("user is \(User.currentUser)")
         
         if User.currentUser != nil {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)

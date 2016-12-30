@@ -64,7 +64,20 @@ class MessageOutgoingImageCell: UITableViewCell {
         }
 
         if let data = message.imageData {
-            self.messageImageView.image = UIImage(data: data as Data)
+            self.messageImageView.image = UIImage(data: data)
+        } else if message.imageUrl != nil {
+            ServerHelper.sharedInstance.getNetworkImage(message.imageUrl!, completion: { (image, error) in
+                if image != nil {
+                    self.messageImageView.image = image!
+                    self.messageImageView.alpha = 0
+                    UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseIn, animations: {
+                        self.messageImageView.alpha = 1
+                    }, completion: nil)
+                } else {
+                    //TODO: deal with no picture
+                }
+                
+            })
         }
         
         if let avatarData = User.currentUser?.profilePicture {

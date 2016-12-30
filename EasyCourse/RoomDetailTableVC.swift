@@ -17,6 +17,9 @@ class RoomDetailTableVC: UITableViewController {
     var viewFromPopUp = false
     var userJoinedThisRoom = true
     
+    // Cell tag:
+    // 5: course
+    
     @IBOutlet weak var notificationSwitch: UISwitch!
     @IBOutlet weak var roomPictureView: UIImageView!
     @IBOutlet weak var roomNameLabel: UILabel!
@@ -28,6 +31,8 @@ class RoomDetailTableVC: UITableViewController {
     
     @IBOutlet weak var quitOrJoinRoomLabel: UILabel!
     
+    @IBOutlet weak var courseNameLabel: UILabel!
+    
     var deleteThisRoom = false
     
     override func viewDidLoad() {
@@ -35,6 +40,12 @@ class RoomDetailTableVC: UITableViewController {
         self.view.layoutIfNeeded()
         notificationSwitch.isOn = room.silent
         roomNameLabel.text = room.roomname
+        if room.courseID != nil {
+            SocketIOManager.sharedInstance.getCourseInfo(room.courseID!, loadType: .cacheElseNetwork, completion: { (course, error) in
+                self.courseNameLabel.text = course?.coursename ?? ""
+            })
+        }
+        
         roomPictureView.image = Design.defaultRoomImage
         founderAvatarImageView.layer.cornerRadius = founderAvatarImageView.frame.height/2
         founderAvatarImageView.layer.masksToBounds = true
@@ -86,9 +97,9 @@ class RoomDetailTableVC: UITableViewController {
     }
     
     func setupJoinOrQuitLabel() {
-        let realm = try! Realm()
-        let isJoinIn = realm.object(ofType: Room.self, forPrimaryKey: room.id)?.isJoinIn
-        if isJoinIn == true {
+//        let realm = try! Realm()
+//        let isJoinIn = realm.object(ofType: Room.self, forPrimaryKey: room.id)
+        if User.currentUser?.joinedRoom.index(of: room) != nil {
             quitOrJoinRoomLabel.text = "Quit room"
             quitOrJoinRoomLabel.textColor = Design.color.deleteButtonColor()
             userJoinedThisRoom = true
@@ -117,6 +128,13 @@ class RoomDetailTableVC: UITableViewController {
             } else {
                 popUpJoinRoomAlert()
             }
+        case 5: //Course
+//            self.performSegue(withIdentifier: "courseSegue", sender: self)
+            let sb = UIStoryboard(name: "User", bundle: nil)
+            let vc = sb.instantiateViewController(withIdentifier: "CourseDetailVC") as! CourseDetailVC
+            vc.courseId = room.courseID
+            self.navigationController?.pushViewController(vc, animated: true)
+
         default:
             break
         }
@@ -128,6 +146,12 @@ class RoomDetailTableVC: UITableViewController {
         case (0,0):
             return 66
         case (0,1):
+            if room.courseID != nil {
+                return 44
+            } else {
+                return 0
+            }
+        case (0,2):
             if room.founderID != nil {
                 return 44
             } else {
@@ -174,6 +198,18 @@ class RoomDetailTableVC: UITableViewController {
         return 20
     }
     
+    // MARK: - Navigation
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+//        if segue.identifier == "courseSegue" {
+//            let vc = segue.destination as! CourseDetailVC
+//            vc.courseId = room.courseID!
+//            
+//        }
+    }
+    
+    // MARK: - Button pressed
+    
     @IBAction func notificationSwitchChanged(_ sender: UISwitch) {
         sender.isEnabled = false
         let realm = try! Realm()
@@ -181,7 +217,8 @@ class RoomDetailTableVC: UITableViewController {
         hud.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
         hud.textLabel.text = "Loading"
         hud.show(in: self.view)
-        ServerConst.sharedInstance.silentRoom(room.id!, silent: sender.isOn, completion: { (success, error) in
+        
+        SocketIOManager.sharedInstance.silentRoom(room.id!, silent: sender.isOn) { (success, error) in
             sender.isEnabled = true
             print("finished")
             if success {
@@ -200,18 +237,12 @@ class RoomDetailTableVC: UITableViewController {
                     hud.dismiss()
                 }
             }
-        })
-    }
-    
-    /*
-    // MARK: - Navigation
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+        }
+        
     }
-    */
+
+    
     
     func cancelBtnPressed() {
         self.dismiss(animated: true, completion: nil)
@@ -223,7 +254,7 @@ class RoomDetailTableVC: UITableViewController {
             let hud = JGProgressHUD(style: .extraLight)
             hud?.textLabel.text = "Loading"
             hud?.show(in: self.navigationController?.view)
-            SocketIOManager.sharedInstance.quitRoom(self.room.id!, deleteRoom: false, completion: { (success, error) in
+            SocketIOManager.sharedInstance.quitRoom(self.room.id!, completion: { (success, error) in
                 print("quit room: \(success)")
                 if success {
                     if !self.viewFromPopUp {

@@ -24,8 +24,8 @@ class LoginLangChooseVC: UIViewController {
     
     @IBOutlet weak var langTVWidthConstraint: NSLayoutConstraint!
     
-    var language:[(String,Int)] = []
-    var choosedLang: [Int] = []
+    var language:[(key: String, name: String, displayName: String)] = []
+    var choosedLang: [String] = []
     
     var loadStatus = Constant.searchStatus.notSearching
     
@@ -76,28 +76,15 @@ class LoginLangChooseVC: UIViewController {
         loadStatus = .isSearching
         langTableView.reloadData()
         ServerConst.sharedInstance.getDefaultLanguage { (lang, error) in
-            if lang != nil {
+            if error == nil {
                 self.loadStatus = .receivedResult
-                self.language = self.sortLanguage(lang!)
+                self.language = lang
             } else {
                 self.loadStatus = .receivedError
             }
             self.langTableView.reloadData()
         }
     }
-
-    func sortLanguage(_ lang:[(String,Int)]) ->[(String, Int)] {
-        let englishIndex = lang.index { (lang) -> Bool in
-            return lang.1 == 0
-        }
-        var eliminateEnglishArr = lang
-        if englishIndex != nil { eliminateEnglishArr.remove(at: englishIndex!) }
-        
-        return eliminateEnglishArr.sorted { (a, b) -> Bool in
-            return a.1 < b.1
-        }
-    }
-    
     
     @IBAction func finishBtnPressed(_ sender: UIButton) {
         User.userLang = choosedLang
@@ -110,17 +97,17 @@ class LoginLangChooseVC: UIViewController {
         let hud = JGProgressHUD(style: .extraLight)
         hud?.textLabel.text = "Loading"
         hud?.show(in: self.view, animated: true)
-        ServerConst.sharedInstance.userChooseCourseAndLang(["lang":choosedLang, "course":courseIdArray]) { (success, error) in
+        
+        SocketIOManager.sharedInstance.joinCourse(courseIdArray, languages: choosedLang) { (success, error) in
             if success {
                 hud?.indicatorView = JGProgressHUDSuccessIndicatorView()
                 hud?.textLabel.text = "Success"
                 hud?.dismiss(animated: true)
                 self.delegate?.moveToVC(3)
-//                SocketIOManager.sharedInstance.syncUser()
+                //                SocketIOManager.sharedInstance.syncUser()
             } else {
-                //TODO: error
                 hud?.indicatorView = JGProgressHUDErrorIndicatorView()
-                hud?.textLabel.text = "Error, try again"
+                hud?.textLabel.text = error?.description ?? "Error, try again"
                 hud?.tapOutsideBlock = { (hu) in
                     hud?.dismiss()
                 }
@@ -128,7 +115,27 @@ class LoginLangChooseVC: UIViewController {
                     hud?.dismiss()
                 }
             }
+
         }
+        
+//        ServerConst.sharedInstance.userChooseCourseAndLang(["lang":choosedLang, "course":courseIdArray]) { (success, error) in
+//            if success {
+//                hud?.indicatorView = JGProgressHUDSuccessIndicatorView()
+//                hud?.textLabel.text = "Success"
+//                hud?.dismiss(animated: true)
+//                self.delegate?.moveToVC(3)
+////                SocketIOManager.sharedInstance.syncUser()
+//            } else {
+//                hud?.indicatorView = JGProgressHUDErrorIndicatorView()
+//                hud?.textLabel.text = "Error, try again"
+//                hud?.tapOutsideBlock = { (hu) in
+//                    hud?.dismiss()
+//                }
+//                hud?.tapOnHUDViewBlock = { (hu) in
+//                    hud?.dismiss()
+//                }
+//            }
+//        }
     }
     
     /*
@@ -164,8 +171,8 @@ extension LoginLangChooseVC: UITableViewDataSource, UITableViewDelegate {
             return statusCell
         case .receivedResult:
             let cell = tableView.dequeueReusableCell(withIdentifier: "LoginLangChooseTVCell", for: indexPath) as! LoginLangChooseTVCell
-            let cellChoosed = choosedLang.index(of: language[(indexPath as NSIndexPath).row].1) != nil
-            cell.configureCell(langText: language[indexPath.row].0, choosed: cellChoosed)
+            let cellChoosed = choosedLang.index(of: language[indexPath.row].key) != nil
+            cell.configureCell(langText: language[indexPath.row].displayName, choosed: cellChoosed)
             return cell
         default:
             let statusCell = tableView.dequeueReusableCell(withIdentifier: "LoadingTVCell", for: indexPath) as! LoadingTVCell
@@ -193,10 +200,10 @@ extension LoginLangChooseVC: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if loadStatus == .receivedResult {
-            if let index = choosedLang.index(of: language[(indexPath as NSIndexPath).row].1) {
+            if let index = choosedLang.index(of: language[indexPath.row].key) {
                 choosedLang.remove(at: index)
             } else {
-                choosedLang.append(language[(indexPath as NSIndexPath).row].1)
+                choosedLang.append(language[indexPath.row].key)
             }
             tableView.reloadRows(at: [indexPath], with: .middle)
         } else if loadStatus == .receivedError {
