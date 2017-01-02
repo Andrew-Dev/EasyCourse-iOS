@@ -42,18 +42,23 @@ class RoomsTVCell: UITableViewCell {
     }
     
     func configureCell(_ room:Room, lastMessage: Message?) {
-        roomProfilePicture.image = Design.defaultAvatarImage
         timeLabel.text = ""
         lastMessageLabel.text = ""
         
         if room.isToUser {
+            roomProfilePicture.image = Design.defaultAvatarImage
             let user = try! Realm().object(ofType: User.self, forPrimaryKey: room.id)
             roomNameLabel.text = user?.username ?? "User"
             if let userImgUrlStr = user?.profilePictureUrl {
                 let URL = Foundation.URL(string: userImgUrlStr)
-                self.roomProfilePicture.af_setImage(withURL: URL!, placeholderImage: nil, imageTransition: .crossDissolve(0.2), runImageTransitionIfCached: false, completion: nil)
+                self.roomProfilePicture.af_setImage(withURL: URL!, placeholderImage: Design.defaultAvatarImage, imageTransition: .crossDissolve(0.2), runImageTransitionIfCached: false, completion: nil)
             }
         } else {
+            roomProfilePicture.image = Design.defaultRoomImage
+            if room.avatarPictureUrl != nil {
+                let URL = Foundation.URL(string: room.avatarPictureUrl!)
+                self.roomProfilePicture.af_setImage(withURL: URL!, placeholderImage: Design.defaultRoomImage, imageTransition: .crossDissolve(0.2), runImageTransitionIfCached: false, completion: nil)
+            }
             roomNameLabel.text = room.roomname
         }
         

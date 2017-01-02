@@ -44,7 +44,10 @@ class MessageOutgoingTextCell: UITableViewCell {
         userMessageLabel.text = message.text
         
         if let avatarData = User.currentUser?.profilePicture {
-            self.userAvatarImageView.image = UIImage(data: avatarData as Data)
+            self.userAvatarImageView.image = UIImage(data: avatarData)
+        } else if let avatarUrl = User.currentUser?.profilePictureUrl {
+            let URL = Foundation.URL(string: avatarUrl)
+            self.userAvatarImageView.af_setImage(withURL: URL!, placeholderImage: nil, imageTransition: .crossDissolve(0.2), runImageTransitionIfCached: false, completion: nil)
         } else {
             self.userAvatarImageView.image = Design.defaultAvatarImage
         }

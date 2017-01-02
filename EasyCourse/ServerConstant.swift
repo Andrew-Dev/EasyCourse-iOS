@@ -371,7 +371,7 @@ class ServerConst {
     func saveDeviceTokenForUser(_ completion: @escaping (_ success:Bool, _ error:Error?) -> ()) {
         if User.token == nil || UserSetting.userDeviceToken == nil { return completion(false, nil) }
         
-        let params = ["deviceToken":UserSetting.userDeviceToken!, "deviceType": 0] as Parameters
+        let params = ["deviceToken":UserSetting.userDeviceToken!, "deviceType": "ios"] as Parameters
         let apiUrl = URL(string: "\(Constant.baseURL)/installation")
         
         Alamofire.request(apiUrl!, method: .post, parameters: params, encoding: JSONEncoding.default, headers: ["auth":User.token!]).response { (response) in

@@ -27,6 +27,8 @@ class Room: Object {
     let memberCounts = RealmOptional<Int>()
     dynamic var memberCountsDescription:String? = nil
     dynamic var language:String? = nil
+    dynamic var avatarPictureUrl:String? = nil
+
     
     //User built room
     dynamic var founderID:String? = nil
@@ -61,6 +63,7 @@ class Room: Object {
         if let id = data["_id"] as? String {
             self.id = id
             self.roomname = data["name"] as? String
+            self.avatarPictureUrl = data["avatarPictureUrl"] as? String
             self.memberCounts.value = data["memberCounts"] as? Int
             self.courseID = data["course"] as? String
             self.university = data["university"] as? String
@@ -77,7 +80,7 @@ class Room: Object {
     
     internal class func createOrUpdateRoomWithData(data:NSDictionary, isToUser: Bool) -> Room? {
         if let id = data["_id"] as? String {
-            print("room data: \(data)")
+//            print("room data: \(data)")
             let realm = try! Realm()
             var room = realm.object(ofType: Room.self, forPrimaryKey: id)
             if room == nil {
@@ -90,6 +93,9 @@ class Room: Object {
             try! realm.write {
                 if let name = data["name"] as? String {
                     room!.roomname = name
+                }
+                if let avatarPictureUrl = data["avatarPictureUrl"] as? String {
+                    room!.avatarPictureUrl = avatarPictureUrl
                 }
                 if let memberCounts = data["memberCounts"] as? Int {
                     room!.memberCounts.value = memberCounts

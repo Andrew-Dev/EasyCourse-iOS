@@ -271,6 +271,13 @@ class User: Object {
         return courseIndex == nil ? false : true
     }
     
+    func hasJoinedRoom(_ roomId: String) -> Bool {
+        let roomIndex = self.joinedRoom.index { (userroom) -> Bool in
+            return userroom.id == roomId
+        }
+        return roomIndex == nil ? false : true
+    }
+    
     //=== remove all
 //    
 //    func initUserFromServerWithData(_ data:NSDictionary) -> User? {

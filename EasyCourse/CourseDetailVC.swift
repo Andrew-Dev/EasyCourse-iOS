@@ -139,7 +139,7 @@ extension CourseDetailVC:UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
         case 1:
-            return "Rooms"
+            return rooms.count == 0 ? nil : "Rooms"
         default:
             return nil
         }

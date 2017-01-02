@@ -13,7 +13,6 @@
 		F70A718C1DE60440000E502F /* UserRoomDetailTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F70A718B1DE60440000E502F /* UserRoomDetailTableVC.swift */; };
 		F72F22C51DD95A39009E7C6C /* NetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F72F22C41DD95A39009E7C6C /* NetworkError.swift */; };
 		F72F22CA1DDBA19B009E7C6C /* RoomDetailClassmatesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F72F22C81DDBA19B009E7C6C /* RoomDetailClassmatesVC.swift */; };
-		F72F22CB1DDBA19B009E7C6C /* RoomDetailSubgroupsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F72F22C91DDBA19B009E7C6C /* RoomDetailSubgroupsVC.swift */; };
 		F72F22D21DE0C0C6009E7C6C /* MessageAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = F72F22D11DE0C0C6009E7C6C /* MessageAlert.swift */; };
 		F7364C7D1DA6E0EF007A967F /* LoadingTVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7364C7B1DA6E0EF007A967F /* LoadingTVCell.swift */; };
 		F7364C7E1DA6E0EF007A967F /* LoadingTVCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F7364C7C1DA6E0EF007A967F /* LoadingTVCell.xib */; };
@@ -87,6 +86,10 @@
 		F7CE24471DCE98780004957E /* RoomsDialogAccGroupVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CE24461DCE98780004957E /* RoomsDialogAccGroupVC.swift */; };
 		F7CFB8CD1E14DC94000C5491 /* RoomsAddRoomBelongingPickerTVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CFB8CC1E14DC94000C5491 /* RoomsAddRoomBelongingPickerTVCell.swift */; };
 		F7CFB8CF1E14DF90000C5491 /* RoomsAddRoomBelongingTVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CFB8CE1E14DF90000C5491 /* RoomsAddRoomBelongingTVCell.swift */; };
+		F7CFB8D11E16CC8B000C5491 /* RoomDetailClassmatesTVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CFB8D01E16CC8B000C5491 /* RoomDetailClassmatesTVCell.swift */; };
+		F7CFB8D61E171295000C5491 /* RoomListTVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CFB8D41E171295000C5491 /* RoomListTVCell.swift */; };
+		F7CFB8D71E171295000C5491 /* RoomListTVCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F7CFB8D51E171295000C5491 /* RoomListTVCell.xib */; };
+		F7CFB8D91E1715CB000C5491 /* RoomDetailShareRoomVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CFB8D81E1715CB000C5491 /* RoomDetailShareRoomVC.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -98,7 +101,6 @@
 		F70A718B1DE60440000E502F /* UserRoomDetailTableVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserRoomDetailTableVC.swift; sourceTree = "<group>"; };
 		F72F22C41DD95A39009E7C6C /* NetworkError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkError.swift; sourceTree = "<group>"; };
 		F72F22C81DDBA19B009E7C6C /* RoomDetailClassmatesVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomDetailClassmatesVC.swift; sourceTree = "<group>"; };
-		F72F22C91DDBA19B009E7C6C /* RoomDetailSubgroupsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomDetailSubgroupsVC.swift; sourceTree = "<group>"; };
 		F72F22D11DE0C0C6009E7C6C /* MessageAlert.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageAlert.swift; sourceTree = "<group>"; };
 		F7364C7B1DA6E0EF007A967F /* LoadingTVCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingTVCell.swift; sourceTree = "<group>"; };
 		F7364C7C1DA6E0EF007A967F /* LoadingTVCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LoadingTVCell.xib; sourceTree = "<group>"; };
@@ -175,6 +177,10 @@
 		F7CE24461DCE98780004957E /* RoomsDialogAccGroupVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomsDialogAccGroupVC.swift; sourceTree = "<group>"; };
 		F7CFB8CC1E14DC94000C5491 /* RoomsAddRoomBelongingPickerTVCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomsAddRoomBelongingPickerTVCell.swift; sourceTree = "<group>"; };
 		F7CFB8CE1E14DF90000C5491 /* RoomsAddRoomBelongingTVCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomsAddRoomBelongingTVCell.swift; sourceTree = "<group>"; };
+		F7CFB8D01E16CC8B000C5491 /* RoomDetailClassmatesTVCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomDetailClassmatesTVCell.swift; sourceTree = "<group>"; };
+		F7CFB8D41E171295000C5491 /* RoomListTVCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomListTVCell.swift; sourceTree = "<group>"; };
+		F7CFB8D51E171295000C5491 /* RoomListTVCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RoomListTVCell.xib; sourceTree = "<group>"; };
+		F7CFB8D81E1715CB000C5491 /* RoomDetailShareRoomVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomDetailShareRoomVC.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -211,7 +217,8 @@
 			children = (
 				F7A5564D1D9D7E43003E258D /* RoomDetailTableVC.swift */,
 				F72F22C81DDBA19B009E7C6C /* RoomDetailClassmatesVC.swift */,
-				F72F22C91DDBA19B009E7C6C /* RoomDetailSubgroupsVC.swift */,
+				F7CFB8D01E16CC8B000C5491 /* RoomDetailClassmatesTVCell.swift */,
+				F7CFB8D81E1715CB000C5491 /* RoomDetailShareRoomVC.swift */,
 				F70A718B1DE60440000E502F /* UserRoomDetailTableVC.swift */,
 				F7ADFB371D8CEFFF00AD53C3 /* UserDetailTableVC.swift */,
 			);
@@ -229,6 +236,7 @@
 		F72F22D01DE0BCF7009E7C6C /* UI Components */ = {
 			isa = PBXGroup;
 			children = (
+				F7CFB8D31E17124A000C5491 /* CommonCell */,
 				498AAFBC1DB70C8D00972AB2 /* ImagePresenterViewController.swift */,
 				F76A9BFE1D86E22C0065C25C /* PopAnimator.swift */,
 				F7364C7F1DA7EE3C007A967F /* InfiniteScrollActivityView.swift */,
@@ -472,6 +480,15 @@
 			name = MessageBubbleCells;
 			sourceTree = "<group>";
 		};
+		F7CFB8D31E17124A000C5491 /* CommonCell */ = {
+			isa = PBXGroup;
+			children = (
+				F7CFB8D41E171295000C5491 /* RoomListTVCell.swift */,
+				F7CFB8D51E171295000C5491 /* RoomListTVCell.xib */,
+			);
+			name = CommonCell;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -556,6 +573,7 @@
 				F76A9BA81D861E990065C25C /* Login.storyboard in Resources */,
 				F76A9BD31D8622680065C25C /* LoginUnivChooseCell.xib in Resources */,
 				F76A9BDF1D86236D0065C25C /* LoginLangChooseTVCell.xib in Resources */,
+				F7CFB8D71E171295000C5491 /* RoomListTVCell.xib in Resources */,
 				4945155F1DB71A6A003508CA /* loading.png in Resources */,
 				F76A9B911D85FF3B0065C25C /* Main.storyboard in Resources */,
 				F76A9BA11D861D580065C25C /* Room.storyboard in Resources */,
@@ -627,6 +645,7 @@
 				F72F22D21DE0C0C6009E7C6C /* MessageAlert.swift in Sources */,
 				F7A5564C1D9B3E6A003E258D /* UserSetting.swift in Sources */,
 				F72F22CA1DDBA19B009E7C6C /* RoomDetailClassmatesVC.swift in Sources */,
+				F7CFB8D11E16CC8B000C5491 /* RoomDetailClassmatesTVCell.swift in Sources */,
 				F76A9BFF1D86E22C0065C25C /* PopAnimator.swift in Sources */,
 				F7CE24431DCE8E7B0004957E /* MessageOutgoingGroupCell.swift in Sources */,
 				F76A9BE51D8625FF0065C25C /* RoomsDialogVC.swift in Sources */,
@@ -635,6 +654,7 @@
 				F76A9BC31D8621D80065C25C /* LoginUnivComponentVC.swift in Sources */,
 				F76A9BE31D8625AC0065C25C /* RoomsVC.swift in Sources */,
 				F76A9BD21D8622680065C25C /* LoginUnivChooseCell.swift in Sources */,
+				F7CFB8D61E171295000C5491 /* RoomListTVCell.swift in Sources */,
 				F76A9BF01D8626BD0065C25C /* MessageIncomingImageCell.swift in Sources */,
 				F76A9BEE1D8626A20065C25C /* MessageOutgoingTextCell.swift in Sources */,
 				F76A9BFB1D8628C80065C25C /* Reachability.swift in Sources */,
@@ -642,6 +662,7 @@
 				F7CE24471DCE98780004957E /* RoomsDialogAccGroupVC.swift in Sources */,
 				F76A9BEC1D8626890065C25C /* MessageOutgoingImageCell.swift in Sources */,
 				F7ADFB341D8BA2DF00AD53C3 /* UserEditProfileTableVC.swift in Sources */,
+				F7CFB8D91E1715CB000C5491 /* RoomDetailShareRoomVC.swift in Sources */,
 				F76A9BEA1D86266E0065C25C /* MessageIncomingTextCell.swift in Sources */,
 				F7364C7D1DA6E0EF007A967F /* LoadingTVCell.swift in Sources */,
 				F7CFB8CD1E14DC94000C5491 /* RoomsAddRoomBelongingPickerTVCell.swift in Sources */,
@@ -651,7 +672,6 @@
 				F76A9BBF1D86219E0065C25C /* LoginVC.swift in Sources */,
 				F72F22C51DD95A39009E7C6C /* NetworkError.swift in Sources */,
 				F7ADFB2A1D889D8600AD53C3 /* UserRecruiteVC.swift in Sources */,
-				F72F22CB1DDBA19B009E7C6C /* RoomDetailSubgroupsVC.swift in Sources */,
 				F76A9BB51D8620700065C25C /* Course.swift in Sources */,
 				F76A9BD61D8622AB0065C25C /* LoginCourseListCVCell.swift in Sources */,
 				F76A9BBB1D8620E50065C25C /* Constant.swift in Sources */,

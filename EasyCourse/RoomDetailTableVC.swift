@@ -74,10 +74,6 @@ class RoomDetailTableVC: UITableViewController {
         }
 
         setupJoinOrQuitLabel()
-        
-        SocketIOManager.sharedInstance.getRoomMembers(room.id!, limit: 20, skip: 0, refresh: true) { (room, err) in
-            print("called: \(err)")
-        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -99,7 +95,8 @@ class RoomDetailTableVC: UITableViewController {
     func setupJoinOrQuitLabel() {
 //        let realm = try! Realm()
 //        let isJoinIn = realm.object(ofType: Room.self, forPrimaryKey: room.id)
-        if User.currentUser?.joinedRoom.index(of: room) != nil {
+//        print("room: \(room)")
+        if User.currentUser?.hasJoinedRoom(room.id!) != nil {
             quitOrJoinRoomLabel.text = "Quit room"
             quitOrJoinRoomLabel.textColor = Design.color.deleteButtonColor()
             userJoinedThisRoom = true
@@ -116,10 +113,6 @@ class RoomDetailTableVC: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
         let cell = tableView.cellForRow(at: indexPath)
         switch cell!.tag {
-        case 1: //Subgroup Cell
-            if room.isSystem.value! {
-                self.performSegue(withIdentifier: "subgroupsSegue", sender: self)
-            }
         case 2: //Classmates Cell
             self.performSegue(withIdentifier: "classmatesSegue", sender: self)
         case 3: //Join or quit room
@@ -128,6 +121,8 @@ class RoomDetailTableVC: UITableViewController {
             } else {
                 popUpJoinRoomAlert()
             }
+        case 4:
+            self.performSegue(withIdentifier: "gotoShareRoom", sender: self)
         case 5: //Course
 //            self.performSegue(withIdentifier: "courseSegue", sender: self)
             let sb = UIStoryboard(name: "User", bundle: nil)
@@ -155,10 +150,6 @@ class RoomDetailTableVC: UITableViewController {
             if room.founderID != nil {
                 return 44
             } else {
-                return 0
-            }
-        case (1,1):
-            if room.isSystem.value != true  {
                 return 0
             }
         case (2,0):
@@ -201,11 +192,15 @@ class RoomDetailTableVC: UITableViewController {
     // MARK: - Navigation
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-//        if segue.identifier == "courseSegue" {
-//            let vc = segue.destination as! CourseDetailVC
-//            vc.courseId = room.courseID!
-//            
-//        }
+        if segue.identifier == "classmatesSegue" {
+            let vc = segue.destination as! RoomDetailClassmatesVC
+            vc.roomId = room.id
+            
+        } else if segue.identifier == "gotoShareRoom" {
+            let navController = segue.destination as! UINavigationController
+            let vc = navController.viewControllers[0] as! RoomDetailShareRoomVC
+            vc.sendRoomId = room.id
+        }
     }
     
     // MARK: - Button pressed
@@ -259,7 +254,7 @@ class RoomDetailTableVC: UITableViewController {
                 if success {
                     if !self.viewFromPopUp {
                         hud?.dismiss()
-                        self.navigationController?.popToRootViewController(animated: true)
+                        _ = self.navigationController?.popToRootViewController(animated: true)
                     } else {
                         self.dismiss(animated: true, completion: { 
                             //

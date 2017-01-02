@@ -77,19 +77,6 @@ class Message: Object {
         id = UUID().uuidString
     }
     
-//    internal func cacheSenderUserInfo(_ data:NSDictionary) {
-//        print("start cache")
-//        if let senderId = data["sender"] as? String,
-//            let username = data["senderName"] as? String,
-//            let profilePictureUrl = data["avatarUrl"] as? String {
-//            
-//            let userData = ["id":senderId, "username":username, "profilePictureUrl":profilePictureUrl]
-//            userCache.add(senderId, object: JSON.Dictionary(userData))
-//            
-//            print("user cache added:\(userData)")
-//        }
-//    }
-    
     internal class func saveSenderUserInfo(_ data:NSDictionary) {
 //        print("start cache")
         if let senderId = data["sender"] as? String,

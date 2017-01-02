@@ -60,9 +60,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func userDidLogout() {
-        let vc = UIStoryboard(name: "Login", bundle: nil).instantiateInitialViewController()! as UIViewController
+        let storyboard = UIStoryboard(name: "Login", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "LoginVC") as! LoginVC
         window?.rootViewController?.present(vc, animated: true, completion: {
             self.window?.rootViewController = vc
+            self.window?.makeKeyAndVisible()
         })
         
     }

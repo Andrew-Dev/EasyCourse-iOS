@@ -39,8 +39,13 @@ class UserTableVC: UITableViewController {
             versionLabel.text = nil
         }
         
-        loadUserInfo()
+        
         NotificationCenter.default.addObserver(self, selector: #selector(self.loadUserInfo), name: Constant.NotificationKey.SyncUser, object: nil)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        loadUserInfo()
     }
     
     deinit {
@@ -49,7 +54,10 @@ class UserTableVC: UITableViewController {
     
     func loadUserInfo() {
         if let avatarData = User.currentUser?.profilePicture {
-            self.avatarImageView.image = UIImage(data: avatarData as Data)
+            self.avatarImageView.image = UIImage(data: avatarData)
+        } else if let avatarUrl = User.currentUser?.profilePictureUrl {
+            let URL = Foundation.URL(string: avatarUrl)
+            self.avatarImageView.af_setImage(withURL: URL!, placeholderImage: nil, imageTransition: .crossDissolve(0.2), runImageTransitionIfCached: false, completion: nil)
         } else {
             self.avatarImageView.image = Design.defaultAvatarImage
         }

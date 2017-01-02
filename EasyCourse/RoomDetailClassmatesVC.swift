@@ -15,10 +15,41 @@ class RoomDetailClassmatesVC: UIViewController {
     var roomId:String!
     var room:Room!
     
+    var userArray:[User] = []
+    
+    //Load more
+    var pageOffset = 20
+    var page = -1
+    var noMoreData = false
+    var isMoreDataLoading = false
+    var loadingMoreView: InfiniteScrollActivityView?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         classmatesTableView.delegate = self
         classmatesTableView.dataSource = self
+        classmatesTableView.tableFooterView = UIView()
+        
+        let frame = CGRect(x: 0, y: classmatesTableView.contentSize.height, width: classmatesTableView.bounds.size.width, height: InfiniteScrollActivityView.defaultHeight)
+        loadingMoreView = InfiniteScrollActivityView(frame: frame)
+        loadingMoreView!.isHidden = true
+        classmatesTableView.addSubview(loadingMoreView!)
+        
+        var insets = classmatesTableView.contentInset;
+        insets.bottom += InfiniteScrollActivityView.defaultHeight;
+        classmatesTableView.contentInset = insets
+
+        
+        SocketIOManager.sharedInstance.getRoomMembers(roomId, limit: pageOffset, skip: (page+1)*pageOffset, refresh: true) { (users, error) in
+            if error != nil {
+                
+            } else {
+                self.page += 1
+                self.noMoreData = users.count < self.pageOffset
+                self.userArray = users
+                self.classmatesTableView.reloadData()
+            }
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -57,14 +88,8 @@ class RoomDetailClassmatesVC: UIViewController {
 extension RoomDetailClassmatesVC: UITableViewDataSource, UITableViewDelegate {
     // MARK: - Table view data source
     
-    func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 1
-    }
-    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        return 1
+        return userArray.count
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -73,11 +98,44 @@ extension RoomDetailClassmatesVC: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: "userCell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "RoomDetailClassmatesTVCell", for: indexPath) as! RoomDetailClassmatesTVCell
         
-        let label: UILabel = cell.viewWithTag(1) as! UILabel
-        label.text = "User"
+        cell.configureCell(user: userArray[indexPath.row])
         
         return cell
     }
+    
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        self.view.endEditing(true)
+        if (!noMoreData && !isMoreDataLoading) {
+            // ... Code to load more results ...
+            let scrollViewContentHeight = classmatesTableView.contentSize.height
+            let scrollOffsetThreshold = scrollViewContentHeight - classmatesTableView.bounds.size.height
+            
+            // When the user has scrolled past the threshold, start requesting
+            if(scrollView.contentOffset.y > scrollOffsetThreshold && classmatesTableView.isDragging) {
+                isMoreDataLoading = true
+                let frame = CGRect(x:0, y:classmatesTableView.contentSize.height, width:classmatesTableView.bounds.size.width, height:InfiniteScrollActivityView.defaultHeight)
+                loadingMoreView?.frame = frame
+                loadingMoreView!.startAnimating()
+                
+                // ... Code to load more results ...
+                
+                SocketIOManager.sharedInstance.getRoomMembers(roomId, limit: pageOffset, skip: (page+1)*pageOffset, refresh: true, completion: { (users, error) in
+                    if error != nil {
+                        
+                    } else {
+                        self.page += 1
+                        self.noMoreData = users.count < self.pageOffset
+                        self.userArray += users
+                    }
+                    self.isMoreDataLoading = false
+                    self.loadingMoreView?.stopAnimating()
+                    self.classmatesTableView.reloadData()
+                })
+            }
+        }
+    }
+
 }

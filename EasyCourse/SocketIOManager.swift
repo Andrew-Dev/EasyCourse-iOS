@@ -208,47 +208,37 @@ class SocketIOManager: NSObject {
         }
     }
     
-    func getRoomMembers(_ roomId:String, limit:Int, skip:Int, refresh:Bool, completion: @escaping (_ userList:[User]?, _ error:NetworkError?) -> ()) {
-        print("get room inf: \(roomId)")
+    func getRoomMembers(_ roomId:String, limit:Int, skip:Int, refresh:Bool, completion: @escaping (_ userList:[User], _ error:NetworkError?) -> ()) {
+        print("get room id: \(roomId)")
         
         if !refresh {
             //TODO
         }
         
         
-        let params = ["roomId":roomId]
+        let params = ["roomId":roomId, "limit":limit, "skip":skip] as [String : Any]
+        
         socket.emitWithAck("getRoomMembers", params).timingOut(after: timeoutSec) { (data) in
+            print("get room members: \(data)")
             if let err = self.checkAckError(data, onlyCheckNetwork: false) {
                 print("get room info error")
-                return completion(nil, err)
-            }
-            
-            guard let room = try! Realm().object(ofType: Room.self, forPrimaryKey: roomId) else {
-                return completion(nil, NetworkError.LocalError(reason: "No room in local"))
+                return completion([], err)
             }
             
             let json = JSON(data)
             if let userArray = json[0]["users"].arrayObject {
                 var userList:[User] = []
                 userArray.forEach({ (userData) in
-//                    print("user Data: \(userData)")
                     if let userDataDic = userData as? NSDictionary {
                         if let user = User.createOrUpdateUserWithData(userDataDic) {
                             userList.append(user)
-                            if room.memberList.index(of: user) == nil {
-                                try! Realm().write {
-                                    room.memberList.append(user)
-                                }
-                            } else {
-                                print("existed")
-                            }
                         }
                     }
                 })
                 return completion(userList, nil)
             } else {
                 print("error: \(json[0]["users"].error?.localizedDescription)")
-                return completion(nil, NetworkError.ParseJSONError)
+                return completion([], NetworkError.ParseJSONError)
             }
             
         }
@@ -568,7 +558,7 @@ class SocketIOManager: NSObject {
             User.currentUser = User.createOrUpdateUserWithData(userData)
             
             NotificationCenter.default.post(name: Constant.NotificationKey.SyncUser, object: nil)
-            print("syncUser received\(data)")
+            print("syncUser received")
             completion(true, nil)
         }
     }
@@ -706,8 +696,7 @@ class SocketIOManager: NSObject {
                         }
                     }
                 } else {
-                    print("message obj: \(object)")
-                    print("new message [single]")
+                    print("message [single]: \(object)")
                     let newMessage = Message()
                     newMessage.initMessage(object as! NSDictionary)
                     Message.saveSenderUserInfo(object as! NSDictionary)
@@ -748,6 +737,16 @@ class SocketIOManager: NSObject {
         
         socket.on("error") { (data, ack) in
             print("error here \(data) \(self.socket.status.rawValue)")
+            let json = JSON(data)
+            print("json: \(json)")
+            if json[0].string == "auth" {
+                //TODO: log out
+                User.currentUser = nil
+                User.token = nil
+                RealmTools.setDefaultRealmForUser(nil)
+                NotificationCenter.default.post(name: Constant.NotificationKey.UserDidLogout, object: nil)
+                self.closeConnection()
+            }
             MessageAlert.sharedInstance.setupConnectionStatus()
         }
         

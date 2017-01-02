@@ -52,7 +52,7 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
             if room != nil {
                 return room!
             } else {
-                self.navigationController?.popToRootViewController(animated: true)
+                _ = self.navigationController?.popToRootViewController(animated: true)
                 return Room()
             }
         }
@@ -185,7 +185,7 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if try! Realm().object(ofType: Room.self, forPrimaryKey: localRoomId) == nil {
-            navigationController?.popToRootViewController(animated: true)
+            _ = navigationController?.popToRootViewController(animated: true)
         }
     }
     
@@ -382,7 +382,7 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
             self.scrollToBottom(true)
             for asset in assets {
                 asset.fetchOriginalImageWithCompleteBlock({ (image, info) in
-                    let imageData = UIImageJPEGRepresentation(image!, 0)
+//                    let imageData = UIImageJPEGRepresentation(image!, 0)
                     
                     let message = Message()
                     message.initForCurrentUser(nil, image: image, sharedRoom: nil, toRoom: self.localRoom.id!, isToUser: self.localRoom.isToUser)
@@ -469,7 +469,7 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     func gobackToLastView(_ notification: Notification) {
         if let deletedRoomID = notification.object as? String {
             if deletedRoomID == localRoom.id {
-                self.navigationController?.popViewController(animated: true)
+                _ = self.navigationController?.popViewController(animated: true)
             }
         }
     }
