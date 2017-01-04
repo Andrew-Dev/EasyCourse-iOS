@@ -72,9 +72,9 @@ class UserCoursesTVCell: UITableViewCell {
             })
             
         } else {
-            print("click join \(User.userLang) = \(cellCourse!.id)")
+            print("click join \(User.currentUser?.userLang()) = \(cellCourse!.id)")
             
-            SocketIOManager.sharedInstance.joinCourse([cellCourse!.id!], languages: User.userLang) { (success, error) in
+            SocketIOManager.sharedInstance.joinCourse([cellCourse!.id!], languages: User.currentUser!.userLang()) { (success, error) in
                
                 
             }

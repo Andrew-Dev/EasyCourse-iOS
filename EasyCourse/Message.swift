@@ -38,10 +38,17 @@ class Message: Object {
     func initMessage(_ data:NSDictionary) {
         if let id = data["_id"] as? String {
             self.id = id
-            self.senderId = data["sender"] as? String
+            if let sender = data["sender"] as? NSDictionary {
+                self.senderId = sender["_id"] as? String
+            }
+            
             self.text = data["text"] as? String
             self.imageUrl = data["imageUrl"] as? String
-            self.sharedRoom = data["sharedRoom"] as? String
+            if let sharedRoomData = data["sharedRoom"] as? NSDictionary,
+                let sharedRoomId = sharedRoomData["_id"] as? String {
+                self.sharedRoom = sharedRoomId
+                _ = Room.createOrUpdateRoomWithData(data: sharedRoomData, isToUser: false)
+            }
             if let toRoom = data["toRoom"] as? String {
                 self.toRoom = toRoom
                 self.isToUser = false
@@ -79,15 +86,16 @@ class Message: Object {
     
     internal class func saveSenderUserInfo(_ data:NSDictionary) {
 //        print("start cache")
-        if let senderId = data["sender"] as? String,
-            let username = data["senderName"] as? String {
-            
+        if let sender = data["sender"] as? NSDictionary,
+            let senderId = sender["_id"] as? String {
             let realm = try! Realm()
             if let dbUser = realm.object(ofType: User.self, forPrimaryKey: senderId) {
                 print("ready to update user")
                 try! realm.write {
                     print("updating user")
-                    dbUser.username = username
+                    if let username = sender["displayName"] as? String {
+                        dbUser.username = username
+                    }
                     if let profilePictureUrl = data["avatarUrl"] as? String {
                         dbUser.profilePictureUrl = profilePictureUrl
                     }
@@ -95,7 +103,9 @@ class Message: Object {
             } else {
                 let user = User()
                 user.id = senderId
-                user.username = username
+                if let username = sender["displayName"] as? String {
+                    user.username = username
+                }
                 if let profilePictureUrl = data["avatarUrl"] as? String {
                     user.profilePictureUrl = profilePictureUrl
                 }
@@ -111,9 +121,23 @@ class Message: Object {
     func saveToDatabase() {
         
         let realm = try! Realm()
-        let roomID = self.isToUser ? self.senderId : self.toRoom
+        var roomID = self.isToUser ? self.senderId : self.toRoom
+        if self.isToUser {
+            if self.senderId == User.currentUser?.id {
+                roomID = self.toRoom
+            } else {
+                roomID = self.senderId
+            }
+        } else {
+            roomID = self.toRoom
+        }
+        print("save the room: \(roomID) + \(self)")
         if let room = realm.object(ofType: Room.self, forPrimaryKey: roomID) {
-            
+            if User.currentUser?.joinedRoom.index(of: room) == nil {
+                try! realm.write {
+                    User.currentUser?.joinedRoom.append(room)
+                }
+            }
             if realm.object(ofType: Message.self, forPrimaryKey: self.id) == nil {
                 print("save msg to db: \(self.text))")
                 try! realm.write {
@@ -127,12 +151,12 @@ class Message: Object {
             }
         } else {
             let room = Room()
-            room.id = self.toRoom
+            room.id = roomID
             room.messageList.append(self)
             room.unread += 1
             room.isToUser = true
             try! realm.write {
-                realm.add(room, update: true)
+                User.currentUser?.joinedRoom.append(room)
             }
         }
     }

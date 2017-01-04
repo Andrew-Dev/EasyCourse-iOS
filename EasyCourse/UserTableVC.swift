@@ -27,10 +27,10 @@ class UserTableVC: UITableViewController {
         self.view.layoutIfNeeded()
         avatarImageView.layer.cornerRadius = avatarImageView.frame.width/2
         avatarImageView.layer.masksToBounds = true
-        logoutBtn.layer.cornerRadius = logoutBtn.frame.height/2
-        logoutBtn.layer.masksToBounds = true
-        logoutBtnWidthConstraint.constant = UIScreen.main.bounds.width * 0.8
         
+        logoutBtnWidthConstraint.constant = UIScreen.main.bounds.width * 0.8
+        logoutBtn.layer.cornerRadius = logoutBtnWidthConstraint.constant/8/2
+        logoutBtn.layer.masksToBounds = true
         
         let dictionary = Bundle.main.infoDictionary!
         if let version = dictionary["CFBundleShortVersionString"] as? String, let build = dictionary["CFBundleVersion"] as? String {

@@ -58,7 +58,6 @@ class Course: Object {
     
     //Updating object property
     func mapCourseWithData(_ data:NSDictionary) {
-        print("course data; \(data)")
         try! Realm().write {
             if let id = data["_id"] as? String, self.id == nil {
                 self.id = id

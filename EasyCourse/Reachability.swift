@@ -9,7 +9,7 @@
 import SystemConfiguration
 
 open class Reachability {
-    class func isConnectedToNetwork() -> Bool {
+//    class func isConnectedToNetwork() -> Bool {
 //        var zeroAddress = sockaddr_in()
 //        zeroAddress.sin_len = UInt8(MemoryLayout.size(ofValue: zeroAddress))
 //        zeroAddress.sin_family = sa_family_t(AF_INET)
@@ -23,6 +23,6 @@ open class Reachability {
 //        let isReachable = (flags.rawValue & UInt32(kSCNetworkFlagsReachable)) != 0
 //        let needsConnection = (flags.rawValue & UInt32(kSCNetworkFlagsConnectionRequired)) != 0
 //        return (isReachable && !needsConnection)
-        return true
-    }
+//        return true
+//    }
 }

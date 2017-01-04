@@ -26,8 +26,9 @@ class MessageIncomingTextCell: UITableViewCell {
     @IBOutlet weak var messageBubbleView: UIView!
     @IBOutlet weak var bubbleMaxWidthConstraint: NSLayoutConstraint!
     
-    var delegate:cellTableviewProtocol?
+    var cellDelegate: cellTableviewProtocol?
     var message:Message?
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         self.layoutIfNeeded()
@@ -35,7 +36,7 @@ class MessageIncomingTextCell: UITableViewCell {
         messageBubbleView.layer.masksToBounds = true
         userAvatarImageView.layer.cornerRadius = userAvatarImageView.frame.size.width/2
         userAvatarImageView.layer.masksToBounds = true
-        bubbleMaxWidthConstraint.constant = UIScreen.main.bounds.width * 0.6
+        bubbleMaxWidthConstraint.constant = UIScreen.main.bounds.width * 0.8
         
         let tapImage = UITapGestureRecognizer(target: self, action: #selector(self.tapUserAvatar))
         userAvatarImageView.addGestureRecognizer(tapImage)
@@ -79,8 +80,7 @@ class MessageIncomingTextCell: UITableViewCell {
     }
     
     func tapUserAvatar() {
-        print("tapped")
-        delegate?.displayViews!((message?.senderId)!)
+        cellDelegate?.displayViews!((message?.senderId)!)
     }
     
 }

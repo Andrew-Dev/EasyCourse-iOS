@@ -31,7 +31,7 @@ class MessageOutgoingTextCell: UITableViewCell {
         messageBubbleView.layer.masksToBounds = true
         userAvatarImageView.layer.cornerRadius = userAvatarImageView.frame.size.width/2
         userAvatarImageView.layer.masksToBounds = true
-        bubbleMaxWidthConstraint.constant = UIScreen.main.bounds.width * 0.6
+        bubbleMaxWidthConstraint.constant = UIScreen.main.bounds.width * 0.8
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {

@@ -55,7 +55,7 @@ class CourseDetailSubroomCell: UITableViewCell {
             founderNameLabel.text = "Official"
         } else if room.founderID != nil {
             founderNameLabel.text = ""
-            SocketIOManager.sharedInstance.getUserInfo(room.founderID!, refresh: false, completion: { (user, error) in
+            SocketIOManager.sharedInstance.getUserInfo(room.founderID!, loadType: .cacheElseNetwork, completion: { (user, error) in
                 if user != nil {
                     self.founderNameLabel.text = user?.username ?? ""
                     if user?.profilePictureUrl != nil {

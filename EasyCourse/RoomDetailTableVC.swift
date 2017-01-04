@@ -50,7 +50,7 @@ class RoomDetailTableVC: UITableViewController {
         founderAvatarImageView.layer.cornerRadius = founderAvatarImageView.frame.height/2
         founderAvatarImageView.layer.masksToBounds = true
         if room.founderID != nil {
-            SocketIOManager.sharedInstance.getUserInfo(room.founderID!, refresh: false, completion: { (user, error) in
+            SocketIOManager.sharedInstance.getUserInfo(room.founderID!, loadType: .cacheElseNetwork, completion: { (user, error) in
                 if user != nil {
                     self.founderNameLabel.isHidden = false
                     self.founderNameLabel.text = user?.username
@@ -96,13 +96,13 @@ class RoomDetailTableVC: UITableViewController {
 //        let realm = try! Realm()
 //        let isJoinIn = realm.object(ofType: Room.self, forPrimaryKey: room.id)
 //        print("room: \(room)")
-        if User.currentUser?.hasJoinedRoom(room.id!) != nil {
+        if User.currentUser!.hasJoinedRoom(room.id!) {
             quitOrJoinRoomLabel.text = "Quit room"
             quitOrJoinRoomLabel.textColor = Design.color.deleteButtonColor()
             userJoinedThisRoom = true
         } else {
             quitOrJoinRoomLabel.text = "Join room"
-            quitOrJoinRoomLabel.textColor = Design.color.lightBlueMalibu()
+            quitOrJoinRoomLabel.textColor = Design.color.deepGreenPersianGreenColor()
             userJoinedThisRoom = false
         }
     }
@@ -209,8 +209,6 @@ class RoomDetailTableVC: UITableViewController {
         sender.isEnabled = false
         let realm = try! Realm()
         let hud = JGProgressHUD()
-        hud.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
-        hud.textLabel.text = "Loading"
         hud.show(in: self.view)
         
         SocketIOManager.sharedInstance.silentRoom(room.id!, silent: sender.isOn) { (success, error) in

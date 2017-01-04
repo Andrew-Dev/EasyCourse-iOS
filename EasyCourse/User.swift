@@ -27,6 +27,7 @@ class User: Object {
     dynamic var universityId:String? = nil
     let joinedRoom = List<Room>()
     let joinedCourse = List<Course>()
+    let langArray = List<Language>()
     
     //Related to user
     // 0 means other is on user's friend pending list.(others can send message to user, but push notification only sent at the first message)
@@ -70,20 +71,6 @@ class User: Object {
         }
     }
     
-    class var userLang: [String] {
-        get {
-            if let lang  = UserDefaults.standard.object(forKey: Constant.UserDefaultKey.currentUserLangKey) as? [String] {
-                _userLang = lang
-            }
-            return _userLang
-        }
-        set(langArr) {
-            _userLang = langArr
-            UserDefaults.standard.set(_userLang, forKey: Constant.UserDefaultKey.currentUserLangKey)
-            UserDefaults.standard.synchronize()
-        }
-    }
-    
     class var token:String? {
         get {
             let keychain = KeychainSwift()
@@ -98,6 +85,14 @@ class User: Object {
                 keychain.set(token!, forKey: Constant.UserDefaultKey.currentUserTokenKey)
             }
         }
+    }
+    
+    func userLang() -> [String] {
+        var langArr:[String] = []
+        self.langArray.forEach { (lang) in
+            langArr.append(lang.code!)
+        }
+        return langArr
     }
     
     // New
@@ -141,6 +136,20 @@ class User: Object {
                 self.universityId = universityId
             }
         }
+        print("data: \(data)")
+        if let langs = data["userLang"] as? [String] {
+
+            try! realm.write {
+                self.langArray.removeAll()
+            }
+                langs.forEach({ (lang) in
+                    let language = Language.findOrCreate(code: lang)
+                    try! realm.write {
+                        self.langArray.append(language)
+                    }
+                })
+            
+        }
         
         
         if let courseArray = data["joinedCourse"] as? [NSDictionary] {
@@ -150,7 +159,7 @@ class User: Object {
             for courseData in courseArray {
                 if let course = Course.createOrUpdateCourse(courseData) {
                     try! realm.write {
-                        User.currentUser?.joinedCourse.append(course)
+                        self.joinedCourse.append(course)
                     }
                 }
             }
@@ -163,7 +172,7 @@ class User: Object {
             for roomData in roomArray {
                 if let room = Room.createOrUpdateRoomWithData(data: roomData, isToUser: false) {
                     try! realm.write {
-                        User.currentUser?.joinedRoom.append(room)
+                        self.joinedRoom.append(room)
                     }
                 }
             }
@@ -173,7 +182,7 @@ class User: Object {
             for contactData in contactsArray {
                 if let room = Room.createOrUpdateRoomWithData(data: contactData, isToUser: true) {
                     try! realm.write {
-                        User.currentUser?.joinedRoom.append(room)
+                        self.joinedRoom.append(room)
                     }
                 }
 //                User.createOrUpdateUserWithData(contactData)
@@ -264,6 +273,17 @@ class User: Object {
         }
     }
     
+    func setLang(_ langArr:[String]) {
+        let realm = try! Realm()
+        try! realm.write {
+            self.langArray.removeAll()
+            langArr.forEach { (lang) in
+                self.langArray.append(Language.findOrCreate(code: lang))
+            }
+        }
+        
+    }
+    
     func hasJoinedCourse(_ courseId: String) -> Bool {
         let courseIndex = self.joinedCourse.index { (usercourse) -> Bool in
             return usercourse.id == courseId
@@ -273,8 +293,10 @@ class User: Object {
     
     func hasJoinedRoom(_ roomId: String) -> Bool {
         let roomIndex = self.joinedRoom.index { (userroom) -> Bool in
+            print("\(userroom.id) : \(roomId)")
             return userroom.id == roomId
         }
+        print("joinedroom: \(roomIndex)")
         return roomIndex == nil ? false : true
     }
     

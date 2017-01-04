@@ -29,7 +29,9 @@ class MessageIncomingGroupCell: UITableViewCell {
     
     @IBOutlet weak var bubbleMaxWidthConstraint: NSLayoutConstraint!
     
-    var delegate: popUpMessageProtocol?
+    var popUpDelegate: popUpMessageProtocol?
+    var cellDelegate: cellTableviewProtocol?
+    
     var message:Message?
     
     override func awakeFromNib() {
@@ -44,6 +46,10 @@ class MessageIncomingGroupCell: UITableViewCell {
         let tapGestureRecognizer = UITapGestureRecognizer(target:self, action:#selector(self.groupTapped))
         messageBubbleView.isUserInteractionEnabled = true
         messageBubbleView.addGestureRecognizer(tapGestureRecognizer)
+        
+        let tapImage = UITapGestureRecognizer(target: self, action: #selector(self.tapUserAvatar))
+        userAvatarImageView.addGestureRecognizer(tapImage)
+        userAvatarImageView.isUserInteractionEnabled = true
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -93,7 +99,10 @@ class MessageIncomingGroupCell: UITableViewCell {
     }
     
     func groupTapped() {
-        delegate?.popUpSharedRoom(message!)
+        popUpDelegate?.popUpSharedRoom(message!)
     }
 
+    func tapUserAvatar() {
+        cellDelegate?.displayViews!((message?.senderId)!)
+    }
 }

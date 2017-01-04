@@ -24,7 +24,7 @@ class LoginLangChooseVC: UIViewController {
     
     @IBOutlet weak var langTVWidthConstraint: NSLayoutConstraint!
     
-    var language:[(key: String, name: String, displayName: String)] = []
+    var language:[(code: String, name: String, displayName: String)] = []
     var choosedLang: [String] = []
     
     var loadStatus = Constant.searchStatus.notSearching
@@ -87,7 +87,6 @@ class LoginLangChooseVC: UIViewController {
     }
     
     @IBAction func finishBtnPressed(_ sender: UIButton) {
-        User.userLang = choosedLang
         let realm = try! Realm()
         let allCourse = realm.objects(Course.self)
         var courseIdArray:[String] = []
@@ -171,7 +170,7 @@ extension LoginLangChooseVC: UITableViewDataSource, UITableViewDelegate {
             return statusCell
         case .receivedResult:
             let cell = tableView.dequeueReusableCell(withIdentifier: "LoginLangChooseTVCell", for: indexPath) as! LoginLangChooseTVCell
-            let cellChoosed = choosedLang.index(of: language[indexPath.row].key) != nil
+            let cellChoosed = choosedLang.index(of: language[indexPath.row].code) != nil
             cell.configureCell(langText: language[indexPath.row].displayName, choosed: cellChoosed)
             return cell
         default:
@@ -200,10 +199,10 @@ extension LoginLangChooseVC: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if loadStatus == .receivedResult {
-            if let index = choosedLang.index(of: language[indexPath.row].key) {
+            if let index = choosedLang.index(of: language[indexPath.row].code) {
                 choosedLang.remove(at: index)
             } else {
-                choosedLang.append(language[indexPath.row].key)
+                choosedLang.append(language[indexPath.row].code)
             }
             tableView.reloadRows(at: [indexPath], with: .middle)
         } else if loadStatus == .receivedError {

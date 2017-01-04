@@ -29,7 +29,8 @@ class ImagePresenterViewController: UIViewController, MXPagerViewDelegate, MXPag
         self.view.backgroundColor = UIColor.black
         currentIndex = startImageIndex
         self.view.isUserInteractionEnabled = true
-        
+        self.view.alpha = 0
+
         pagerView = MXPagerView(frame: self.view.frame)
         pageLabel = UILabel(frame: CGRect(x: 30, y: 30, width: view.frame.size.width - 60, height: 32))
         saveBtn = UIButton(frame: CGRect(x: view.frame.size.width - 40, y: view.frame.size.height - 40, width: 32, height: 32))
@@ -66,6 +67,13 @@ class ImagePresenterViewController: UIViewController, MXPagerViewDelegate, MXPag
         pagerView.reloadData()
         
         pagerView.showPage(at: currentIndex, animated: false)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        UIView.animate(withDuration: 0.1, delay: 0.000001, options: .curveEaseIn, animations: {
+            self.view.alpha = 1
+        }, completion: nil)
     }
     
     override func viewWillLayoutSubviews() {
@@ -122,8 +130,8 @@ class ImagePresenterViewController: UIViewController, MXPagerViewDelegate, MXPag
     }
     
     func pagerView(_ pagerView: MXPagerView, willMoveToPageAt index: Int) {
-        let imageScrollView = pagerView.page(at: currentIndex)?.viewWithTag(1) as! ImageScrollView
-        imageScrollView.refresh()
+//        let imageScrollView = pagerView.page(at: currentIndex)?.viewWithTag(1) as! ImageScrollView
+//        imageScrollView.refresh()
         pageLabel.text = String(format: "%li of %li", index+1, liveImageMessage.count)
     }
     
@@ -141,30 +149,41 @@ class ImagePresenterViewController: UIViewController, MXPagerViewDelegate, MXPag
         
         let imageScrollView: ImageScrollView! = ImageScrollView()
         
-        var image = UIImage(color: .black, size: CGSize(width: 800, height: 600))
+        var image = UIImage(color: .white, size: CGSize(width: 800, height: 600))
         
         let result = liveImageMessage[index]
-        /*if result.imageData != nil {
+        if result.imageData != nil {
             image = UIImage(data: result.imageData!)!
+            let when = DispatchTime.now() + 0.00000001
+            DispatchQueue.main.asyncAfter(deadline: when) {
+                imageScrollView.display(image: image!)
+            }
         } else {
             asynchronouslyLoadImageIntoView(imageScrollView: imageScrollView, imageUrl: result.imageUrl!)
-        }*/
-        asynchronouslyLoadImageIntoView(imageScrollView: imageScrollView, imageUrl: result.imageUrl!)
+        }
         
-        //var image = pvImages[index]
         imageScrollView.isUserInteractionEnabled = true
         imageScrollView.tag = 1
-        imageScrollView.display(image: image!)
         
         return imageScrollView
     }
 
     func asynchronouslyLoadImageIntoView(imageScrollView: ImageScrollView, imageUrl: String) {
-        ServerHelper.sharedInstance.getNetworkImage(imageUrl, completion: { (image, error) in
+        ServerHelper.sharedInstance.getNetworkImage(imageUrl, completion: { (image, cache, error) in
             if image != nil {
-                imageScrollView.display(image: image!)
+                let when = DispatchTime.now() + 0.00000001
+                DispatchQueue.main.asyncAfter(deadline: when) {
+                    imageScrollView.display(image: image!)
+                }
             } else {
                 //TODO: deal with no picture
+                let label = UILabel()
+                label.frame = CGRect(x: 0, y: 0, width: 200, height: 20)
+                label.text = "Fail to load the picture"
+                label.textColor = UIColor.init(white: 0.9, alpha: 1)
+                label.center = self.view.center
+                label.textAlignment = .center
+                imageScrollView.addSubview(label)
             }
             
         })

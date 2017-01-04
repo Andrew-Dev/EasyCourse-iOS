@@ -260,12 +260,11 @@ class LoginMainComponentVC: UIViewController, UITextFieldDelegate {
         ServerConst.sharedInstance.loginWithFacebook(self) { (success, error) in
             if success {
                 hud.indicatorView = JGProgressHUDSuccessIndicatorView()
-                hud.textLabel.text = "Success!"
                 hud.dismiss(afterDelay: 1, animated: true)
                 self.gotoNextScreen()
             } else if error != nil {
                 hud.indicatorView = JGProgressHUDErrorIndicatorView()
-                hud.textLabel.text = "error"
+                hud.textLabel.text = error?.description ?? "Error"
                 hud.tapOutsideBlock = { (hu) in
                     hud.dismiss()
                 }
@@ -302,7 +301,7 @@ class LoginMainComponentVC: UIViewController, UITextFieldDelegate {
                 hud.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
                 //hud.square = true
                 
-                if Reachability.isConnectedToNetwork() == true {
+//                if Reachability.isConnectedToNetwork() == true {
                     hud.textLabel.text = "Loading"
                     hud.show(in: self.view)
                     
@@ -310,12 +309,11 @@ class LoginMainComponentVC: UIViewController, UITextFieldDelegate {
                     ServerConst.sharedInstance.loginWithEmail(self.emailTextField.text!, password: self.passwordTextfield.text!, completion: { (success, error) in
                         if success {
                             hud.indicatorView = JGProgressHUDSuccessIndicatorView()
-                            hud.textLabel.text = "Success!"
                             hud.dismiss(afterDelay: 1, animated: true)
                             self.gotoNextScreen()
                         } else {
                             hud.indicatorView = JGProgressHUDErrorIndicatorView()
-                            hud.textLabel.text = "Error"
+                            hud.textLabel.text = error?.description ?? "Error"
                             hud.tapOutsideBlock = { (hu) in
                                 hud.dismiss()
                             }
@@ -324,12 +322,12 @@ class LoginMainComponentVC: UIViewController, UITextFieldDelegate {
                             }
                         }
                     })
-                } else {
-                    hud.indicatorView = JGProgressHUDErrorIndicatorView()
-                    hud.textLabel.text = "Network error!"
-                    hud.show(in: self.navigationController?.view)
-                    hud.dismiss(afterDelay: 2, animated: true)
-                }
+//                } else {
+//                    hud.indicatorView = JGProgressHUDErrorIndicatorView()
+//                    hud.textLabel.text = "Network error!"
+//                    hud.show(in: self.navigationController?.view)
+//                    hud.dismiss(afterDelay: 2, animated: true)
+//                }
                 
             }
         }
@@ -357,8 +355,7 @@ class LoginMainComponentVC: UIViewController, UITextFieldDelegate {
             hud.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
             //            hud.square = true
             
-            if Reachability.isConnectedToNetwork() == true {
-                hud.textLabel.text = "Loading"
+//            if Reachability.isConnectedToNetwork() == true {
                 hud.show(in: self.view)
                 //MARK:sign up
                 ServerConst.sharedInstance.signupWithEmail(self.emailTextField.text!, password: self.passwordTextfield.text!, username: self.userNameTextField.text!, completion: { (success, error) in
@@ -369,7 +366,7 @@ class LoginMainComponentVC: UIViewController, UITextFieldDelegate {
                         self.gotoNextScreen()
                     } else {
                         hud.indicatorView = JGProgressHUDErrorIndicatorView()
-                        hud.textLabel.text = "error"
+                        hud.textLabel.text = error?.description ?? "Error"
                         hud.tapOutsideBlock = { (hu) in
                             hud.dismiss()
                         }
@@ -378,12 +375,12 @@ class LoginMainComponentVC: UIViewController, UITextFieldDelegate {
                         }
                     }
                 })
-            } else {
-                hud.indicatorView = JGProgressHUDErrorIndicatorView()
-                hud.textLabel.text = "Network error!"
-                hud.show(in: self.navigationController?.view)
-                hud.dismiss(afterDelay: 2, animated: true)
-            }
+//            } else {
+//                hud.indicatorView = JGProgressHUDErrorIndicatorView()
+//                hud.textLabel.text = "Network error!"
+//                hud.show(in: self.navigationController?.view)
+//                hud.dismiss(afterDelay: 2, animated: true)
+//            }
             
         }
         
@@ -394,9 +391,6 @@ class LoginMainComponentVC: UIViewController, UITextFieldDelegate {
         let hud = JGProgressHUD()
         hud.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
         
-//        if emailTextField.text!.isEmpty {
-//
-//        }
         print("email is: \(emailTextField.text!) + \(emailTextField.text!.isValidEmail())")
         if !emailTextField.text!.isValidEmail() {
             hud.indicatorView = JGProgressHUDErrorIndicatorView()

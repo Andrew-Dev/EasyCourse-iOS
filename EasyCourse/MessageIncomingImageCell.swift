@@ -28,7 +28,8 @@ class MessageIncomingImageCell: UITableViewCell {
     
     @IBOutlet weak var messageBubbleWidthConstraint: NSLayoutConstraint!
     
-    var delegate: popUpMessageProtocol?
+    var popUpDelegate: popUpMessageProtocol?
+    var cellDelegate: cellTableviewProtocol?
     var message:Message?
     
     override func awakeFromNib() {
@@ -45,6 +46,10 @@ class MessageIncomingImageCell: UITableViewCell {
         let tapGestureRecognizer = UITapGestureRecognizer(target:self, action:#selector(self.imageTapped))
         messageImageView.isUserInteractionEnabled = true
         messageImageView.addGestureRecognizer(tapGestureRecognizer)
+        
+        let tapImage = UITapGestureRecognizer(target: self, action: #selector(self.tapUserAvatar))
+        userAvatarImageView.addGestureRecognizer(tapImage)
+        userAvatarImageView.isUserInteractionEnabled = true
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -69,13 +74,17 @@ class MessageIncomingImageCell: UITableViewCell {
             messageImageView.image = img
         } else {
             print("uncached img")
-            ServerHelper.sharedInstance.getNetworkImage(message.imageUrl!, completion: { (image, error) in
+            ServerHelper.sharedInstance.getNetworkImage(message.imageUrl!, completion: { (image, cached, error) in
                 if image != nil {
                     self.messageImageView.image = image!
-                    self.messageImageView.alpha = 0
-                    UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseIn, animations: {
-                        self.messageImageView.alpha = 1
+                    if !cached {
+                        self.messageImageView.image = image!
+                        self.messageImageView.alpha = 0
+                        UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseIn, animations: {
+                            self.messageImageView.alpha = 1
                         }, completion: nil)
+                    }
+                    
                 } else {
                     //TODO: deal with no picture
                 }
@@ -110,7 +119,11 @@ class MessageIncomingImageCell: UITableViewCell {
     }
     
     func imageTapped() {
-        delegate?.popUpImage(messageImageView,message: message!)
+        popUpDelegate?.popUpImage(messageImageView, message: message!)
+    }
+    
+    func tapUserAvatar() {
+        cellDelegate?.displayViews!((message?.senderId)!)
     }
     
 }

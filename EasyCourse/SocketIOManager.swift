@@ -71,9 +71,6 @@ class SocketIOManager: NSObject {
             
             if success {
                 print("success log out")
-                User.currentUser = nil
-                User.token = nil
-                RealmTools.setDefaultRealmForUser(nil)
                 NotificationCenter.default.post(name: Constant.NotificationKey.UserDidLogout, object: nil)
                 self.closeConnection()
                 completion(true, nil)
@@ -130,6 +127,8 @@ class SocketIOManager: NSObject {
             
         }
     }
+    
+    // MARK: - Room & Contacts
     
     func searchRoom(_ text:String, limit:Int?, skip:Int?, completion: @escaping (_ rooms:[Room], _ error:NetworkError?) -> ()) {
         let localLimit = limit ?? 20
@@ -341,8 +340,8 @@ class SocketIOManager: NSObject {
             }
             
             let json = JSON(data)
-            if let success = json[0]["success"].bool, success {
-                return completion(true, nil)
+            if let success = json[0]["success"].bool {
+                return completion(success, nil)
             } else {
                 print("get course error: \(json[0]["success"].error?.localizedDescription)")
                 return completion(false, NetworkError.ParseJSONError)
@@ -351,6 +350,55 @@ class SocketIOManager: NSObject {
             
         }
     }
+    
+    func silentFriend(_ userId: String, silent: Bool, completion: @escaping (_ success:Bool, _ error:NetworkError?) -> ()) {
+        let params = ["otherUser":userId, "silent":silent] as [String : Any]
+        socket.emitWithAck("silentFriend", params).timingOut(after: timeoutSec) { (data) in
+            print("data is : \(data)")
+            if let err = self.checkAckError(data, onlyCheckNetwork: false) {
+                return completion(false, err)
+            }
+            
+            let json = JSON(data)
+            if let success = json[0]["success"].bool {
+                return completion(success, nil)
+            } else {
+                print("get course error: \(json[0]["success"].error?.localizedDescription)")
+                return completion(false, NetworkError.ParseJSONError)
+            }
+            
+            
+        }
+    }
+    
+    func removeFriend(_ userId: String, completion: @escaping (_ success:Bool, _ error:NetworkError?) -> ()) {
+        let params = ["otherUser":userId]
+        socket.emitWithAck("removeFriend", params).timingOut(after: timeoutSec) { (data) in
+            print("data is : \(data)")
+            if let err = self.checkAckError(data, onlyCheckNetwork: false) {
+                return completion(false, err)
+            }
+            
+            let json = JSON(data)
+            if let success = json[0]["success"].bool {
+                let realm = try! Realm()
+                if let userroom = realm.object(ofType: Room.self, forPrimaryKey: userId), userroom.isToUser {
+                    try! realm.write {
+                        realm.delete(userroom)
+                    }
+                }
+                return completion(success, nil)
+            } else {
+                print("get course error: \(json[0]["success"].error?.localizedDescription)")
+                return completion(false, NetworkError.ParseJSONError)
+            }
+            
+            
+        }
+    }
+    
+    
+    // MARK: - Course
     
     func getCourseInfo(_ courseId:String, loadType:LoadType, completion: @escaping (_ course:Course?, _ error:NetworkError?) -> ()) {
         
@@ -515,9 +563,11 @@ class SocketIOManager: NSObject {
         }
     }
     
-    func syncUser(_ username: String?, userProfileImage:UIImage?, completion: @escaping (_ success:Bool, _ error:NetworkError?) -> ()) {
+    //MARK: - User
+    func syncUser(_ username: String?, userProfileImage:UIImage?, userLang:[String]?, completion: @escaping (_ success:Bool, _ error:NetworkError?) -> ()) {
         var data:[String:Any] = [:]
         if username != nil { data["displayName"] = username! }
+        if userLang != nil { data["userLang"] = userLang! }
         if userProfileImage != nil {
             let imageData = UIImageJPEGRepresentation(userProfileImage!, 1)
             data["avatarImage"] = imageData
@@ -595,13 +645,15 @@ class SocketIOManager: NSObject {
         }
     }
     
-    func getUserInfo(_ userId:String, refresh:Bool, completion: @escaping (_ user:User?, _ error:NetworkError?) -> ()) {
+    func getUserInfo(_ userId:String, loadType:LoadType, completion: @escaping (_ user:User?, _ error:NetworkError?) -> ()) {
         print("get user inf: \(userId)")
-        // Cache user
-        if !refresh {
+        if loadType != .NetworkOnly {
             if let user = try! Realm().object(ofType: User.self, forPrimaryKey: userId) {
-                print("user get in database")
-                return completion(user, nil)
+                if loadType == .cacheAndNetwork {
+                    completion(user, nil)
+                } else if loadType == .cacheElseNetwork {
+                    return completion(user, nil)
+                }
             }
         }
         
@@ -740,10 +792,7 @@ class SocketIOManager: NSObject {
             let json = JSON(data)
             print("json: \(json)")
             if json[0].string == "auth" {
-                //TODO: log out
-                User.currentUser = nil
-                User.token = nil
-                RealmTools.setDefaultRealmForUser(nil)
+                // MARK: auth error log out
                 NotificationCenter.default.post(name: Constant.NotificationKey.UserDidLogout, object: nil)
                 self.closeConnection()
             }

@@ -137,39 +137,6 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
             self.loadMessage()
         })
         
-        //TODO: delete room
-//        roomUpdateNotif = try! Realm().objects(Room.self).addNotificationBlock({ (result) in
-//            print("get room notif")
-//            self.loadMessage()
-//            switch result {
-//            case .update(_, let deletions, _, _):
-//                    print("delete: \(deletions)")
-//                self.navigationController?.popToRootViewController(animated: true)
-//            default:
-//                break
-//            }
-////            if result
-//        })
-        
-//        roomUpdateNotif = try! Realm().objects(Room.self).addNotificationBlock { [weak self] (changes: RealmCollectionChange) in
-//            switch changes {
-//            case .initial:
-//                // Results are now populated and can be accessed without blocking the UI
-//                print("initial")
-//                break
-//            case .update(let a, let deletions, let insertions, let modifications):
-//                // Query results have changed, so apply them to the UITableView
-//                print("delete: \(a)m \(deletions)")
-//                break
-//            case .error(let error):
-//                // An error occurred while opening the Realm file on the background worker thread
-//                fatalError("\(error)")
-//                break
-//            }
-//        }
-        
-
-        
         NotificationCenter.default.addObserver(self, selector: #selector(self.gobackToLastView), name: Constant.NotificationKey.RoomDelete, object: nil)
         
     }
@@ -216,9 +183,6 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     }
     
     func loadMessage() {
-        try! Realm().write {
-            localRoom.unread = 0
-        }
         messageTableView.reloadData()
         scrollToBottom(true)
     }
@@ -269,7 +233,8 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
                 if msgIndex != 0 {
                     lastMessage = liveMessage[msgIndex - 1]
                 }
-                cell.delegate = self
+                cell.cellDelegate = self
+                cell.popUpDelegate = self
                 cell.configureCell(liveMessage[msgIndex], lastMessage: lastMessage)
                 return cell
                 
@@ -279,7 +244,8 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
                 if msgIndex != 0 {
                     lastMessage = liveMessage[msgIndex - 1]
                 }
-                cell.delegate = self
+                cell.cellDelegate = self
+                cell.popUpDelegate = self
                 cell.configureCell(liveMessage[msgIndex], lastMessage: lastMessage)
                 return cell
             } else {
@@ -288,7 +254,7 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
                 if msgIndex != 0 {
                     lastMessage = liveMessage[msgIndex - 1]
                 }
-                cell.delegate = self
+                cell.cellDelegate = self
                 cell.configureCell(liveMessage[msgIndex], lastMessage: lastMessage)
                 return cell
                 
@@ -480,10 +446,8 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     }
     
     func displayViews(_ id:String) {
-        if !localRoom.isToUser {
-            tappedUserId = id
-            self.performSegue(withIdentifier: "gotoUserDetailPage", sender: self)
-        }
+        tappedUserId = id
+        self.performSegue(withIdentifier: "gotoUserDetailPage", sender: self)
     }
     
 }
@@ -571,7 +535,7 @@ extension RoomsDialogVC: UIViewControllerTransitioningDelegate, popUpMessageProt
         selectedImageView = imageView
         
         
-        print(liveImageMessage)
+        print("total img cnt: \(liveImageMessage.count)")
         
         let imagePresenter = ImagePresenterViewController()
 
@@ -588,7 +552,7 @@ extension RoomsDialogVC: UIViewControllerTransitioningDelegate, popUpMessageProt
         let nc = UINavigationController(rootViewController: imagePresenter)
         nc.isNavigationBarHidden = true
         nc.transitioningDelegate = self
-        present(nc, animated: true,completion:nil)
+        present(nc, animated: true, completion:nil)
     }
     
     func animationController(

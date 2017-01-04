@@ -60,6 +60,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func userDidLogout() {
+        User.currentUser = nil
+        User.token = nil
+        RealmTools.setDefaultRealmForUser(nil)
         let storyboard = UIStoryboard(name: "Login", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "LoginVC") as! LoginVC
         window?.rootViewController?.present(vc, animated: true, completion: {
@@ -77,7 +80,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationDidEnterBackground(_ application: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
-        SocketIOManager.sharedInstance.closeConnection()
+        if User.currentUser != nil {
+            SocketIOManager.sharedInstance.closeConnection()
+        }
     }
     
     
