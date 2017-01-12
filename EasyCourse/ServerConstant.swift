@@ -108,7 +108,6 @@ class ServerConst {
                 if FBSDKAccessToken.current().tokenString == nil {
                     return completion(false, NetworkError.ServerError(reason: "Fail to get Facebook token"))
                 }
-                //TODO: add mobile header
                 let apiUrl = URL(string: "\(Constant.baseURL)/facebook/token/?access_token=\(FBSDKAccessToken.current().tokenString!)")
 
                 Alamofire.request(apiUrl!, headers:["isMobile":"true"]).responseJSON { response in
@@ -141,6 +140,34 @@ class ServerConst {
                     })
                 }
             }
+        }
+    }
+    
+    func resetPassword(_ email:String, oldPassword:String, newPassword:String, completion: @escaping (_ success:Bool, _ error:NetworkError?) -> ()) {
+        let params = ["email":email, "password":oldPassword, "newPassword":newPassword]
+        let apiUrl = URL(string: "\(Constant.baseURL)/resetPassword")
+        
+        Alamofire.request(apiUrl!, method: .post, parameters: params, encoding: JSONEncoding.default, headers:["isMobile":"true"]).responseJSON { (response) in
+            
+            if let result = response.result.value as? NSDictionary {
+                print(result)
+                if let error = result["error"] as? String {
+                    return completion(false, NetworkError.ServerError(reason: error))
+                }
+            }
+            
+            if let token = response.response?.allHeaderFields["Auth"] as? String {
+                print("receive token: \(token)")
+                User.token = token
+                SocketIOManager.sharedInstance.closeConnection()
+                SocketIOManager.sharedInstance.establishConnection()
+                return completion(true, nil)
+            } else {
+                return completion(false, NetworkError.ServerError(reason: "Fail to reset password"))
+            }
+
+            
+           
         }
     }
     

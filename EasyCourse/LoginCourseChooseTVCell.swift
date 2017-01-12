@@ -10,13 +10,10 @@ import UIKit
 
 class LoginCourseChooseTVCell: UITableViewCell {
     
-    
     @IBOutlet weak var courseNameLabel: UILabel!
     
     @IBOutlet weak var courseTitleLabel: UILabel!
-    
-    @IBOutlet weak var operationImgView: UIImageView!
-    
+        
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
@@ -32,13 +29,9 @@ class LoginCourseChooseTVCell: UITableViewCell {
         courseNameLabel.text = course.coursename
         courseTitleLabel.text = course.title
         if choosed {
-            self.backgroundColor = Design.color.cellSelectedGreen()
-            operationImgView.image = UIImage(named: "close-ion")!.withRenderingMode(UIImageRenderingMode.alwaysTemplate)
-            operationImgView.tintColor = UIColor.red
+            self.accessoryType = .checkmark
         } else {
-            self.backgroundColor = UIColor.white
-            operationImgView.image = UIImage(named: "plus-ion")!.withRenderingMode(UIImageRenderingMode.alwaysTemplate)
-            operationImgView.tintColor = UIColor(red: 0, green: 200/255, blue: 7/255, alpha: 1)
+            self.accessoryType = .none
         }
     }
     

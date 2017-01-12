@@ -25,7 +25,7 @@ class UserRecruiteVC: UIViewController, UIWebViewDelegate {
         hud.square = true
         
         hud.show(in: self.view)
-        let url = URL (string: "https://mtdtao.typeform.com/to/l9ZsMJ");
+        let url = URL (string: "https://docs.google.com/forms/d/e/1FAIpQLSeKu9p0Al-E9LAQyjeQw06KmXQQ1DyoJenH2_tRwO2sbhvA_g/viewform");
         let requestObj = URLRequest(url: url!);
         joinUsWebView.loadRequest(requestObj)
     }
@@ -42,7 +42,7 @@ class UserRecruiteVC: UIViewController, UIWebViewDelegate {
     
     func webView(_ webView: UIWebView, didFailLoadWithError error: Error) {
         hud.indicatorView = JGProgressHUDErrorIndicatorView()
-        hud.textLabel.text = "Network error! Please send your personal information to mtdtao@gmail.com"
+        hud.textLabel.text = "Network error! Please send your personal information to contact@easycourse.io"
         hud.tapOutsideBlock = { (hu) in
             self.hud.dismiss()
         }

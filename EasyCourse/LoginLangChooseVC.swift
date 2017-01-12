@@ -12,7 +12,7 @@ import JGProgressHUD
 
 class LoginLangChooseVC: UIViewController {
     
-    weak var delegate: moveToVCProtocol?
+    weak var delegate: loginProtocol?
     
     @IBOutlet weak var langTableView: UITableView!
     
@@ -32,14 +32,13 @@ class LoginLangChooseVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.layoutIfNeeded()
-        titleLabel.textColor = UIColor(white: 0.9, alpha: 1)
         
         titleLabelToCenterConstraint.constant = UIScreen.main.bounds.height * -0.25
         finishBtn.layer.cornerRadius = finishBtn.frame.height/2
-        finishBtn.layer.borderColor = UIColor.white.cgColor
+        finishBtn.layer.borderColor = UIColor(white: 0.5, alpha: 1).cgColor
         finishBtn.layer.borderWidth = 1
         finishBtn.layer.masksToBounds = true
-        finishBtn.tintColor = UIColor.white
+        finishBtn.tintColor = UIColor(white: 0.5, alpha: 1)
         
         langTableView.register(UINib(nibName: "LoginLangChooseTVCell", bundle: nil), forCellReuseIdentifier: "LoginLangChooseTVCell")
         langTableView.register(UINib(nibName: "LoadingTVCell", bundle: nil), forCellReuseIdentifier: "LoadingTVCell")
@@ -67,7 +66,7 @@ class LoginLangChooseVC: UIViewController {
             self.titleLabel.alpha = 1
             self.langTableView.alpha = 1
             self.finishBtn.alpha = 1
-            self.titleLabelToCenterConstraint.constant = UIScreen.main.bounds.height * -0.3
+            self.titleLabelToCenterConstraint.constant = UIScreen.main.bounds.height * -0.4
             self.view.layoutIfNeeded()
             }, completion: nil)
     }
@@ -87,22 +86,21 @@ class LoginLangChooseVC: UIViewController {
     }
     
     @IBAction func finishBtnPressed(_ sender: UIButton) {
-        let realm = try! Realm()
-        let allCourse = realm.objects(Course.self)
         var courseIdArray:[String] = []
-        for course in allCourse {
-            courseIdArray.append(course.id!)
+        if let choosedCourse = delegate?.getChoosedCourse() {
+            for course in choosedCourse {
+                courseIdArray.append(course.id!)
+            }
         }
+        
         let hud = JGProgressHUD(style: .extraLight)
-        hud?.textLabel.text = "Loading"
         hud?.show(in: self.view, animated: true)
         
         SocketIOManager.sharedInstance.joinCourse(courseIdArray, languages: choosedLang) { (success, error) in
             if success {
                 hud?.indicatorView = JGProgressHUDSuccessIndicatorView()
-                hud?.textLabel.text = "Success"
                 hud?.dismiss(animated: true)
-                self.delegate?.moveToVC(3)
+                self.delegate?.showMainTabBarVC(true)
                 //                SocketIOManager.sharedInstance.syncUser()
             } else {
                 hud?.indicatorView = JGProgressHUDErrorIndicatorView()
@@ -116,25 +114,6 @@ class LoginLangChooseVC: UIViewController {
             }
 
         }
-        
-//        ServerConst.sharedInstance.userChooseCourseAndLang(["lang":choosedLang, "course":courseIdArray]) { (success, error) in
-//            if success {
-//                hud?.indicatorView = JGProgressHUDSuccessIndicatorView()
-//                hud?.textLabel.text = "Success"
-//                hud?.dismiss(animated: true)
-//                self.delegate?.moveToVC(3)
-////                SocketIOManager.sharedInstance.syncUser()
-//            } else {
-//                hud?.indicatorView = JGProgressHUDErrorIndicatorView()
-//                hud?.textLabel.text = "Error, try again"
-//                hud?.tapOutsideBlock = { (hu) in
-//                    hud?.dismiss()
-//                }
-//                hud?.tapOnHUDViewBlock = { (hu) in
-//                    hud?.dismiss()
-//                }
-//            }
-//        }
     }
     
     /*
@@ -179,32 +158,17 @@ extension LoginLangChooseVC: UITableViewDataSource, UITableViewDelegate {
             return statusCell
         }
         
-        
-//        let cell = tableView.dequeueReusableCell(withIdentifier: "LoginLangChooseTVCell", for: indexPath) as! LoginLangChooseTVCell
-//        cell.langLabel.text = language[(indexPath as NSIndexPath).row].0
-//        let cellChoosed = choosedLang.index(of: language[(indexPath as NSIndexPath).row].1) != nil
-//        cell.configureCell(langText: language[indexPath.row].0, choosed: cellChoosed)
-//        if choosedLang.index(of: language[(indexPath as NSIndexPath).row].1) == nil {
-//            cell.backgroundColor = UIColor.white
-//            cell.operationImgView.image = UIImage(named: "plus-ion")!.withRenderingMode(UIImageRenderingMode.alwaysTemplate)
-//            cell.operationImgView.tintColor = UIColor(red: 0, green: 200/255, blue: 7/255, alpha: 1)
-//        } else {
-//            cell.backgroundColor = Design.color.cellSelectedGreen()
-//            cell.operationImgView.image = UIImage(named: "close-ion")!.withRenderingMode(UIImageRenderingMode.alwaysTemplate)
-//            cell.operationImgView.tintColor = UIColor.red
-//        }
-        
-//        return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if loadStatus == .receivedResult {
             if let index = choosedLang.index(of: language[indexPath.row].code) {
+                tableView.cellForRow(at: indexPath)?.accessoryType = .none
                 choosedLang.remove(at: index)
             } else {
+                tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
                 choosedLang.append(language[indexPath.row].code)
             }
-            tableView.reloadRows(at: [indexPath], with: .middle)
         } else if loadStatus == .receivedError {
             getLanguage()
         }
@@ -213,7 +177,7 @@ extension LoginLangChooseVC: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 55
+        return 44
     }
     
 }

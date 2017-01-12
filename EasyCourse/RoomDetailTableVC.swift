@@ -124,12 +124,18 @@ class RoomDetailTableVC: UITableViewController {
         case 4:
             self.performSegue(withIdentifier: "gotoShareRoom", sender: self)
         case 5: //Course
-//            self.performSegue(withIdentifier: "courseSegue", sender: self)
             let sb = UIStoryboard(name: "User", bundle: nil)
             let vc = sb.instantiateViewController(withIdentifier: "CourseDetailVC") as! CourseDetailVC
             vc.courseId = room.courseID
             self.navigationController?.pushViewController(vc, animated: true)
-
+        case 6:
+            let vc = self.storyboard?.instantiateViewController(withIdentifier: "RoomsAddRoomVC") as! RoomsAddRoomVC
+            if let course = try! Realm().object(ofType: Course.self, forPrimaryKey: room.courseID) {
+                vc.belongedCourse = course
+                vc.belongedCourseChoosed = true
+            }
+            let navi = UINavigationController(rootViewController: vc)
+            self.navigationController?.present(navi, animated: true, completion: nil)
         default:
             break
         }

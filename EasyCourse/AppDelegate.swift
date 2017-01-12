@@ -10,6 +10,7 @@ import UIKit
 import FBSDKCoreKit
 import Async
 import SwiftMessages
+import UserNotifications
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -29,32 +30,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print("the set default id: \(id)")
         RealmTools.setDefaultRealmForUser(id)
         
-        
-//        print("user is \(User.currentUser)")
-        
-        if User.currentUser != nil {
-            let storyboard = UIStoryboard(name: "Main", bundle: nil)
-            let baseTabBarController = storyboard.instantiateViewController(withIdentifier: "BaseTabBarController") as! UITabBarController
-            window?.rootViewController = baseTabBarController
-        } else {
-            let storyboard = UIStoryboard(name: "Login", bundle: nil)
-            let logInViewController = storyboard.instantiateViewController(withIdentifier: "LoginVC") as! LoginVC
-            window?.rootViewController = logInViewController
-        }
-        
-//                UINavigationBar.appearance().barTintColor = Design.color.themeColor()
-//                UINavigationBar.appearance().barStyle = .Black
+        window?.makeKeyAndVisible()
+        window?.rootViewController = MainNavigationController()
+
         UINavigationBar.appearance().tintColor = Design.color.lighterDarkGunPowder()
         UINavigationBar.appearance().isTranslucent = false
         
         UITabBar.appearance().isTranslucent = false
         UITabBar.appearance().tintColor = Design.color.lighterDarkGunPowder()
-                
-        let types: UIUserNotificationType = [.alert, .badge, .sound]
-        let settings = UIUserNotificationSettings(types: types, categories: nil)
-        application.registerUserNotificationSettings(settings)
-        application.registerForRemoteNotifications()
         
+        if !UserSetting.shouldAskPushNotif {
+            if #available(iOS 10, *) {
+                UNUserNotificationCenter.current().requestAuthorization(options:[.badge, .alert, .sound]){ (granted, error) in }
+                UIApplication.shared.registerForRemoteNotifications()
+            } else {
+                UIApplication.shared.registerUserNotificationSettings(UIUserNotificationSettings(types: [.badge, .sound, .alert], categories: nil))
+                UIApplication.shared.registerForRemoteNotifications()
+            }
+        }
         
         return true
     }
@@ -66,8 +59,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let storyboard = UIStoryboard(name: "Login", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "LoginVC") as! LoginVC
         window?.rootViewController?.present(vc, animated: true, completion: {
-            self.window?.rootViewController = vc
-            self.window?.makeKeyAndVisible()
+//            self.window?.rootViewController = vc
+//            self.window?.makeKeyAndVisible()
         })
         
     }

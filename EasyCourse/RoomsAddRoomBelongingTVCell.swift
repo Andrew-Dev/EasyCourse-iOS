@@ -27,7 +27,7 @@ class RoomsAddRoomBelongingTVCell: UITableViewCell {
     func configureCell(courseChoosed: Bool, course: Course?) {
         if courseChoosed {
             if course == nil {
-                courseLabel.text = "private"
+                courseLabel.text = "none"
             } else {
                 courseLabel.text = course?.coursename ?? "-"
             }

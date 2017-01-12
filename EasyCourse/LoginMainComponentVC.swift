@@ -70,11 +70,12 @@ class LoginMainComponentVC: UIViewController, UITextFieldDelegate {
     var emailFieldIsClosed = true
     var tap:UITapGestureRecognizer?
     
-    weak var delegate: moveToVCProtocol?
+    weak var delegate: loginProtocol?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.layoutIfNeeded()
+        self.view.backgroundColor = Design.color.DarkGunPowder()
         titleLabel.textColor = UIColor.white
         
         emailBtn.tintColor = UIColor.white
@@ -122,6 +123,7 @@ class LoginMainComponentVC: UIViewController, UITextFieldDelegate {
         
         NotificationCenter.default.addObserver(self, selector:#selector(self.keyboardWillAppear(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector:#selector(self.keyboardWillDisappear(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        
     }
     
     func setLoginbtnHighlighted() {
@@ -174,6 +176,7 @@ class LoginMainComponentVC: UIViewController, UITextFieldDelegate {
     
     //MARK: - Buttons
     @IBAction func emailBtnPressed(_ sender: UIButton) {
+
         self.view.endEditing(true)
         emailBtn.isEnabled = false
         
@@ -351,11 +354,11 @@ class LoginMainComponentVC: UIViewController, UITextFieldDelegate {
             self.view.endEditing(true)
             if !self.validateInput(true) { return }
             
-            let hud = JGProgressHUD()
-            hud.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
-            //            hud.square = true
             
-//            if Reachability.isConnectedToNetwork() == true {
+            let alert = UIAlertController(title: "Terms & privacy", message: "By signing up, you agree to our EasyCourse Terms and have read our privacy at the bottom of the page.", preferredStyle: .alert)
+            let signUp = UIAlertAction(title: "Sign up", style: .default, handler: { (UIAlertAction) in
+                let hud = JGProgressHUD()
+                hud.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
                 hud.show(in: self.view)
                 //MARK:sign up
                 ServerConst.sharedInstance.signupWithEmail(self.emailTextField.text!, password: self.passwordTextfield.text!, username: self.userNameTextField.text!, completion: { (success, error) in
@@ -375,12 +378,15 @@ class LoginMainComponentVC: UIViewController, UITextFieldDelegate {
                         }
                     }
                 })
-//            } else {
-//                hud.indicatorView = JGProgressHUDErrorIndicatorView()
-//                hud.textLabel.text = "Network error!"
-//                hud.show(in: self.navigationController?.view)
-//                hud.dismiss(afterDelay: 2, animated: true)
-//            }
+            })
+            let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+            alert.addAction(signUp)
+            alert.addAction(cancel)
+            self.present(alert, animated: true, completion: nil)
+            
+            
+            
+            
             
         }
         
@@ -509,24 +515,12 @@ class LoginMainComponentVC: UIViewController, UITextFieldDelegate {
         } else if realm.objects(Course.self).count == 0 {
             delegate?.moveToVC(1)
         } else {
-            let sb = UIStoryboard(name: "Main", bundle: nil)
-            let mainTabBarController = sb.instantiateViewController(withIdentifier: "BaseTabBarController") as! UITabBarController
-            self.present(mainTabBarController, animated: true, completion: {
-                let aa = UIApplication.shared.delegate as! AppDelegate
-                aa.window?.rootViewController = mainTabBarController
-            })
-            
+            delegate?.showMainTabBarVC(false)
         }
     }
     
-    @IBAction func gotoUniv(_ sender: AnyObject) {
-        delegate?.moveToVC(0)
-    }
-    
-    @IBAction func gotoCourse(_ sender: AnyObject) {
-        delegate?.moveToVC(1)
-    }
-    
-    
+    @IBAction func termsPressed(_ sender: Any) {
+        UIApplication.shared.openURL(NSURL(string: "http://www.easycourse.io/docs")! as URL)
+    }    
     
 }

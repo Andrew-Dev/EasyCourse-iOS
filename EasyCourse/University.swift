@@ -34,7 +34,7 @@ class University: Object {
     }
     
     func mapUnivWithData(_ data:NSDictionary) {
-        print("univmapdata: \(data)")
+//        print("univmapdata: \(data)")
         let realm = try! Realm()
         try! realm.write {
             if let id = data["_id"] as? String, self.id == nil {

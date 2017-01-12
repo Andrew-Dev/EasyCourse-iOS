@@ -11,20 +11,14 @@ import AlamofireImage
 import JGProgressHUD
 import Async
 
-protocol viewUpdateDelegate {
-    func viewUpdateWithData(value: Any)
-}
-
-class UserEditProfileTableVC: UITableViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, viewUpdateDelegate {
+class UserEditProfileTableVC: UITableViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate {
 
     @IBOutlet weak var profilePictureImageView: UIImageView!
     
     @IBOutlet weak var usernameTextField: UITextField!
     
-    @IBOutlet weak var UnivLabel: UILabel!
-    
-    @IBOutlet weak var LangLabel: UILabel!
-    
+    @IBOutlet weak var userEmailLabel: UILabel!
+
     var tap:UITapGestureRecognizer?
     var picker = UIImagePickerController()
 //    var profileImgModified = false
@@ -39,7 +33,7 @@ class UserEditProfileTableVC: UITableViewController, UIImagePickerControllerDele
         picker.delegate = self
         picker.allowsEditing = true
 
-        
+        initData()
         
         
         usernameTextField.text = User.currentUser?.username
@@ -48,11 +42,6 @@ class UserEditProfileTableVC: UITableViewController, UIImagePickerControllerDele
         
         NotificationCenter.default.addObserver(self, selector:#selector(self.keyboardWasShown(_:)), name: NSNotification.Name.UIKeyboardDidShow, object: nil)
         NotificationCenter.default.addObserver(self, selector:#selector(self.keyboardWillDisappear(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        initData()
     }
 
     override func didReceiveMemoryWarning() {
@@ -70,20 +59,9 @@ class UserEditProfileTableVC: UITableViewController, UIImagePickerControllerDele
         } else {
             profilePictureImageView.image = Design.defaultAvatarImage
         }
+        userEmailLabel.text = User.currentUser?.email
         
-        self.UnivLabel.text = "-"
-        if (User.currentUser?.universityId != nil) {
-            SocketIOManager.sharedInstance.getUniversityInfo(User.currentUser!.universityId!, loadType: .cacheElseNetwork, completion: { (univ, error) in
-                if (univ != nil) {
-                    self.UnivLabel.text = univ!.name
-                }
-            })
-        }
-        
-        self.LangLabel.text = userChoosedLang.joined(separator: ", ")
     }
-    
-   
     
     func keyboardWasShown(_ notification:Notification) {
         self.view.addGestureRecognizer(tap!)
@@ -95,11 +73,6 @@ class UserEditProfileTableVC: UITableViewController, UIImagePickerControllerDele
     
     func dismissSubView() {
         self.view.endEditing(true)
-    }
-    
-    func viewUpdateWithData(value: Any) {
-        userChoosedLang = value as! [String]
-        self.tableView.reloadRows(at: [IndexPath(row:1, section:1)], with: .none)
     }
     
 
@@ -166,12 +139,12 @@ class UserEditProfileTableVC: UITableViewController, UIImagePickerControllerDele
         
 //        hud.textLabel.text = "Uploading"
         hud.show(in: self.view)
-        SocketIOManager.sharedInstance.syncUser(self.usernameTextField.text, userProfileImage: modifiedAvatar, userLang: userChoosedLang) { (success, error) in
+        SocketIOManager.sharedInstance.syncUser(self.usernameTextField.text, userProfileImage: modifiedAvatar, userLang: nil) { (success, error) in
             if success {
                 hud.textLabel.text = "Success"
                 hud.indicatorView = JGProgressHUDSuccessIndicatorView()
                 hud.dismiss(afterDelay: 1, animated: true)
-                self.navigationController?.popViewController(animated: true)
+                _ = self.navigationController?.popViewController(animated: true)
             } else {
                 hud.indicatorView = JGProgressHUDErrorIndicatorView()
                 hud.textLabel.text = error?.description
@@ -187,13 +160,8 @@ class UserEditProfileTableVC: UITableViewController, UIImagePickerControllerDele
         
     }
     
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "gotoChooseLanguage" {
-            let vc = segue.destination as! UserEditProfileChooseLangVC
-            vc.delegate = self
-            vc.selectedCode = userChoosedLang
-        }
-    }
+//    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+//    }
 
 }
 
@@ -204,8 +172,8 @@ extension UserEditProfileTableVC {
                 showChangeAvatarAlertView()
             }
         } else if indexPath.section == 1 {
-            if indexPath.row == 1 {
-                self.performSegue(withIdentifier: "gotoChooseLanguage", sender: self)
+            if indexPath.row == 0 {
+                self.performSegue(withIdentifier: "gotoResetPassword", sender: self)
             }
         }
         tableView.deselectRow(at: indexPath, animated: true)
@@ -217,5 +185,22 @@ extension UserEditProfileTableVC {
     
     override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         return 1
+    }
+    
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if section == 0 {
+            if User.currentUser?.email != nil {
+                return 3
+            } else {
+                return 2
+            }
+        } else if section == 1 {
+            if User.currentUser?.email != nil {
+                return 1
+            } else {
+                return 0
+            }
+        }
+        return 0
     }
 }

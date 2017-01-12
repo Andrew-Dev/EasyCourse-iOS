@@ -45,7 +45,7 @@ class RoomsAddRoomBelongingPickerTVCell: UITableViewCell, UIPickerViewDelegate, 
     func pickerView(_ pickerView: UIPickerView, attributedTitleForRow row: Int, forComponent component: Int) -> NSAttributedString? {
         var text = ""
         if row == 0 {
-            text = "private"
+            text = "none"
         } else {
             text = courseList[row - 1].coursename ?? ""
         }

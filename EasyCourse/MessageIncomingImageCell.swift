@@ -22,7 +22,7 @@ class MessageIncomingImageCell: UITableViewCell {
     
     @IBOutlet weak var timeLabel: UILabel!
     
-    @IBOutlet weak var messageBubbleView: UIView!
+    @IBOutlet weak var messageBubbleView: MessageBubbleView!
     
     @IBOutlet weak var messageBubbleHeightConstraint: NSLayoutConstraint!
     
@@ -36,12 +36,15 @@ class MessageIncomingImageCell: UITableViewCell {
         super.awakeFromNib()
         // Initialization code
         self.layoutIfNeeded()
+        messageBubbleView.backgroundColor = Design.color.incomingBubbleColor
         messageBubbleView.layer.cornerRadius = 10
         messageBubbleView.layer.masksToBounds = true
         messageBubbleWidthConstraint.constant = UIScreen.main.bounds.width * 0.4
         messageBubbleHeightConstraint.constant = 90
+        
         userAvatarImageView.layer.cornerRadius = userAvatarImageView.frame.size.width/2
         userAvatarImageView.layer.masksToBounds = true
+        userNameLabel.textColor = Design.color.incomingUsernameColor
         
         let tapGestureRecognizer = UITapGestureRecognizer(target:self, action:#selector(self.imageTapped))
         messageImageView.isUserInteractionEnabled = true
@@ -62,6 +65,8 @@ class MessageIncomingImageCell: UITableViewCell {
     func configureCell(_ message:Message, lastMessage: Message?) {
         //        messageBubbleHeightConstraint.constant = min(90.0, message.imageHeight.value!/message.imageWidth.value!)
         self.message = message
+        messageBubbleView.message = message
+        
         let ratio = message.imageHeight.value!/message.imageWidth.value!
         if message.imageHeight.value!/message.imageWidth.value! > 1.8 {
             messageBubbleHeightConstraint.constant = 90
@@ -69,39 +74,22 @@ class MessageIncomingImageCell: UITableViewCell {
             messageBubbleHeightConstraint.constant = messageBubbleWidthConstraint.constant * CGFloat(ratio)
         }
         
-        if let img = ServerHelper.sharedInstance.cachedImage(message.imageUrl!) {
-            print("cached img")
-            messageImageView.image = img
-        } else {
-            print("uncached img")
-            ServerHelper.sharedInstance.getNetworkImage(message.imageUrl!, completion: { (image, cached, error) in
-                if image != nil {
-                    self.messageImageView.image = image!
-                    if !cached {
-                        self.messageImageView.image = image!
-                        self.messageImageView.alpha = 0
-                        UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseIn, animations: {
-                            self.messageImageView.alpha = 1
-                        }, completion: nil)
-                    }
-                    
+        let URL = Foundation.URL(string: message.imageUrl!)
+        messageImageView.af_setImage(withURL: URL!, placeholderImage: Design.imagePlaceHolder, imageTransition: .crossDissolve(0.2), runImageTransitionIfCached: false, completion: nil)
+        
+        // User
+        userNameLabel.text = " "
+        userAvatarImageView.image = Design.defaultAvatarImage
+        
+        SocketIOManager.sharedInstance.getUserInfo(message.senderId!, loadType: .cacheElseNetwork) { (user, error) in
+            if error == nil {
+                self.userNameLabel.text = user?.username
+                if let userImgUrlStr = user?.profilePictureUrl {
+                    let URL = Foundation.URL(string: userImgUrlStr)
+                    self.userAvatarImageView.af_setImage(withURL: URL!, placeholderImage: Design.defaultAvatarImage, imageTransition: .crossDissolve(0.2), runImageTransitionIfCached: false, completion: nil)
                 } else {
-                    //TODO: deal with no picture
+                    self.userAvatarImageView.image = Design.defaultAvatarImage
                 }
-                
-            })
-        }
-        
-        self.userAvatarImageView.image = nil
-
-        
-        ServerConst.sharedInstance.getUserInfo(message.senderId!,refresh: false) { (user, joinedCourse, error) in
-            self.userNameLabel.text = user?.username
-            if let userImgUrlStr = user?.profilePictureUrl {
-                let URL = Foundation.URL(string: userImgUrlStr)
-                self.userAvatarImageView.af_setImage(withURL: URL!, placeholderImage: nil, imageTransition: .crossDissolve(0.2), runImageTransitionIfCached: false, completion: nil)
-            } else {
-                self.userAvatarImageView.image = Design.defaultAvatarImage
             }
         }
         

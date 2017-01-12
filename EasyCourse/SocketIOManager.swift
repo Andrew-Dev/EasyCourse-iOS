@@ -29,7 +29,9 @@ class SocketIOManager: NSObject {
     
     
     func establishConnection() {
+        print("connect with token: \(User.token!)")
         socket = SocketIOClient(socketURL: URL(string: Constant.baseURL)!, config: [.connectParams(["token" : User.token!])])
+        print("socket is \(socket)")
 //        socket = SocketIOClient(socketURL: URL(string: Constant.baseURL)!, config: [.connectParams(["token" : "asdf"])])
 
         
@@ -112,7 +114,7 @@ class SocketIOManager: NSObject {
             guard let messageData = data[0] as? NSDictionary else {
                 return completion(false, NetworkError.ParseJSONError)
             }
-            print("res msg data: \(messageData)")
+//            print("res msg data: \(messageData)")
             do {
                 try self.updateMessageInDatabase(message: message, resData: messageData)
             } catch let error as NetworkError {
@@ -198,7 +200,7 @@ class SocketIOManager: NSObject {
             guard let roomData = arg0["room"] as? NSDictionary else {
                 return completion(nil, NetworkError.ParseJSONError)
             }
-            print("data: \(roomData)")
+//            print("data: \(roomData)")
             
             ServerHelper.sharedInstance.cacheObject(.RoomInfo, id: roomId, data: roomData)
             let room = Room().initRoomWithData(roomData, isToUser: false)
@@ -269,6 +271,7 @@ class SocketIOManager: NSObject {
 //            room.initRoomWithData(roomData, isToUser: false)?.saveToDatabase()
             if User.currentUser?.joinedRoom.index(of: room) == nil {
                 try! Realm().write {
+                    room.lastUpdateTime = NSDate()
                     User.currentUser?.joinedRoom.append(room)
                 }
             }
@@ -528,7 +531,9 @@ class SocketIOManager: NSObject {
             
             if success {
                 print("success join course")
-                
+                if languages != nil {
+                    User.currentUser?.setLang(languages!)
+                }
                 completion(true, nil)
             } else {
                 completion(false, NetworkError.ServerError(reason: nil))
@@ -600,11 +605,6 @@ class SocketIOManager: NSObject {
             }
 //            print("user data: \(data)")
             
-//            if User.currentUser == nil {
-//                User.currentUser = User().initCurrentUserWithData(userData)
-//            } else {
-//                User.currentUser!.syncCurrentUserWithData(userData)
-//            }
             User.currentUser = User.createOrUpdateUserWithData(userData)
             
             NotificationCenter.default.post(name: Constant.NotificationKey.SyncUser, object: nil)
@@ -613,14 +613,20 @@ class SocketIOManager: NSObject {
         }
     }
     
-    func getHistMessage(_ completion: @escaping (_ success:Bool, _ error:NetworkError?) -> ()) {
+    func getHistMessage(_ initial: Bool, completion: @escaping (_ success:Bool, _ error:NetworkError?) -> ()) {
         var params:[String:Any] = [:]
-        if let lastUpdatedTime = try! Realm().objects(Message.self).filter("successSent != false").last?.createdAt {
+//        if let lastUpdatedTime = try! Realm().objects(Message.self).filter("successSent != false").last?.createdAt {
+//            params["lastUpdateTime"] = lastUpdatedTime.timeIntervalSince1970 * 1000
+//        }
+        let beginUpdateMsgTime = Date()
+        if initial {
+            params["lastUpdateTime"] = Date().timeIntervalSince1970 * 1000 - 1000*60*60*24*7
+        } else if let lastUpdatedTime = User.currentUser!.getLastMsgUpdateTime() {
             params["lastUpdateTime"] = lastUpdatedTime.timeIntervalSince1970 * 1000
         }
-
-        let a = try! Realm().objects(Message.self).last?.text
-        print("lastupdateTime: \(a), \(params["lastUpdateTime"])")
+        
+//        let a = try! Realm().objects(Message.self).last?.text
+//        print("lastupdateTime: \(a), \(params["lastUpdateTime"])")
         socket.emitWithAck("getHistMessage", params).timingOut(after: timeoutSec) { (data) in
             if let err = self.checkAckError(data, onlyCheckNetwork: false) {
                 print("get histmsg error")
@@ -635,9 +641,16 @@ class SocketIOManager: NSObject {
                 return completion(false, NetworkError.ParseJSONError)
             }
             
+            if messageArray.count != 0 {
+                User.currentUser!.setLastMsgUpdateTime(beginUpdateMsgTime)
+            }
+            
             for obj in messageArray {
                 print("hist message obj: \(obj)")
-                self.saveMessageToDatabase(data: obj)
+//                self.saveMessageToDatabase(data: obj)
+                if let data = obj as? NSDictionary {
+                    Message.createOrUpdateMessage(data)
+                }
             }
             
             completion(true, nil)
@@ -663,7 +676,7 @@ class SocketIOManager: NSObject {
                 print("get room info error")
                 return completion(nil, err)
             }
-            print("data: \(data)")
+//            print("data: \(data)")
             
             guard let arg0 = data[0] as? NSDictionary else {
                 return completion(nil, NetworkError.ParseJSONError)
@@ -674,7 +687,6 @@ class SocketIOManager: NSObject {
             }
 
             let user = User.createOrUpdateUserWithData(userData)
-//            user.initUserFromServerWithData(userData)?.saveToDatabase()
             return completion(user, nil)
         }
     }
@@ -692,7 +704,7 @@ class SocketIOManager: NSObject {
             }
         }
         
-        let params = ["univ":univId]
+        let params = ["univId":univId]
         socket.emitWithAck("getUniversityInfo", params).timingOut(after: timeoutSec) { (data) in
             if let err = self.checkAckError(data, onlyCheckNetwork: false) {
                 return completion(nil, err)
@@ -721,7 +733,7 @@ class SocketIOManager: NSObject {
             MessageAlert.sharedInstance.setupConnectionStatus()
             self.syncUser([:], completion: { (success, error) in
                 if success {
-                    self.getHistMessage({ (histSuccess, histError) in
+                    self.getHistMessage(false, completion: { (success, error) in
                         //
                     })
                 }
@@ -739,30 +751,17 @@ class SocketIOManager: NSObject {
                     print("new message [array] cnt=\(a.count)")
                     for obj in object as! NSArray {
                         print("message obj: \(obj)")
-                        let newMessage = Message()
-                        newMessage.initMessage(obj as! NSDictionary)
-                        
-                        if newMessage.senderId != User.currentUser!.id {
-                            Message.saveSenderUserInfo(obj as! NSDictionary)
-                            newMessage.saveToDatabase()
+                        if let data = object as? NSDictionary {
+                            Message.createOrUpdateMessage(data)
                         }
                     }
                 } else {
                     print("message [single]: \(object)")
-                    let newMessage = Message()
-                    newMessage.initMessage(object as! NSDictionary)
-                    Message.saveSenderUserInfo(object as! NSDictionary)
-                    newMessage.saveToDatabase()
-//                    if newMessage.senderId != User.currentUser!.id {
-//                        Message().saveSenderUserInfo(object as! NSDictionary)
-//                        newMessage.saveToDatabase()
-//                    }
+                    if let data = object as? NSDictionary {
+                        Message.createOrUpdateMessage(data)
+                    }
                 }
-                
-//                NotificationCenter.default.post(name: Constant.NotificationKey.GetMessage, object: nil)
             }
-//            print("objects: \(objects)")
-//            print("new message recieve")
         }
         
 
@@ -815,19 +814,6 @@ class SocketIOManager: NSObject {
             }
         }
         return nil
-    }
-    
-    private func saveMessageToDatabase(data: Any) {
-        if !(data is NSDictionary) {
-            return
-        }
-        let newMessage = Message()
-        newMessage.initMessage(data as! NSDictionary)
-        
-        if newMessage.senderId != User.currentUser!.id {
-            Message.saveSenderUserInfo(data as! NSDictionary)
-        }
-        newMessage.saveToDatabase()
     }
     
     private func updateMessageInDatabase(message:Message, resData:NSDictionary) throws {

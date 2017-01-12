@@ -74,7 +74,7 @@ class Course: Object {
             if let creditHours = data["creditHours"] as? Int {
                 self.creditHours.value = creditHours
             }
-            print("course univ: \(data["university"])")
+
             if let university = data["university"] as? NSDictionary {
                 if let univId = university["_id"] as? String {
                     self.universityId = univId

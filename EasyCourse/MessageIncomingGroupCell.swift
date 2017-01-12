@@ -21,13 +21,16 @@ class MessageIncomingGroupCell: UITableViewCell {
     
     @IBOutlet weak var timeLabel: UILabel!
     
-    @IBOutlet weak var messageBubbleView: UIView!
+    @IBOutlet weak var messageBubbleView: MessageBubbleView!
     
     @IBOutlet weak var roomNameLabel: UILabel!
     
     @IBOutlet weak var roomImageView: UIImageView!
     
     @IBOutlet weak var bubbleMaxWidthConstraint: NSLayoutConstraint!
+    
+    
+    @IBOutlet weak var roomTextLabel: UILabel!
     
     var popUpDelegate: popUpMessageProtocol?
     var cellDelegate: cellTableviewProtocol?
@@ -37,11 +40,16 @@ class MessageIncomingGroupCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         self.layoutIfNeeded()
+        messageBubbleView.backgroundColor = Design.color.incomingBubbleColor
         messageBubbleView.layer.cornerRadius = 10
         messageBubbleView.layer.masksToBounds = true
         userAvatarImageView.layer.cornerRadius = userAvatarImageView.frame.size.width/2
         userAvatarImageView.layer.masksToBounds = true
         bubbleMaxWidthConstraint.constant = UIScreen.main.bounds.width * 0.6
+        
+        userNameLabel.textColor = Design.color.incomingUsernameColor
+        roomNameLabel.textColor = Design.color.incomingTextColor
+        roomTextLabel.textColor = Design.color.incomingTextColor
         
         let tapGestureRecognizer = UITapGestureRecognizer(target:self, action:#selector(self.groupTapped))
         messageBubbleView.isUserInteractionEnabled = true
@@ -60,6 +68,7 @@ class MessageIncomingGroupCell: UITableViewCell {
     
     func configureCell(_ message:Message, lastMessage: Message?) {
         self.message = message
+        messageBubbleView.message = message
         
         if let room = try! Realm().object(ofType: Room.self, forPrimaryKey: message.sharedRoom) {
             roomNameLabel.text = room.roomname ?? "room"
@@ -71,16 +80,19 @@ class MessageIncomingGroupCell: UITableViewCell {
             })
         }
         
-        self.userAvatarImageView.image = nil
+        // User
+        userNameLabel.text = " "
+        userAvatarImageView.image = Design.defaultAvatarImage
         
-        
-        ServerConst.sharedInstance.getUserInfo(message.senderId!,refresh: false) { (user, joinedCourse, error) in
-            self.userNameLabel.text = user?.username
-            if let userImgUrlStr = user?.profilePictureUrl {
-                let URL = Foundation.URL(string: userImgUrlStr)
-                self.userAvatarImageView.af_setImage(withURL: URL!, placeholderImage: nil, imageTransition: .crossDissolve(0.2), runImageTransitionIfCached: false, completion: nil)
-            } else {
-                self.userAvatarImageView.image = Design.defaultAvatarImage
+        SocketIOManager.sharedInstance.getUserInfo(message.senderId!, loadType: .cacheElseNetwork) { (user, error) in
+            if error == nil {
+                self.userNameLabel.text = user?.username
+                if let userImgUrlStr = user?.profilePictureUrl {
+                    let URL = Foundation.URL(string: userImgUrlStr)
+                    self.userAvatarImageView.af_setImage(withURL: URL!, placeholderImage: Design.defaultAvatarImage, imageTransition: .crossDissolve(0.2), runImageTransitionIfCached: false, completion: nil)
+                } else {
+                    self.userAvatarImageView.image = Design.defaultAvatarImage
+                }
             }
         }
         

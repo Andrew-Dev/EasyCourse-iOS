@@ -8,6 +8,7 @@
 
 import UIKit
 import RealmSwift
+import JGProgressHUD
 
 class UserTableVC: UITableViewController {
 
@@ -18,7 +19,11 @@ class UserTableVC: UITableViewController {
     @IBOutlet weak var logoutBtn: UIButton!
     
     @IBOutlet weak var logoutBtnWidthConstraint: NSLayoutConstraint!
+    
     @IBOutlet weak var versionLabel: UILabel!
+        
+    @IBOutlet weak var univLabel: UILabel!
+    
     
     var userInfoNotif:NotificationToken? = nil
     
@@ -39,6 +44,14 @@ class UserTableVC: UITableViewController {
             versionLabel.text = nil
         }
         
+        if let univId = User.currentUser?.universityId {
+            SocketIOManager.sharedInstance.getUniversityInfo(univId, loadType: .cacheElseNetwork, completion: { (univ, error) in
+                if error == nil {
+                    self.univLabel.text = univ?.name
+                }
+            })
+
+        }
         
         NotificationCenter.default.addObserver(self, selector: #selector(self.loadUserInfo), name: Constant.NotificationKey.SyncUser, object: nil)
     }
@@ -62,6 +75,7 @@ class UserTableVC: UITableViewController {
             self.avatarImageView.image = Design.defaultAvatarImage
         }
         usernameLabel.text = User.currentUser?.username
+
     }
 
     override func didReceiveMemoryWarning() {
@@ -80,10 +94,17 @@ class UserTableVC: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        switch ((indexPath as NSIndexPath).section, (indexPath as NSIndexPath).row) {
+        switch (indexPath.section, indexPath.row) {
         case (0,0):
             self.performSegue(withIdentifier: "gotoUserProfileVC", sender: self)
+        case (0,1):
+            self.performSegue(withIdentifier: "gotoChooseLanguage", sender: self)
         case (1,0):
+            let alert = UIAlertController(title: "Current version doesn't support switch university", message: nil, preferredStyle: .alert)
+            let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+            alert.addAction(cancel)
+            self.present(alert, animated: true, completion: nil)
+        case (1,1):
             self.performSegue(withIdentifier: "gotoUserCoursesVC", sender: self)
         case (2,0):
             self.performSegue(withIdentifier: "gotoUserRecruiteVC", sender: self)
@@ -97,20 +118,36 @@ class UserTableVC: UITableViewController {
 
     
     @IBAction func logoutBtnPressed(_ sender: UIButton) {
-        SocketIOManager.sharedInstance.logout { (success, error) in
-            //
-            
-        }
+        let alert = UIAlertController(title: "Sign out", message: nil, preferredStyle: .actionSheet)
+        let signOut = UIAlertAction(title: "Sign out", style: .destructive, handler: { (UIAlertAction) in
+            let hud = JGProgressHUD()
+            hud.show(in: self.view)
+            SocketIOManager.sharedInstance.logout { (success, error) in
+                if !success {
+                    hud.backgroundColor = UIColor(white: 0, alpha: 0.3)
+                    hud.indicatorView = JGProgressHUDErrorIndicatorView()
+                    hud.textLabel.text = error?.description ?? "Fail sign out"
+                    hud.tapOutsideBlock = { (hu) in hud.dismiss() }
+                    hud.tapOnHUDViewBlock = { (hu) in hud.dismiss() }
+                } else {
+                    hud.dismiss()
+                }
+            }
+        })
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        alert.addAction(signOut)
+        alert.addAction(cancel)
+        self.present(alert, animated: true, completion: nil)
+        
     }
     
     
     // MARK: - Navigation
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+//        if segue.identifier == "gotoChooseLanguage" {
+//            let vc = segue.destination as! UserEditProfileChooseLangVC
+//        }
     }
-    
 
 }

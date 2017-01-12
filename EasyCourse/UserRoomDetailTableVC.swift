@@ -41,6 +41,17 @@ class UserRoomDetailTableVC: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        if section == 0 {
+            return 20
+        }
+        return 0.1
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 20
+    }
+    
     @IBAction func silentSwitchChange(_ sender: UISwitch) {
         sender.isEnabled = false
         let realm = try! Realm()

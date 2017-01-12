@@ -37,6 +37,8 @@ class Room: Object {
     //SYSTEM
     let isSystem = RealmOptional<Bool>()
     
+    //Local
+    dynamic var lastUpdateTime: NSDate? = nil
     
     override static func primaryKey() -> String? {
         return "id"
@@ -80,7 +82,7 @@ class Room: Object {
     
     internal class func createOrUpdateRoomWithData(data:NSDictionary, isToUser: Bool) -> Room? {
         if let id = data["_id"] as? String {
-            print("room data: \(data)")
+//            print("room data: \(data)")
             let realm = try! Realm()
             var room = realm.object(ofType: Room.self, forPrimaryKey: id)
             if room == nil {

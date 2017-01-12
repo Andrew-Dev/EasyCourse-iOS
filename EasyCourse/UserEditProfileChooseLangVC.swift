@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import JGProgressHUD
 
 class UserEditProfileChooseLangVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
@@ -14,13 +15,17 @@ class UserEditProfileChooseLangVC: UIViewController, UITableViewDelegate, UITabl
     
     var langArray:[(code: String, name: String, displayName: String)] = []
     var selectedCode:[String] = []
-    var delegate:viewUpdateDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         LangTableView.delegate = self
         LangTableView.dataSource = self
         LangTableView.tableFooterView = UIView()
+        
+        let saveButton = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(self.saveLang))
+        self.navigationItem.rightBarButtonItem = saveButton
+        
+        selectedCode = User.currentUser?.userLang() ?? []
         
         ServerConst.sharedInstance.getDefaultLanguage { (language, error) in
             if (error != nil) {
@@ -55,16 +60,30 @@ class UserEditProfileChooseLangVC: UIViewController, UITableViewDelegate, UITabl
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let index = selectedCode.index(of: langArray[indexPath.row].code) {
             selectedCode.remove(at: index)
-            delegate?.viewUpdateWithData(value: selectedCode)
             tableView.cellForRow(at: indexPath)?.accessoryType = .none
         } else {
             selectedCode.append(langArray[indexPath.row].code)
-            delegate?.viewUpdateWithData(value: selectedCode)
             tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
         }
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
+    func saveLang() {
+        let hud = JGProgressHUD()
+        hud.show(in: self.view)
+        SocketIOManager.sharedInstance.syncUser(nil, userProfileImage: nil, userLang: selectedCode) { (success, error) in
+            if success {
+                hud.indicatorView = JGProgressHUDSuccessIndicatorView()
+                hud.dismiss()
+                _ = self.navigationController?.popViewController(animated: true)
+            } else {
+                hud.indicatorView = JGProgressHUDErrorIndicatorView()
+                hud.textLabel.text = error?.description ?? "Error"
+                hud.tapOutsideBlock = { (hu) in hud.dismiss() }
+                hud.tapOnHUDViewBlock = { (hu) in hud.dismiss() }
+            }
+        }
+    }
 
     /*
     // MARK: - Navigation
