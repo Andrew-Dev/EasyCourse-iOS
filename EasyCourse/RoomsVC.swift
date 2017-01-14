@@ -27,7 +27,8 @@ class RoomsVC: UIViewController {
     var messageUpdateNotif: NotificationToken? = nil
     let searchBar = UISearchBar()
     let searchResultsTableView = UITableView()
-    var searchResults: [Course] = []
+    var courseResults: [Course] = []
+    var localRoomResults: Results<Room>? = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -53,7 +54,7 @@ class RoomsVC: UIViewController {
             self.roomTableView.reloadData()
         })
         
-        searchBar.placeholder = "Search Courses"
+        searchBar.placeholder = "Search"
         searchBar.delegate = self
         self.navigationItem.titleView = searchBar
         searchResultsTableView.register(UINib(nibName: "CourseTVCell", bundle: nil), forCellReuseIdentifier: "UserCoursesTVCell")
@@ -157,7 +158,7 @@ class RoomsVC: UIViewController {
     func doneSearching() {
         searchBar.resignFirstResponder()
         searchBar.text = ""
-        searchResults = []
+        courseResults = []
         searchResultsTableView.reloadData()
         let addRoomBtn = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(self.showAddRoom))
         self.navigationItem.rightBarButtonItem = addRoomBtn
@@ -168,18 +169,63 @@ class RoomsVC: UIViewController {
 
 extension RoomsVC: UITableViewDelegate, UITableViewDataSource {
     
+    func numberOfSections(in tableView: UITableView) -> Int {
+        if tableView == searchResultsTableView && searchBar.text == "" {
+            return 0
+        }
+        else if tableView == searchResultsTableView && User.currentUser != nil && User.currentUser!.joinedRoom.count > 0 {
+            return 2
+        }
+        return 1
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if tableView == searchResultsTableView {
+            if indexPath.section == 1 {
+                return 65
+            }
+        }
+        return 74
+    }
+    
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        if tableView == searchResultsTableView && tableView.numberOfSections > 1 {
+            if section == 0 {
+                return "My Rooms"
+            } else if section == 1 {
+                return "Courses"
+            }
+        }
+        return nil
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if tableView == searchResultsTableView {
-            return searchResults.count
+            if section == 0 {
+                if localRoomResults != nil {
+                    return localRoomResults!.count
+                }
+                return 0
+            } else if section == 1 {
+                return courseResults.count
+            }
         }
         return sortedRooms.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if tableView == searchResultsTableView {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "UserCoursesTVCell", for: indexPath) as! UserCoursesTVCell
-            cell.configureCell(searchResults[indexPath.row], userJoinedCourses: User.currentUser!.joinedCourse)
-            return cell
+            if indexPath.section == 0 {
+                let cell = roomTableView.dequeueReusableCell(withIdentifier: "RoomsTVCell", for: indexPath) as! RoomsTVCell
+                let room = localRoomResults![indexPath.row]
+                cell.configureCell(room, lastMessage: room.getMessage().last)
+                return cell
+            } else if indexPath.section == 1 {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "UserCoursesTVCell", for: indexPath) as! UserCoursesTVCell
+                cell.configureCell(courseResults[indexPath.row], userJoinedCourses: User.currentUser!.joinedCourse)
+                return cell
+            }
+            
         }
         let cell = tableView.dequeueReusableCell(withIdentifier: "RoomsTVCell", for: indexPath) as! RoomsTVCell
         cell.configureCell(sortedRooms[(indexPath as NSIndexPath).row].0, lastMessage: sortedRooms[(indexPath as NSIndexPath).row].1)
@@ -217,10 +263,12 @@ extension RoomsVC: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         SocketIOManager.sharedInstance.searchCourse(searchText, universityId: User.currentUser!.universityId!, limit: 15, skip: 0, completion: { (courseArr, error) in
             if error == nil {
-                self.searchResults = courseArr
+                self.courseResults = courseArr
                 self.searchResultsTableView.reloadData()
             }
         })
+        localRoomResults = User.currentUser?.joinedRoom.filter("roomname CONTAINS[c] '" + searchBar.text! + "'")
+        self.searchResultsTableView.reloadData()
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
