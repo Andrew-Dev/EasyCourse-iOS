@@ -19,8 +19,14 @@ class RoomsTVCell: UITableViewCell {
     
     @IBOutlet weak var timeLabel: UILabel!
     
+    @IBOutlet weak var unreadLabelView: UIView!
     
     @IBOutlet weak var unreadLabel: UILabel!
+    
+    @IBOutlet weak var attributeLabel: UILabel!
+    
+    
+    @IBOutlet weak var unreadLabelWidthConstraint: NSLayoutConstraint!
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -30,9 +36,13 @@ class RoomsTVCell: UITableViewCell {
         roomProfilePicture.layer.cornerRadius = roomProfilePicture.frame.width/2
         roomProfilePicture.layer.masksToBounds = true
 
-        unreadLabel.layer.cornerRadius = 8
-        unreadLabel.layer.masksToBounds = true
-        unreadLabel.backgroundColor = Design.color.brightRedPomegranate()
+        unreadLabelView.layer.cornerRadius = unreadLabelView.frame.height/2
+        unreadLabelView.layer.masksToBounds = true
+        unreadLabelView.backgroundColor = Design.color.brightRedPomegranate()
+        
+        attributeLabel.layer.cornerRadius = 4
+        attributeLabel.layer.borderWidth = 1
+        attributeLabel.layer.masksToBounds = true
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -42,27 +52,48 @@ class RoomsTVCell: UITableViewCell {
     }
     
     func configureCell(_ room:Room, lastMessage: Message?) {
-        roomProfilePicture.image = Design.defaultAvatarImage
         timeLabel.text = ""
         lastMessageLabel.text = ""
+        attributeLabel.text = nil
         
         if room.isToUser {
+            roomProfilePicture.image = Design.defaultAvatarImage
             let user = try! Realm().object(ofType: User.self, forPrimaryKey: room.id)
             roomNameLabel.text = user?.username ?? "User"
             if let userImgUrlStr = user?.profilePictureUrl {
                 let URL = Foundation.URL(string: userImgUrlStr)
-                self.roomProfilePicture.af_setImage(withURL: URL!, placeholderImage: nil, imageTransition: .crossDissolve(0.2), runImageTransitionIfCached: false, completion: nil)
+                self.roomProfilePicture.af_setImage(withURL: URL!, placeholderImage: Design.defaultAvatarImage, imageTransition: .crossDissolve(0.2), runImageTransitionIfCached: false, completion: nil)
             }
         } else {
+            roomProfilePicture.image = Design.defaultRoomImage
+            if room.avatarPictureUrl != nil {
+                let URL = Foundation.URL(string: room.avatarPictureUrl!)
+                self.roomProfilePicture.af_setImage(withURL: URL!, placeholderImage: Design.defaultRoomImage, imageTransition: .crossDissolve(0.2), runImageTransitionIfCached: false, completion: nil)
+            }
             roomNameLabel.text = room.roomname
+            if room.isSystem.value == true {
+                attributeLabel.text = " Official "
+                attributeLabel.textColor = Design.color.lightBlueMalibu()
+                attributeLabel.layer.borderColor = Design.color.lightBlueMalibu().cgColor
+            } else if room.courseID != nil {
+                SocketIOManager.sharedInstance.getCourseInfo(room.courseID!, loadType: .cacheElseNetwork, completion: { (course, error) in
+                    if error == nil && course?.coursename != nil {
+                        self.attributeLabel.text = " \(course!.coursename!) "
+                        self.attributeLabel.textColor = Design.color.lighterGreenMountainMead()
+                        self.attributeLabel.layer.borderColor = Design.color.lighterGreenMountainMead().cgColor
+                    }
+                })
+            }
         }
         
         
-        if room.unread != 0 {
-            unreadLabel.isHidden = false
-            unreadLabel.text = "\(room.unread)"
+        if room.unread > 0 {
+            unreadLabelView.isHidden = false
+            let unreadText = "\(room.unread)"
+            unreadLabel.text = unreadText
+            unreadLabelWidthConstraint.constant = unreadLabel.frame.height + CGFloat(unreadText.characters.count - 1) * 4
         } else {
-            unreadLabel.isHidden = true
+            unreadLabelView.isHidden = true
         }
         if lastMessage != nil {
             var content = "user"
@@ -84,12 +115,17 @@ class RoomsTVCell: UITableViewCell {
                 lastMessageLabel.text = content + " share an image"
             } else if lastMessage!.text != nil {
                 lastMessageLabel.text = content + ": " + lastMessage!.text!
+//                lastMessageLabel.text =  lastMessage!.text!
             } else if lastMessage?.sharedRoom != nil {
                 lastMessageLabel.text = content + " shared a room"
             } else {
                 lastMessageLabel.text = content + ": ..."
             }
             timeLabel.text = Tools.sharedInstance.timeAgoSinceDatePrefered(lastMessage!.createdAt!)
+        } else {
+            if room.lastUpdateTime != nil {
+                timeLabel.text = Tools.sharedInstance.timeAgoSinceDatePrefered(room.lastUpdateTime! as Date)
+            }
         }
     }
     

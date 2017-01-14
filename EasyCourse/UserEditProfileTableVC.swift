@@ -11,16 +11,20 @@ import AlamofireImage
 import JGProgressHUD
 import Async
 
-class UserEditProfileTableVC: UITableViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class UserEditProfileTableVC: UITableViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate {
 
     @IBOutlet weak var profilePictureImageView: UIImageView!
     
     @IBOutlet weak var usernameTextField: UITextField!
     
+    @IBOutlet weak var userEmailLabel: UILabel!
+
     var tap:UITapGestureRecognizer?
     var picker = UIImagePickerController()
-    var profileImgModified = false
+//    var profileImgModified = false
     var usernameModified = false
+    var modifiedAvatar:UIImage?
+    var userChoosedLang:[String] = User.currentUser!.userLang()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,8 +33,8 @@ class UserEditProfileTableVC: UITableViewController, UIImagePickerControllerDele
         picker.delegate = self
         picker.allowsEditing = true
 
+        initData()
         
-        initProfilePicture()
         
         usernameTextField.text = User.currentUser?.username
         
@@ -45,34 +49,18 @@ class UserEditProfileTableVC: UITableViewController, UIImagePickerControllerDele
         // Dispose of any resources that can be recreated.
     }
     
-    func initProfilePicture() {
+    func initData() {
         profilePictureImageView.layer.cornerRadius = profilePictureImageView.frame.width/2
         profilePictureImageView.layer.masksToBounds = true
         if let avatarData = User.currentUser?.profilePicture {
             profilePictureImageView.image = UIImage(data: avatarData as Data)
         } else if let avatarUrl = User.currentUser?.profilePictureUrl {
-//            profilePictureImageView.af_setImageWithURL(URL(string: avatarUrl)!, placeholderImage: nil)
             profilePictureImageView.af_setImage(withURL: URL(string: avatarUrl)!, placeholderImage: nil)
         } else {
             profilePictureImageView.image = Design.defaultAvatarImage
         }
-    }
-    
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.section == 0 {
-            if indexPath.row == 0 {
-                showChangeAvatarAlertView()
-            }
-        }
-        tableView.deselectRow(at: indexPath, animated: true)
-    }
-    
-    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 14
-    }
-    
-    override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return 1
+        userEmailLabel.text = User.currentUser?.email
+        
     }
     
     func keyboardWasShown(_ notification:Notification) {
@@ -89,11 +77,7 @@ class UserEditProfileTableVC: UITableViewController, UIImagePickerControllerDele
     
 
     @IBAction func usernameTextFieldEditingChanged(_ sender: UITextField) {
-        if sender.text == nil {
-            
-        } else if sender.text! != User.currentUser?.username {
-            
-        }
+//
     }
     
     func showChangeAvatarAlertView() {
@@ -129,94 +113,94 @@ class UserEditProfileTableVC: UITableViewController, UIImagePickerControllerDele
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingImage image: UIImage, editingInfo: [String : AnyObject]?) {
         picker.dismiss(animated: true, completion: nil)
         self.profilePictureImageView.image = image
-        profileImgModified = true
+        modifiedAvatar = image
     }
     
     func saveProfile() {
         let hud = JGProgressHUD()
         hud.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
         hud.square = true
-        if usernameTextField.text == User.currentUser?.username && !profileImgModified {
-            //NOTHING changed
+        var errorReason:String?
+        if usernameTextField.text == nil {
+            errorReason = "Username is empty"
+        } else if usernameTextField.text!.trimWhiteSpace().isEmpty {
+            errorReason = "Username is empty"
+            
+        }
+        
+        if errorReason != nil {
             hud.indicatorView = JGProgressHUDErrorIndicatorView()
-            hud.textLabel.text = "Nothing changed"
-            hud.tapOutsideBlock = { (hu) in
-                hud.dismiss()
-            }
-            hud.tapOnHUDViewBlock = { (hu) in
-                hud.dismiss()
-            }
-            hud.show(in: self.view)
-            return
-        } else if usernameTextField.text == nil {
-            hud.indicatorView = JGProgressHUDErrorIndicatorView()
-            hud.textLabel.text = "Username is empty"
-            hud.tapOutsideBlock = { (hu) in
-                hud.dismiss()
-            }
-            hud.tapOnHUDViewBlock = { (hu) in
-                hud.dismiss()
-            }
+            hud.textLabel.text = errorReason
+            hud.tapOutsideBlock = { (hu) in hud.dismiss() }
+            hud.tapOnHUDViewBlock = { (hu) in hud.dismiss() }
             hud.show(in: self.view)
             return
         }
         
-        hud.textLabel.text = "Uploading"
+//        hud.textLabel.text = "Uploading"
         hud.show(in: self.view)
-        if profileImgModified {
-            ServerConst.sharedInstance.uploadImage(self.profilePictureImageView.image!, uploadType: .avatar, room: nil, completion: { (imageUrl, progress, error) in
-                print("image URL: \(imageUrl)")
-                if imageUrl != nil {
-//                    SocketIOManager.sharedInstance.updateUser(self.usernameTextField.text, userProfileImageUrl: imageUrl!)
-                    SocketIOManager.sharedInstance.syncUser(self.usernameTextField.text, userProfileImageUrl: imageUrl!, completion: { (success, error) in
-                        if success {
-                            hud.textLabel.text = "Success"
-                            hud.indicatorView = JGProgressHUDSuccessIndicatorView()
-                            hud.dismiss(afterDelay: 1, animated: true)
-                            self.navigationController?.popViewController(animated: true)
-                        } else {
-                            hud.indicatorView = JGProgressHUDErrorIndicatorView()
-                            hud.textLabel.text = "Error"
-                            hud.tapOutsideBlock = { (hu) in
-                                hud.dismiss()
-                            }
-                            hud.tapOnHUDViewBlock = { (hu) in
-                                hud.dismiss()
-                            }
-                        }
-                    })
-                    
-                } else if error != nil {
-                    //TODO: fail situation
-                    hud.indicatorView = JGProgressHUDErrorIndicatorView()
-                    hud.textLabel.text = "Error"
-                    hud.tapOutsideBlock = { (hu) in
-                        hud.dismiss()
-                    }
-                    hud.tapOnHUDViewBlock = { (hu) in
-                        hud.dismiss()
-                    }
+        SocketIOManager.sharedInstance.syncUser(self.usernameTextField.text, userProfileImage: modifiedAvatar, userLang: nil) { (success, error) in
+            if success {
+                hud.textLabel.text = "Success"
+                hud.indicatorView = JGProgressHUDSuccessIndicatorView()
+                hud.dismiss(afterDelay: 1, animated: true)
+                _ = self.navigationController?.popViewController(animated: true)
+            } else {
+                hud.indicatorView = JGProgressHUDErrorIndicatorView()
+                hud.textLabel.text = error?.description
+                hud.tapOutsideBlock = { (hu) in
+                    hud.dismiss()
                 }
-            })
-        } else {
-            SocketIOManager.sharedInstance.syncUser(self.usernameTextField.text, userProfileImageUrl: nil, completion: { (success, error) in
-                if success {
-                    hud.textLabel.text = "Success"
-                    hud.indicatorView = JGProgressHUDSuccessIndicatorView()
-                    hud.dismiss(afterDelay: 1, animated: true)
-                    self.navigationController?.popViewController(animated: true)
-                } else {
-                    hud.indicatorView = JGProgressHUDErrorIndicatorView()
-                    hud.textLabel.text = "Error"
-                    hud.tapOutsideBlock = { (hu) in
-                        hud.dismiss()
-                    }
-                    hud.tapOnHUDViewBlock = { (hu) in
-                        hud.dismiss()
-                    }
+                hud.tapOnHUDViewBlock = { (hu) in
+                    hud.dismiss()
                 }
-            })
+            }
         }
+        
+        
     }
     
+//    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+//    }
+
+}
+
+extension UserEditProfileTableVC {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if indexPath.section == 0 {
+            if indexPath.row == 0 {
+                showChangeAvatarAlertView()
+            }
+        } else if indexPath.section == 1 {
+            if indexPath.row == 0 {
+                self.performSegue(withIdentifier: "gotoResetPassword", sender: self)
+            }
+        }
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 14
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 1
+    }
+    
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if section == 0 {
+            if User.currentUser?.email != nil {
+                return 3
+            } else {
+                return 2
+            }
+        } else if section == 1 {
+            if User.currentUser?.email != nil {
+                return 1
+            } else {
+                return 0
+            }
+        }
+        return 0
+    }
 }

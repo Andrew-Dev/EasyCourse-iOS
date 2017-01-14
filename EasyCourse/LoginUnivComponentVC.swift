@@ -19,7 +19,7 @@ class LoginUnivComponentVC: UIViewController, UITableViewDelegate, UITableViewDa
     
     @IBOutlet weak var titleLabelToCenterConstraint: NSLayoutConstraint!
     
-    weak var delegate: moveToVCProtocol?
+    weak var delegate: loginProtocol?
     
     var universities:[University] = []
     
@@ -28,10 +28,11 @@ class LoginUnivComponentVC: UIViewController, UITableViewDelegate, UITableViewDa
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.layoutIfNeeded()
-        titleLabel.textColor = UIColor(white: 0.9, alpha: 1)
+//        titleLabel.textColor = UIColor(white: 0.9, alpha: 1)
         titleLabelToCenterConstraint.constant = UIScreen.main.bounds.height * -0.15
         
-        
+        univTableView.layer.cornerRadius = 3
+        univTableView.layer.masksToBounds = true
         
         univTableView.delegate = self
         univTableView.dataSource = self

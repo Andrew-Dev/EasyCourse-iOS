@@ -10,6 +10,7 @@ import UIKit
 import FBSDKCoreKit
 import Async
 import SwiftMessages
+import UserNotifications
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -29,40 +30,37 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print("the set default id: \(id)")
         RealmTools.setDefaultRealmForUser(id)
         
-        print("user is \(User.currentUser)")
+        window?.makeKeyAndVisible()
+        window?.rootViewController = MainNavigationController()
 
-        
-        if User.currentUser != nil {
-            let storyboard = UIStoryboard(name: "Main", bundle: nil)
-            let baseTabBarController = storyboard.instantiateViewController(withIdentifier: "BaseTabBarController") as! UITabBarController
-            window?.rootViewController = baseTabBarController
-        } else {
-            let storyboard = UIStoryboard(name: "Login", bundle: nil)
-            let logInViewController = storyboard.instantiateViewController(withIdentifier: "LoginVC") as! LoginVC
-            window?.rootViewController = logInViewController
-        }
-        
-//                UINavigationBar.appearance().barTintColor = Design.color.themeColor()
-//                UINavigationBar.appearance().barStyle = .Black
         UINavigationBar.appearance().tintColor = Design.color.lighterDarkGunPowder()
         UINavigationBar.appearance().isTranslucent = false
         
         UITabBar.appearance().isTranslucent = false
         UITabBar.appearance().tintColor = Design.color.lighterDarkGunPowder()
-                
-        let types: UIUserNotificationType = [.alert, .badge, .sound]
-        let settings = UIUserNotificationSettings(types: types, categories: nil)
-        application.registerUserNotificationSettings(settings)
-        application.registerForRemoteNotifications()
         
+        if !UserSetting.shouldAskPushNotif {
+            if #available(iOS 10, *) {
+                UNUserNotificationCenter.current().requestAuthorization(options:[.badge, .alert, .sound]){ (granted, error) in }
+                UIApplication.shared.registerForRemoteNotifications()
+            } else {
+                UIApplication.shared.registerUserNotificationSettings(UIUserNotificationSettings(types: [.badge, .sound, .alert], categories: nil))
+                UIApplication.shared.registerForRemoteNotifications()
+            }
+        }
         
         return true
     }
     
     func userDidLogout() {
-        let vc = UIStoryboard(name: "Login", bundle: nil).instantiateInitialViewController()! as UIViewController
+        User.currentUser = nil
+        User.token = nil
+        RealmTools.setDefaultRealmForUser(nil)
+        let storyboard = UIStoryboard(name: "Login", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "LoginVC") as! LoginVC
         window?.rootViewController?.present(vc, animated: true, completion: {
-            self.window?.rootViewController = vc
+//            self.window?.rootViewController = vc
+//            self.window?.makeKeyAndVisible()
         })
         
     }
@@ -75,7 +73,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationDidEnterBackground(_ application: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
-        SocketIOManager.sharedInstance.closeConnection()
+        if User.currentUser != nil {
+            SocketIOManager.sharedInstance.closeConnection()
+        }
     }
     
     

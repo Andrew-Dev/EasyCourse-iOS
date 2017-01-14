@@ -8,11 +8,12 @@
 
 import UIKit
 import RealmSwift
+import JGProgressHUD
 
 class LoginCourseComponentVC: UIViewController, UITextFieldDelegate {
     
     
-    weak var delegate: moveToVCProtocol?
+    weak var delegate: loginProtocol?
     
     @IBOutlet weak var titleLabel: UILabel!
 
@@ -34,8 +35,20 @@ class LoginCourseComponentVC: UIViewController, UITextFieldDelegate {
     
     @IBOutlet weak var nextBtnWidthConstraint: NSLayoutConstraint!
     
+    @IBOutlet weak var choosedCourseLabel: UILabel!
+    
+    
     var courseList:[Course] = []
     var choosedCourse:[Course] = []
+    var choosedCourseNameList:[String] {
+        get {
+            var name:[String] = []
+            for crs in choosedCourse {
+                name.append(crs.coursename ?? "-")
+            }
+            return name
+        }
+    }
     var isSearching = false
     var searchStatus = Constant.searchStatus.notSearching
     
@@ -49,14 +62,16 @@ class LoginCourseComponentVC: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.layoutIfNeeded()
-        titleLabel.textColor = UIColor(white: 0.9, alpha: 1)
+//        titleLabel.textColor = UIColor(white: 0.9, alpha: 1)
+        
+        choosedCourseLabel.text = nil
         
         titleLabelToCenterConstraint.constant = UIScreen.main.bounds.height * -0.25
         nextBtn.layer.cornerRadius = nextBtn.frame.height/2
-        nextBtn.layer.borderColor = UIColor.white.cgColor
+        nextBtn.layer.borderColor = UIColor(white: 0.5, alpha: 1).cgColor
         nextBtn.layer.borderWidth = 1
         nextBtn.layer.masksToBounds = true
-        nextBtn.tintColor = UIColor.white
+        nextBtn.tintColor = UIColor(white: 0.5, alpha: 1)
         
         backBtn.layer.cornerRadius = nextBtn.frame.height/2
         backBtn.layer.borderColor = UIColor(white: 0.5, alpha: 1).cgColor
@@ -111,7 +126,7 @@ class LoginCourseComponentVC: UIViewController, UITextFieldDelegate {
             self.backBtn.alpha = 1
             self.nextBtn.alpha = 1
             self.seperatorLineView.alpha = 1
-            self.titleLabelToCenterConstraint.constant = UIScreen.main.bounds.height * -0.3
+            self.titleLabelToCenterConstraint.constant = UIScreen.main.bounds.height * -0.4
             self.view.layoutIfNeeded()
             }, completion: nil)
     }
@@ -154,17 +169,29 @@ class LoginCourseComponentVC: UIViewController, UITextFieldDelegate {
     }
     
     @IBAction func nextBtnPressed(_ sender: UIButton) {
-        let realm = try! Realm()
-        for course in choosedCourse {
-            try! realm.write({
-                realm.add(course, update: true)
-            })
+        if choosedCourse.count == 0 {
+            let hud = JGProgressHUD()
+            hud.indicatorView = JGProgressHUDErrorIndicatorView()
+            hud.textLabel.text = "Please choose course"
+            hud.show(in: self.view)
+            hud.dismiss(afterDelay: 2)
+        } else if choosedCourse.count > 10 {
+            let hud = JGProgressHUD()
+            hud.indicatorView = JGProgressHUDErrorIndicatorView()
+            hud.textLabel.text = "Please choose no more than 10 courses"
+            hud.show(in: self.view)
+            hud.dismiss(afterDelay: 2)
+        } else {
+            delegate?.updateChoosedCourse(choosedCourse)
+            delegate?.moveToVC(2)
         }
-        delegate?.moveToVC(2)
     }
     
     @IBAction func backBtnPressed(_ sender: UIButton) {
         choosedCourse = []
+        courseSearchTextField.text = nil
+        searchStatus = .notSearching
+        courseListTableView.reloadData()
         delegate?.moveToVC(0)
     }
     /*
@@ -221,37 +248,24 @@ extension LoginCourseComponentVC: UITableViewDelegate, UITableViewDataSource {
         if searchStatus == .receivedError {
             searchCourse(text: courseSearchTextField.text ?? "", page:0)
         } else if searchStatus == .notSearching {
-            choosedCourse.remove(at: (indexPath as NSIndexPath).row)
+            choosedCourse.remove(at: indexPath.row)
             courseListTableView.deleteRows(at: [indexPath], with: UITableViewRowAnimation.middle)
         } else if searchStatus == .receivedResult || searchStatus == .notSearching {
             let courseExisted = choosedCourse.index(where: { (crs) -> Bool in
-                return crs.id == courseList[(indexPath as NSIndexPath).row].id
+                return crs.id == courseList[indexPath.row].id
             })
+            
             if courseExisted != nil {
+                tableView.cellForRow(at: indexPath)?.accessoryType = .none
                 choosedCourse.remove(at: courseExisted!)
+
             } else {
-                choosedCourse.append(courseList[(indexPath as NSIndexPath).row])
+                tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
+                choosedCourse.append(courseList[indexPath.row])
             }
-            tableView.reloadRows(at: [indexPath], with: UITableViewRowAnimation.middle)
-        }
-        
-        
-        
-//        if !isSearching {
-//            choosedCourse.remove(at: (indexPath as NSIndexPath).row)
-//            courseListTableView.deleteRows(at: [indexPath], with: UITableViewRowAnimation.middle)
-//        } else {
-//            let courseExisted = choosedCourse.index(where: { (crs) -> Bool in
-//                return crs.id == courseList[(indexPath as NSIndexPath).row].id
-//            })
-//            if courseExisted != nil {
-//                choosedCourse.remove(at: courseExisted!)
-//            } else {
-//                choosedCourse.append(courseList[(indexPath as NSIndexPath).row])
-//            }
 //            tableView.reloadRows(at: [indexPath], with: UITableViewRowAnimation.middle)
-//        }
-        titleLabel.text = "Choose your course (\(choosedCourse.count))"
+        }
+        choosedCourseLabel.text = choosedCourseNameList.joined(separator: ", ")
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
@@ -290,3 +304,4 @@ extension LoginCourseComponentVC: UITableViewDelegate, UITableViewDataSource {
         return 55
     }
 }
+

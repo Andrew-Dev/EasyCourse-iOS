@@ -11,6 +11,7 @@ import SocketIO
 import Alamofire
 import RealmSwift
 import SwiftMessages
+import UserNotifications
 
 //import Cache
 
@@ -27,7 +28,7 @@ class RoomsVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         roomTableView.delegate = self
         roomTableView.dataSource = self
         roomTableView.tableFooterView = UIView()
@@ -58,11 +59,30 @@ class RoomsVC: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        if UserSetting.shouldAskPushNotif {
+            let alert = UIAlertController(title: "Tips", message: "Using push notifications may help you to receive more information on class.", preferredStyle: .alert)
+            let okay = UIAlertAction(title: "Okay", style: .default, handler: { (UIAlertAction) in
+                self.registerPushNotif()
+                UserSetting.shouldAskPushNotif = false
+            })
+            alert.addAction(okay)
+            self.present(alert, animated: true, completion: nil)
+        }
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    func registerPushNotif() {
+        if #available(iOS 10, *) {
+            UNUserNotificationCenter.current().requestAuthorization(options:[.badge, .alert, .sound]){ (granted, error) in }
+            UIApplication.shared.registerForRemoteNotifications()
+        } else {
+            UIApplication.shared.registerUserNotificationSettings(UIUserNotificationSettings(types: [.badge, .sound, .alert], categories: nil))
+            UIApplication.shared.registerForRemoteNotifications()
+        }
     }
     
     func sortRooms() {
@@ -76,10 +96,35 @@ class RoomsVC: UIViewController {
             }
             
         }
-        sortedRooms.sort { (a: (Room, Message?), b: (Room, Message?)) -> Bool in
-            if a.1 == nil { return false }
-            if b.1 == nil { return true }
-            return a.1!.createdAt?.compare((b.1!.createdAt)! as Date) == ComparisonResult.orderedDescending
+        sortedRooms.sort { (a: (room:Room, msg:Message?), b: (room:Room, msg:Message?)) -> Bool in
+            
+            var aLastUpdate:Date?
+            var bLastUpdata:Date?
+            if a.room.lastUpdateTime != nil && a.msg?.createdAt != nil {
+                if a.room.lastUpdateTime!.compare(a.msg!.createdAt!) == .orderedDescending {
+                    aLastUpdate = a.room.lastUpdateTime! as Date
+                } else {
+                    aLastUpdate = a.msg!.createdAt!
+                }
+            } else {
+                aLastUpdate = a.room.lastUpdateTime as Date? ?? a.msg?.createdAt
+            }
+            if aLastUpdate == nil { return false }
+            if b.room.lastUpdateTime != nil && b.msg?.createdAt != nil {
+                if b.room.lastUpdateTime!.compare(b.msg!.createdAt!) == .orderedDescending {
+                    bLastUpdata = b.room.lastUpdateTime! as Date
+                } else {
+                    bLastUpdata = b.msg!.createdAt!
+                }
+            } else {
+                bLastUpdata = b.room.lastUpdateTime as Date? ?? b.msg?.createdAt
+            }
+            if bLastUpdata == nil { return true }
+            if aLastUpdate! > bLastUpdata! {
+                return true
+            } else {
+                return false
+            }
         }
     }
     

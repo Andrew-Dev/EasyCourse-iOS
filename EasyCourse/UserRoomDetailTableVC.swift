@@ -25,13 +25,6 @@ class UserRoomDetailTableVC: UITableViewController {
         silentSwitch.isOn = room.silent
         usernameLabel.text = user?.username
         roomPictureView.image = Design.defaultAvatarImage
-        
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem()
-        
     }
 
     override func didReceiveMemoryWarning() {
@@ -42,40 +35,75 @@ class UserRoomDetailTableVC: UITableViewController {
     // MARK: - Table view data source
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        let cell = tableView.cellForRow(at: indexPath)
-        if(cell != nil && cell?.tag == 1) { //report
-            report()
+        if indexPath.section == 2 && indexPath.row == 0 {
+            removeFriendAlert()
         }
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        if section == 0 {
+            return 20
+        }
+        return 0.1
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 20
     }
     
     @IBAction func silentSwitchChange(_ sender: UISwitch) {
         sender.isEnabled = false
         let realm = try! Realm()
         let hud = JGProgressHUD()
-        hud.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
-        hud.textLabel.text = "Loading"
         hud.show(in: self.view)
-        ServerConst.sharedInstance.silentRoom(room.id!, silent: sender.isOn, completion: { (success, error) in
-            sender.isEnabled = true
-            print("finished")
-            if success {
-                hud.dismiss()
-                try! realm.write {
-                    self.room.silent = sender.isOn
-                }
-            } else {
+        SocketIOManager.sharedInstance.silentFriend(user!.id!, silent: sender.isOn) { (afterSilent, error) in
+            if error != nil {
                 sender.isOn = !sender.isOn
                 hud.indicatorView = JGProgressHUDErrorIndicatorView()
-                hud.textLabel.text = "Connect Error"
+                hud.textLabel.text = error?.description
                 hud.tapOutsideBlock = { (hu) in
                     hud.dismiss()
                 }
                 hud.tapOnHUDViewBlock = { (hu) in
                     hud.dismiss()
                 }
+            } else {
+                hud.dismiss()
+                try! realm.write {
+                    self.room.silent = sender.isOn
+                }
             }
+            sender.isEnabled = true
+        }
+    }
+    
+    func removeFriendAlert() {
+        let otherUserName = user!.username ?? "user"
+        let alert = UIAlertController(title: "Remove friend", message: "You will no longer receive \(otherUserName)'s message. You can message him/her to allow him/her to talk to you again.", preferredStyle: .alert)
+        let delete = UIAlertAction(title: "Remove", style: .destructive, handler: { (UIAlertAction) in
+            let hud = JGProgressHUD()
+            hud.show(in: self.view)
+            SocketIOManager.sharedInstance.removeFriend(self.user!.id!, completion: { (success, error) in
+                if success {
+                    hud.dismiss()
+                    _ = self.navigationController?.popToRootViewController(animated: true)
+                } else {
+                    hud.indicatorView = JGProgressHUDErrorIndicatorView()
+                    hud.textLabel.text = error?.description
+                    hud.tapOutsideBlock = { (hu) in
+                        hud.dismiss()
+                    }
+                    hud.tapOnHUDViewBlock = { (hu) in
+                        hud.dismiss()
+                    }
+                }
+            })
         })
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        alert.addAction(delete)
+        alert.addAction(cancel)
+        self.present(alert, animated: true, completion: nil)
     }
     
     func report() {

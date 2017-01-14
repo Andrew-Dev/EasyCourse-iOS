@@ -23,8 +23,12 @@ class Constant: NSObject {
         static let currentUserIDKey = "kCurrentUserIDKey"
         static let currentUserLangKey = "kCurrentUserLangKey"
         static let currentUserTokenKey = "kCurrentUserTokenKey"
+        static let shouldAskPushNotif = "shouldAskPushNotif"
         static let deviceTokenKey = "deviceTokenKey"
         static let silentRoomKey = "deviceTokenKey"
+        static func userMsgLastUpdateKey(id: String) -> String {
+            return "userMsgLastUpdateKey\(id)"
+        }
     }
     
     
@@ -40,6 +44,8 @@ class Constant: NSObject {
         case receivedError
         case receivedResult
     }
+    
+//    static let baseURL = "https://www.easycourseserver.com/api"
     
 //    static let baseURL = "https://zengjintaotest.com/api"
     static let baseURL = "http://localhost:3000/api"

@@ -8,6 +8,7 @@
 
 import UIKit
 import RealmSwift
+import JGProgressHUD
 
 class RoomsDialogAccGroupVC: UIViewController {
     
@@ -79,12 +80,22 @@ extension RoomsDialogAccGroupVC: UITableViewDelegate, UITableViewDataSource {
             let alertController = UIAlertController(title: "Send this room", message: rooms[indexPath.row].roomname, preferredStyle: .alert)
             let sendAction = UIAlertAction(title: "Send", style: .default, handler: { (action) in
                 let message = Message()
-                message.initForCurrentUser(nil, imageUrl: nil, image: nil, sharedRoom: self.rooms[indexPath.row].id, toRoom: self.toRoom.id, isToUser: self.toRoom.isToUser)
+                message.initForCurrentUser(nil, image: nil, sharedRoom: self.rooms[indexPath.row].id, toRoom: self.toRoom.id, isToUser: self.toRoom.isToUser)
                 message.saveToDatabase()
                 SocketIOManager.sharedInstance.sendMessage(message, completion: { (success, error) in
                     //TODO: message sent response
+                    if error != nil {
+                        let hud = JGProgressHUD()
+                        hud.show(in: self.view)
+                        hud.indicatorView = JGProgressHUDErrorIndicatorView()
+                        hud.textLabel.text = error?.description ?? "Message sent fail"
+                        hud.dismiss(afterDelay: 2)
+                    } else {
+                        self.dismiss(animated: true, completion: nil)
+                    }
+                    
                 })
-                self.dismiss(animated: true, completion: nil)
+                
             })
             let cancelAction = UIAlertAction(title: "Cancel", style: .destructive, handler: { (action) in
 

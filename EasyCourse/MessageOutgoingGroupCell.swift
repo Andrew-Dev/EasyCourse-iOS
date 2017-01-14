@@ -15,17 +15,19 @@ class MessageOutgoingGroupCell: UITableViewCell {
     
     @IBOutlet weak var timeSeperatorHeightConstraint: NSLayoutConstraint!
     
-    @IBOutlet weak var userAvatarImageView: UIImageView!
-    
     @IBOutlet weak var timeLabel: UILabel!
     
-    @IBOutlet weak var messageBubbleView: UIView!
+    @IBOutlet weak var messageBubbleView: MessageBubbleView!
     
     @IBOutlet weak var roomNameLabel: UILabel!
     
     @IBOutlet weak var roomImageView: UIImageView!
     
     @IBOutlet weak var bubbleMaxWidthConstraint: NSLayoutConstraint!
+    
+    @IBOutlet weak var errorAlertImgView: UIImageView!
+    
+    @IBOutlet weak var roomTextLabel: UILabel!
     
     var delegate: popUpMessageProtocol?
     var message:Message?
@@ -34,11 +36,13 @@ class MessageOutgoingGroupCell: UITableViewCell {
         super.awakeFromNib()
         // Initialization code
         self.layoutIfNeeded()
+        messageBubbleView.backgroundColor = Design.color.outgoingBubbleColor
         messageBubbleView.layer.cornerRadius = 10
         messageBubbleView.layer.masksToBounds = true
-        userAvatarImageView.layer.cornerRadius = userAvatarImageView.frame.size.width/2
-        userAvatarImageView.layer.masksToBounds = true
         bubbleMaxWidthConstraint.constant = UIScreen.main.bounds.width * 0.6
+        
+        roomNameLabel.textColor = Design.color.outgoingTextColor
+        roomTextLabel.textColor = Design.color.outgoingTextColor
         
         let tapGestureRecognizer = UITapGestureRecognizer(target:self, action:#selector(self.groupTapped))
         messageBubbleView.isUserInteractionEnabled = true
@@ -53,6 +57,7 @@ class MessageOutgoingGroupCell: UITableViewCell {
     
     func configureCell(_ message:Message, lastMessage: Message?) {
         self.message = message
+        messageBubbleView.message = message
         
         if let room = try! Realm().object(ofType: Room.self, forPrimaryKey: message.sharedRoom) {
             roomNameLabel.text = room.roomname ?? "room"
@@ -64,11 +69,6 @@ class MessageOutgoingGroupCell: UITableViewCell {
             })
         }
         
-        if let avatarData = User.currentUser?.profilePicture {
-            self.userAvatarImageView.image = UIImage(data: avatarData as Data)
-        } else {
-            self.userAvatarImageView.image = Design.defaultAvatarImage
-        }
         
         let formatter = DateFormatter()
         formatter.dateFormat = "MMM d, HH:mm"
@@ -80,6 +80,12 @@ class MessageOutgoingGroupCell: UITableViewCell {
         } else {
             timeSeperatorView.isHidden = true
             timeSeperatorHeightConstraint.constant = 0
+        }
+        
+        if message.successSent.value == false {
+            errorAlertImgView.isHidden = false
+        } else {
+            errorAlertImgView.isHidden = true
         }
         
     }

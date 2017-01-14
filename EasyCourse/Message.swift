@@ -38,10 +38,17 @@ class Message: Object {
     func initMessage(_ data:NSDictionary) {
         if let id = data["_id"] as? String {
             self.id = id
-            self.senderId = data["sender"] as? String
+            if let sender = data["sender"] as? NSDictionary {
+                self.senderId = sender["_id"] as? String
+            }
+            
             self.text = data["text"] as? String
             self.imageUrl = data["imageUrl"] as? String
-            self.sharedRoom = data["sharedRoom"] as? String
+            if let sharedRoomData = data["sharedRoom"] as? NSDictionary,
+                let sharedRoomId = sharedRoomData["_id"] as? String {
+                self.sharedRoom = sharedRoomId
+                _ = Room.createOrUpdateRoomWithData(data: sharedRoomData, isToUser: false)
+            }
             if let toRoom = data["toRoom"] as? String {
                 self.toRoom = toRoom
                 self.isToUser = false
@@ -59,9 +66,96 @@ class Message: Object {
 //        return self
     }
     
-    func initForCurrentUser(_ text: String?, imageUrl: String?, image: UIImage?, sharedRoom: String?, toRoom: String?, isToUser: Bool) {
+    internal class func createOrUpdateMessage(_ data:NSDictionary) {
+        guard let id = data["_id"] as? String else {
+            return
+        }
+        
+        let text = data["text"] as? String
+        let imageUrl = data["imageUrl"] as? String
+        let sharedRoomData = data["sharedRoom"] as? NSDictionary
+        if text == nil && imageUrl == nil && sharedRoomData == nil {
+            return
+        }
+        
+        var messageAlreadyExist = false
+        var message = Message()
+        let realm = try! Realm()
+        if let msg = realm.object(ofType: Message.self, forPrimaryKey: id) {
+            message = msg
+            messageAlreadyExist = true
+        } else if let msg = realm.objects(Message.self).filter("remoteId = '\(id)'").last {
+            message = msg
+            messageAlreadyExist = true
+        } else {
+            try! realm.write {
+                message.id = id
+                realm.add(message)
+            }
+        }
+        
+        try! realm.write {
+            if let sender = data["sender"] as? NSDictionary {
+                message.senderId = sender["_id"] as? String
+            }
+            
+            message.text = data["text"] as? String
+            message.imageUrl = data["imageUrl"] as? String
+            if let sharedRoomData = data["sharedRoom"] as? NSDictionary,
+                let sharedRoomId = sharedRoomData["_id"] as? String {
+                message.sharedRoom = sharedRoomId
+            }
+            if let toRoom = data["toRoom"] as? String {
+                message.toRoom = toRoom
+                message.isToUser = false
+            }
+            if let toUser = data["toUser"] as? String {
+                message.toRoom = toUser
+                message.isToUser = true
+            }
+            message.imageWidth.value = data["imageWidth"] as? Float
+            message.imageHeight.value = data["imageHeight"] as? Float
+            if let dateString = data["createdAt"] as? String {
+                message.createdAt = dateString.stringToDate()
+            } else {
+                message.createdAt = Date()
+            }
+        }
+        
+        if let sharedRoomData = data["sharedRoom"] as? NSDictionary,
+            let _ = sharedRoomData["_id"] as? String {
+            _ = Room.createOrUpdateRoomWithData(data: sharedRoomData, isToUser: false)
+        }
+        saveSenderUserInfo(data)
+        if message.toRoom == nil { return }
+        let roomId = message.isToUser ? message.senderId : message.toRoom
+        if let room = realm.object(ofType: Room.self, forPrimaryKey: roomId) {
+            if User.currentUser?.joinedRoom.index(of: room) == nil {
+                try! realm.write {
+                    User.currentUser?.joinedRoom.append(room)
+                }
+            }
+            if !messageAlreadyExist {
+                try! realm.write {
+                    room.messageList.append(message)
+                    room.unread += 1
+                }
+            }
+        } else {
+            let room = Room()
+            room.id = roomId
+            room.messageList.append(message)
+            room.unread += 1
+            room.isToUser = message.isToUser
+            try! realm.write {
+                User.currentUser?.joinedRoom.append(room)
+            }
+        }
+    }
+    
+    
+    func initForCurrentUser(_ text: String?, image: UIImage?, sharedRoom: String?, toRoom: String?, isToUser: Bool) {
         self.text = text
-        self.imageUrl = imageUrl
         self.sharedRoom = sharedRoom
         
         self.toRoom = toRoom
@@ -78,37 +172,29 @@ class Message: Object {
         id = UUID().uuidString
     }
     
-//    internal func cacheSenderUserInfo(_ data:NSDictionary) {
-//        print("start cache")
-//        if let senderId = data["sender"] as? String,
-//            let username = data["senderName"] as? String,
-//            let profilePictureUrl = data["avatarUrl"] as? String {
-//            
-//            let userData = ["id":senderId, "username":username, "profilePictureUrl":profilePictureUrl]
-//            userCache.add(senderId, object: JSON.Dictionary(userData))
-//            
-//            print("user cache added:\(userData)")
-//        }
-//    }
-    
     internal class func saveSenderUserInfo(_ data:NSDictionary) {
 //        print("start cache")
-        if let senderId = data["sender"] as? String,
-            let username = data["senderName"] as? String {
-            
+        if let sender = data["sender"] as? NSDictionary,
+            let senderId = sender["_id"] as? String {
             let realm = try! Realm()
             if let dbUser = realm.object(ofType: User.self, forPrimaryKey: senderId) {
+                print("ready to update user")
                 try! realm.write {
-                    dbUser.username = username
-                    if let profilePictureUrl = data["avatarUrl"] as? String {
+                    print("updating user")
+                    if let username = sender["displayName"] as? String {
+                        dbUser.username = username
+                    }
+                    if let profilePictureUrl = sender["avatarUrl"] as? String {
                         dbUser.profilePictureUrl = profilePictureUrl
                     }
                 }
             } else {
                 let user = User()
                 user.id = senderId
-                user.username = username
-                if let profilePictureUrl = data["avatarUrl"] as? String {
+                if let username = sender["displayName"] as? String {
+                    user.username = username
+                }
+                if let profilePictureUrl = sender["avatarUrl"] as? String {
                     user.profilePictureUrl = profilePictureUrl
                 }
                 
@@ -123,27 +209,43 @@ class Message: Object {
     func saveToDatabase() {
         
         let realm = try! Realm()
-        let roomID = self.isToUser ? self.senderId : self.toRoom
+        var roomID = self.isToUser ? self.senderId : self.toRoom
+        if self.isToUser {
+            if self.senderId == User.currentUser?.id {
+                roomID = self.toRoom
+            } else {
+                roomID = self.senderId
+            }
+        } else {
+            roomID = self.toRoom
+        }
+        print("save the room: \(roomID) + \(self)")
         if let room = realm.object(ofType: Room.self, forPrimaryKey: roomID) {
-            
+            if User.currentUser?.joinedRoom.index(of: room) == nil {
+                try! realm.write {
+                    User.currentUser?.joinedRoom.append(room)
+                }
+            }
             if realm.object(ofType: Message.self, forPrimaryKey: self.id) == nil {
                 print("save msg to db: \(self.text))")
-                try! realm.write({
+                try! realm.write {
+                    print("saving: \(self.text))")
                     room.messageList.append(self)
                     room.unread += 1
-                })
+                }
+
             } else {
                 print("message already exist")
             }
         } else {
             let room = Room()
-            room.id = self.toRoom
+            room.id = roomID
             room.messageList.append(self)
             room.unread += 1
             room.isToUser = true
-            try! realm.write({
-                realm.add(room, update: true)
-            })
+            try! realm.write {
+                User.currentUser?.joinedRoom.append(room)
+            }
         }
     }
     

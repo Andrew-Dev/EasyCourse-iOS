@@ -7,11 +7,14 @@
 //
 
 import UIKit
-protocol moveToVCProtocol : NSObjectProtocol {
+protocol loginProtocol : NSObjectProtocol {
     func moveToVC(_ index:Int) -> Void
+    func updateChoosedCourse(_ courseArr:[Course]) -> Void
+    func getChoosedCourse() -> [Course]
+    func showMainTabBarVC(_ getPassMessage:Bool) -> Void
 }
 
-class LoginVC: UIViewController, moveToVCProtocol {
+class LoginVC: UIViewController, loginProtocol {
     
     
     @IBOutlet weak var mainScrollView: UIScrollView!
@@ -22,10 +25,12 @@ class LoginVC: UIViewController, moveToVCProtocol {
     var chooseCourseVC:LoginCourseComponentVC?
     var chooseLangVC:LoginLangChooseVC?
     
+    var choosedCourse:[Course] = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.layoutIfNeeded()
-        mainScrollView.backgroundColor = Design.color.DarkGunPowder()
+//        mainScrollView.backgroundColor = Design.color.DarkGunPowder()
         
         mainLoginVC.delegate = self
         self.addChildViewController(mainLoginVC)
@@ -64,6 +69,15 @@ class LoginVC: UIViewController, moveToVCProtocol {
         // Dispose of any resources that can be recreated.
     }
     
+    // MARK: login protocol
+    
+    func updateChoosedCourse(_ courseArr:[Course]) {
+        choosedCourse = courseArr
+    }
+    
+    func getChoosedCourse() -> [Course] {
+        return choosedCourse
+    }
     
     func moveToVC(_ index: Int) {
         if index == 0 && chooseUnivVC == nil {
@@ -96,17 +110,29 @@ class LoginVC: UIViewController, moveToVCProtocol {
             self.addChildViewController(chooseLangVC!)
             self.mainScrollView.addSubview(chooseLangVC!.view)
             chooseLangVC!.didMove(toParentViewController: self)
-        } else if index == 3 {
-            let sb = UIStoryboard(name: "Main", bundle: nil)
-            let mainTabBarController = sb.instantiateViewController(withIdentifier: "BaseTabBarController") as! UITabBarController
-            self.present(mainTabBarController, animated: true, completion: {
-                let aa = UIApplication.shared.delegate as! AppDelegate
-                aa.window?.rootViewController = mainTabBarController
-            })
         }
         self.view.setNeedsLayout()
         mainScrollView.setContentOffset(CGPoint(x: (self.view.frame.width * CGFloat(index + 1)), y: 0), animated: true)
         
+    }
+    
+    func showMainTabBarVC(_ getPassMessage: Bool) {
+        let sb = UIStoryboard(name: "Main", bundle: nil)
+        let mainTabBarController = sb.instantiateViewController(withIdentifier: "BaseTabBarController") as! UITabBarController
+        
+        let rootViewController = UIApplication.shared.keyWindow?.rootViewController
+
+        guard let mainNavigationController = rootViewController as? MainNavigationController else { return }
+        
+        mainNavigationController.viewControllers = [mainTabBarController]
+        
+        dismiss(animated: true, completion: nil)
+        
+        if getPassMessage {
+            SocketIOManager.sharedInstance.getHistMessage(true, completion: { (success, error) in
+                //
+            })
+        }
     }
     
     /*

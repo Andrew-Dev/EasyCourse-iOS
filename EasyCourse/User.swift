@@ -15,7 +15,7 @@ import AlamofireImage
 import SwiftyJSON
 
 var _currentUser:User?
-var _userLang:[Int] = []
+var _userLang:[String] = []
 
 class User: Object {
     
@@ -27,6 +27,7 @@ class User: Object {
     dynamic var universityId:String? = nil
     let joinedRoom = List<Room>()
     let joinedCourse = List<Course>()
+    let langArray = List<Language>()
     
     //Related to user
     // 0 means other is on user's friend pending list.(others can send message to user, but push notification only sent at the first message)
@@ -70,20 +71,6 @@ class User: Object {
         }
     }
     
-    class var userLang: [Int] {
-        get {
-            if let lang  = UserDefaults.standard.object(forKey: Constant.UserDefaultKey.currentUserLangKey) as? [Int] {
-                _userLang = lang
-            }
-            return _userLang
-        }
-        set(langArr) {
-            _userLang = langArr
-            UserDefaults.standard.set(_userLang, forKey: Constant.UserDefaultKey.currentUserLangKey)
-            UserDefaults.standard.synchronize()
-        }
-    }
-    
     class var token:String? {
         get {
             let keychain = KeychainSwift()
@@ -98,6 +85,27 @@ class User: Object {
                 keychain.set(token!, forKey: Constant.UserDefaultKey.currentUserTokenKey)
             }
         }
+    }
+    
+    func setLastMsgUpdateTime(_ Date:Date) {
+        UserDefaults.standard.set(Date, forKey: Constant.UserDefaultKey.userMsgLastUpdateKey(id: self.id!))
+        UserDefaults.standard.synchronize()
+    }
+    
+    func getLastMsgUpdateTime() -> Date? {
+        if let date = UserDefaults.standard.object(forKey: Constant.UserDefaultKey.userMsgLastUpdateKey(id: self.id!)) as? Date {
+            return date
+        } else {
+            return nil
+        }
+    }
+    
+    func userLang() -> [String] {
+        var langArr:[String] = []
+        self.langArray.forEach { (lang) in
+            langArr.append(lang.code!)
+        }
+        return langArr
     }
     
     // New
@@ -122,8 +130,6 @@ class User: Object {
         
         user?.mapUserWithData(data)
         
-        
-        
         return user
     }
     
@@ -143,6 +149,20 @@ class User: Object {
                 self.universityId = universityId
             }
         }
+//        print("data: \(data)")
+        if let langs = data["userLang"] as? [String] {
+
+            try! realm.write {
+                self.langArray.removeAll()
+            }
+                langs.forEach({ (lang) in
+                    let language = Language.findOrCreate(code: lang)
+                    try! realm.write {
+                        self.langArray.append(language)
+                    }
+                })
+            
+        }
         
         
         if let courseArray = data["joinedCourse"] as? [NSDictionary] {
@@ -152,7 +172,7 @@ class User: Object {
             for courseData in courseArray {
                 if let course = Course.createOrUpdateCourse(courseData) {
                     try! realm.write {
-                        User.currentUser?.joinedCourse.append(course)
+                        self.joinedCourse.append(course)
                     }
                 }
             }
@@ -165,7 +185,7 @@ class User: Object {
             for roomData in roomArray {
                 if let room = Room.createOrUpdateRoomWithData(data: roomData, isToUser: false) {
                     try! realm.write {
-                        User.currentUser?.joinedRoom.append(room)
+                        self.joinedRoom.append(room)
                     }
                 }
             }
@@ -175,10 +195,10 @@ class User: Object {
             for contactData in contactsArray {
                 if let room = Room.createOrUpdateRoomWithData(data: contactData, isToUser: true) {
                     try! realm.write {
-                        User.currentUser?.joinedRoom.append(room)
+                        self.joinedRoom.append(room)
                     }
                 }
-                User.createOrUpdateUserWithData(contactData)
+//                User.createOrUpdateUserWithData(contactData)
             }
         }
         
@@ -195,171 +215,106 @@ class User: Object {
         }
     }
     
-    //=== remove all
-//    
-//    func initUserFromServerWithData(_ data:NSDictionary) -> User? {
-//        let realm = try! Realm()
-//        if let id = data["_id"] as? String {
-//            if let existedUser = realm.object(ofType: User.self, forPrimaryKey: id) {
-//                try! realm.write {
-//                    existedUser.username = data["displayName"] as? String
-//                    existedUser.email = data["email"] as? String
-//                    existedUser.profilePictureUrl = data["avatarUrl"] as? String
-//                    existedUser.universityId = data["university"] as? String
-//                    existedUser.otherFriendStatus = data["status"] as? Int ?? 0
-//                }
-//                return existedUser
-//            } else {
-//                self.id = id
-//            }
-//        } else {
-//            return nil
-//        }
-//        self.username = data["displayName"] as? String
-//        self.email = data["email"] as? String
-//        self.profilePictureUrl = data["avatarUrl"] as? String
-//        self.universityId = data["university"] as? String
-//        self.otherFriendStatus = data["status"] as? Int ?? 0
-//        return self
-//    }
-//    
-//    func initCurrentUserWithData(_ data:NSDictionary) -> User {
-//        self.id = data["_id"] as? String
-//        self.username = data["displayName"] as? String
-//        self.email = data["email"] as? String
-//        self.universityId = data["university"] as? String
-//        self.profilePictureUrl = data["avatarUrl"] as? String
-//        if self.profilePictureUrl != nil {
-//            ServerHelper.sharedInstance.getNetworkImageData(profilePictureUrl!, completion: { (data, error) in
-//                if data != nil {
-//                    try! Realm().write({
-//                        User.currentUser?.profilePicture = data
-//                    })
-//                }
-//            })
-//        }
-//        
-//        if let courseArray = data["joinedCourse"] as? [NSDictionary] {
-//            var courses:[Course] = []
-//            for courseData in courseArray {
-////                courses.append(Course.initCourse(courseData)!)
-//            }
-//            Course.syncCourse(courses)
-//        }
-//        
-//        var rooms:[Room] = []
-//        if let roomArray = data["joinedRoom"] as? [NSDictionary] {
-//            for roomData in roomArray {
-//                if let room = Room.createOrUpdateRoomWithData(data: roomData, isToUser: false) {
-//                    rooms.append(room)
-//                }
-//            }
-//        }
-//        
-//        if let contactsArray = data["contacts"] as? [NSDictionary] {
-//            for contactData in contactsArray {
-//                if let room = Room.createOrUpdateRoomWithData(data: contactData, isToUser: true) {
-//                    rooms.append(room)
-//                }
-//                User().initUserFromServerWithData(contactData)?.saveToDatabase()
-//            }
-//        }
-//        
-//        Room.syncRoom(rooms)
-//
-//        
-//        if let silentRoomIdArray = data["silentRoom"] as? [String] {
-//            let realm = try! Realm()
-//            for roomId in silentRoomIdArray {
-//                if let room = realm.object(ofType: Room.self, forPrimaryKey: roomId) {
-//                    try! realm.write {
-//                        room.silent = true
-//                    }
-//                }
-//            }
-//        }
-//
-//        return self
-//    }
-//    
-//    func syncCurrentUserWithData(_ data:NSDictionary) {
-//        let originProfilePictureUrl = User.currentUser?.profilePictureUrl
-//        try! Realm().write({ 
-////            self.id = data["_id"] as? String
-//            self.username = data["displayName"] as? String
-//            self.email = data["email"] as? String
-//            self.universityId = data["university"] as? String
-//            self.profilePictureUrl = data["avatarUrl"] as? String
-//        })
-//
-////        print("profilUrl: \(self.profilePictureUrl)")
-////        print("oriprofilUrl: \(originProfilePictureUrl)")
-//        if profilePictureUrl != nil {
-//            
-//            if User.currentUser?.profilePicture == nil || originProfilePictureUrl != self.profilePictureUrl  {
-//                print("download img")
-//                ServerHelper.sharedInstance.getNetworkImageData(profilePictureUrl!, completion: { (data, error) in
-//                    if data != nil {
-//                        try! Realm().write({
-//                            self.profilePicture = data
-//                        })
-//                        NotificationCenter.default.post(name: Constant.NotificationKey.SyncUser, object: nil)
-//                    }
-//                })
-//            }
-//        }
-//        
-//        if let lang = data["userLang"] as? [Int] {
-//            User.userLang = lang
-//        }
-//        
-//        if let courseArray = data["joinedCourse"] as? [NSDictionary] {
-//            var courses:[Course] = []
-//            for courseData in courseArray {
-////                courses.append(Course.initCourse(courseData)!)
-//            }
-//            Course.syncCourse(courses)
-//        }
-//        
-//        var rooms:[Room] = []
-//        if let roomArray = data["joinedRoom"] as? [NSDictionary] {
-//            for roomData in roomArray {
-//                if let room = Room.createOrUpdateRoomWithData(data: roomData, isToUser: false) {
-//                    rooms.append(room)
-//                }
-//                
-//            }
-//        }
-//        
-//        if let contactsArray = data["contacts"] as? [NSDictionary] {
-//            for contactData in contactsArray {
-//                if let room = Room.createOrUpdateRoomWithData(data: contactData, isToUser: true) {
-//                    rooms.append(room)
-//                }
-//                User().initUserFromServerWithData(contactData)?.saveToDatabase()
-//            }
-//        }
-//        
-//        Room.syncRoom(rooms)
-//
-//        if let silentRoomIdArray = data["silentRoom"] as? [String] {
-//            let realm = try! Realm()
-//            for roomId in silentRoomIdArray {
-//                if let room = realm.object(ofType: Room.self, forPrimaryKey: roomId) {
-//                    try! realm.write {
-//                        room.silent = true
-//                    }
-//                }
-//            }
-//        }
-//
-//    }
-//    
-//    func saveToDatabase() {
-//        let realm = try! Realm()
-//        try! realm.write({
-//            realm.add(self, update: true)
-//        })
-//    }
+    func joinRoom(_ room:Room) {
+        let realm = try! Realm()
+        let roomIndex = self.joinedRoom.index { (userroom) -> Bool in
+            return userroom.id == room.id
+        }
+        if roomIndex == nil {
+            try! realm.write {
+                room.lastUpdateTime = NSDate()
+                self.joinedRoom.append(room)
+            }
+        }
+    }
+    
+    func joinRoomWithData(_ roomData: [NSDictionary]?) {
+        if roomData == nil { return }
+        for roomData in roomData! {
+            if let room = Room.createOrUpdateRoomWithData(data: roomData, isToUser: false) {
+                self.joinRoom(room)
+            }
+        }
+    }
+    
+    func quitRoom(_ roomId:String) {
+        let realm = try! Realm()
+        let roomIndex = self.joinedRoom.index { (userroom) -> Bool in
+            return userroom.id == roomId
+        }
+        if roomIndex != nil {
+            try! realm.write {
+                self.joinedRoom.remove(objectAtIndex: roomIndex!)
+            }
+        }
+    }
+    
+    func joinCourse(_ course:Course) {
+        let realm = try! Realm()
+        let courseIndex = self.joinedCourse.index { (usercourse) -> Bool in
+            return usercourse.id == course.id
+        }
+        if courseIndex == nil {
+            try! realm.write {
+                self.joinedCourse.append(course)
+            }
+        }
+    }
+    
+    func joinCourseWithData(_ courseData:[NSDictionary]?) {
+        if courseData == nil { return }
+        for courseData in courseData! {
+            if let course = Course.createOrUpdateCourse(courseData) {
+                self.joinCourse(course)
+            }
+        }
+    }
+    
+    func quitCourse(_ courseId:String) {
+        let realm = try! Realm()
+        let courseIndex = self.joinedCourse.index { (usercourse) -> Bool in
+            return usercourse.id == courseId
+        }
+        if courseIndex != nil {
+            try! realm.write {
+                self.joinedCourse.remove(objectAtIndex: courseIndex!)
+                let rooms = realm.objects(Room.self).filter({ (room) -> Bool in
+                    return room.courseID == courseId
+                })
+                realm.delete(rooms)
+
+            }
+        }
+    }
+    
+    func setLang(_ langArr:[String]) {
+        let realm = try! Realm()
+        try! realm.write {
+            self.langArray.removeAll()
+            langArr.forEach { (lang) in
+                self.langArray.append(Language.findOrCreate(code: lang))
+            }
+        }
+        
+    }
+    
+    func hasJoinedCourse(_ courseId: String) -> Bool {
+        let courseIndex = self.joinedCourse.index { (usercourse) -> Bool in
+            return usercourse.id == courseId
+        }
+        return courseIndex == nil ? false : true
+    }
+    
+    func hasJoinedRoom(_ roomId: String) -> Bool {
+        let roomIndex = self.joinedRoom.index { (userroom) -> Bool in
+            print("\(userroom.id) : \(roomId)")
+            return userroom.id == roomId
+        }
+        print("joinedroom: \(roomIndex)")
+        return roomIndex == nil ? false : true
+    }
+    
+    
+    
     
 }

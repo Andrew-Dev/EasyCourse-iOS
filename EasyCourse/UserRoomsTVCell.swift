@@ -41,10 +41,12 @@ class UserRoomsTVCell: UITableViewCell {
     
     func configureCell(_ room:Room, userJoinedRooms:Results<(Room)>) {
         cellRoom = room
-        roomNameLabel.text = room.roomname!
-        membersCountLabel.text = "\(room.memberCounts.value!) people"
-        courseRelatedLabel.text = room.courseName
-        if room.isSystem.value! {
+        roomNameLabel.text = room.roomname ?? "-"
+        if let membersCnt = room.memberCounts.value {
+            membersCountLabel.text = "\(membersCnt) people"
+        }
+//        courseRelatedLabel.text = room.courseName
+        if room.isSystem.value == true {
             FounderLabel.text = "system"
         }
         
@@ -69,7 +71,7 @@ class UserRoomsTVCell: UITableViewCell {
 //            SocketIOManager.sharedInstance.quitRoom(cellRoom!.id!) { (success, error) in
 //                self.delegate!.reloadTableView()
 //            }
-            SocketIOManager.sharedInstance.quitRoom(cellRoom!.id!, deleteRoom: true, completion: { (success, error) in
+            SocketIOManager.sharedInstance.quitRoom(cellRoom!.id!, completion: { (success, error) in
                 
                 self.delegate!.reloadTableView()
             })

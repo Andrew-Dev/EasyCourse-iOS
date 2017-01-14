@@ -12,10 +12,12 @@ import DKImagePickerController
 import MWPhotoBrowser
 import LDONavigationSubtitleView
 import JGProgressHUD
+import Async
 
 protocol popUpMessageProtocol : NSObjectProtocol {
     func popUpImage(_ imageView:UIImageView, message:Message) -> Void
     func popUpSharedRoom(_  message:Message) -> Void
+    func popUpResend(_ message:Message) -> Void
 }
 
 class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSource, cellTableviewProtocol {
@@ -33,10 +35,14 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     
     @IBOutlet weak var accImgBtn: UIButton!
     
+    @IBOutlet weak var accRoomBtn: UIButton!
     
     @IBOutlet weak var inputViewHeightConstraint: NSLayoutConstraint!
     
     @IBOutlet weak var inputBottomConstraint: NSLayoutConstraint!
+    
+    
+    
     
     //Type: group chat or private chat
     var otherUser:User?
@@ -52,13 +58,15 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
             if room != nil {
                 return room!
             } else {
-                self.navigationController?.popToRootViewController(animated: true)
+                _ = self.navigationController?.popToRootViewController(animated: true)
                 return Room()
             }
         }
     }
-    var msgPage = 0
+//    var msgPage = 0
+    var msgHidePage = 0
     var msgOffset = 10
+    var scrollLoadingMore = false
     
     //UI
     var placeholderLabel:UILabel!
@@ -68,6 +76,8 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     var selectedImageView:UIImageView?
     var tappedUserId:String?
 
+    var selectedMsg:Message?
+    
     //Notif
     var messageUpdateNotif: NotificationToken? = nil
     var roomUpdateNotif: NotificationToken? = nil
@@ -79,13 +89,17 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
 //        liveMessage = localRoom.messageList
         liveImageMessage = localRoom.getMessageContainsImage()
         
+        msgHidePage = max(liveMessage.count / msgOffset - 1, 0)
+        
         //UI
         if localRoom.isToUser {
             otherUser = try! Realm().object(ofType: User.self, forPrimaryKey: localRoom.id)
             self.navigationItem.title = otherUser?.username
         } else {
             let customTitleView = LDONavigationSubtitleView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 44))
-            customTitleView.subtitle = "\(localRoom.memberCounts.value!) people"
+            if localRoom.memberCountsDescription != nil {
+                customTitleView.subtitle = "\(localRoom.memberCountsDescription!) people"
+            }
             customTitleView.title = localRoom.roomname!
             self.navigationItem.titleView = customTitleView
         }
@@ -95,6 +109,8 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
         messageTableView.estimatedRowHeight = 120
         messageTableView.rowHeight = UITableViewAutomaticDimension
         messageTableView.tableFooterView = UIView()
+        messageTableView.backgroundColor = Design.color.backGroudColor
+        
         
         inputTextView.delegate = self
         inputTextView.layer.cornerRadius = 4.0
@@ -113,7 +129,7 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
         placeholderLabel.textColor = UIColor.lightGray
         placeholderLabel.isHidden = !inputTextView.text.isEmpty
         
-        inputBottomConstraint.constant = 0
+        
         accessoryView.isHidden = true
         
         accImgBtn.layer.cornerRadius = 12
@@ -121,6 +137,12 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
         accImgBtn.layer.borderColor = UIColor(white: 0.8, alpha: 1).cgColor
         accImgBtn.layer.masksToBounds = true
         accImgBtn.backgroundColor = UIColor(white: 0.98, alpha: 1)
+        
+        accRoomBtn.layer.cornerRadius = 12
+        accRoomBtn.layer.borderWidth = 1
+        accRoomBtn.layer.borderColor = UIColor(white: 0.8, alpha: 1).cgColor
+        accRoomBtn.layer.masksToBounds = true
+        accRoomBtn.backgroundColor = UIColor(white: 0.98, alpha: 1)
         
         //Navigation
         let detailButton = UIBarButtonItem(title: "More", style: UIBarButtonItemStyle.done, target: self, action: #selector(self.gotoDetail))
@@ -130,46 +152,73 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
         NotificationCenter.default.addObserver(self, selector:#selector(self.keyboardWasShown(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector:#selector(self.keyboardWillDisappear(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
         
-        messageUpdateNotif = liveMessage.addNotificationBlock({ (result) in
-            print("get message notif")
-            self.loadMessage()
-        })
-        
-        //TODO: delete room
-//        roomUpdateNotif = try! Realm().objects(Room.self).addNotificationBlock({ (result) in
-//            print("get room notif")
+//        messageUpdateNotif = liveMessage.addNotificationBlock({ (result) in
+//            print("get message notif")
 //            self.loadMessage()
-//            switch result {
-//            case .update(_, let deletions, _, _):
-//                    print("delete: \(deletions)")
-//                self.navigationController?.popToRootViewController(animated: true)
-//            default:
-//                break
-//            }
-////            if result
 //        })
         
-//        roomUpdateNotif = try! Realm().objects(Room.self).addNotificationBlock { [weak self] (changes: RealmCollectionChange) in
-//            switch changes {
-//            case .initial:
-//                // Results are now populated and can be accessed without blocking the UI
-//                print("initial")
-//                break
-//            case .update(let a, let deletions, let insertions, let modifications):
-//                // Query results have changed, so apply them to the UITableView
-//                print("delete: \(a)m \(deletions)")
-//                break
-//            case .error(let error):
-//                // An error occurred while opening the Realm file on the background worker thread
-//                fatalError("\(error)")
-//                break
-//            }
-//        }
-        
-
+        messageUpdateNotif = liveMessage.addNotificationBlock { [weak self] (changes: RealmCollectionChange) in
+            guard let tableView = self?.messageTableView else { return }
+            switch changes {
+            case .initial:
+                tableView.reloadData()
+                break
+            case .update(_, let deletions, let insertions, let modifications):
+                print("delete:\(deletions) || insert:\(insertions) || modifications:\(modifications)")
+                if insertions.count > 0 {
+                    let scrollToBottom = tableView.contentOffset.y >= (tableView.contentSize.height - tableView.frame.size.height)
+                    tableView.reloadData()
+                    for i in insertions {
+                        if self!.liveMessage[i].senderId == User.currentUser!.id || scrollToBottom {
+                            self!.scrollToBottom(true)
+                            break
+                        }
+                    }
+                }
+                
+                if let vRows = tableView.indexPathsForVisibleRows {
+                    deletions.forEach({ (deleteIndex) in
+                        let rowIndexPath = IndexPath(row: deleteIndex - self!.msgHidePage*self!.msgOffset, section: 0)
+                        if vRows.contains(rowIndexPath) {
+                            print("delete visible: \(rowIndexPath.row)")
+                            tableView.deleteRows(at: [rowIndexPath], with: .none)
+                        } else {
+                            print("delete reloadData")
+                            tableView.reloadData()
+                        }
+                    })
+                    
+                    modifications.forEach({ (modifyIndex) in
+                        if self?.liveMessage[modifyIndex].successSent.value == false {
+                            let rowIndexPath = IndexPath(row: modifyIndex - self!.msgHidePage*self!.msgOffset, section: 0)
+                            if vRows.contains(rowIndexPath) {
+                                print("modify visible: \(rowIndexPath.row)")
+                                tableView.reloadRows(at: [rowIndexPath], with: .none)
+                            } else {
+                                print("modify reloadData")
+                                tableView.reloadData()
+                            }
+                        }
+                        
+                    })
+                }
+                
+                break
+                
+            case .error(let error):
+                // An error occurred while opening the Realm file on the background worker thread
+                fatalError("\(error)")
+                break
+            }
+        }
         
         NotificationCenter.default.addObserver(self, selector: #selector(self.gobackToLastView), name: Constant.NotificationKey.RoomDelete, object: nil)
         
+    }
+    
+    func mapMsgIndexToCell(dbIndex:Int) -> Int {
+        print("insert index=\(dbIndex - msgHidePage*msgOffset) || livemsg=\(liveMessage.count) || cellcnt=\(messageTableView.numberOfRows(inSection: 0))")
+        return dbIndex - msgHidePage*msgOffset
     }
     
     
@@ -182,8 +231,12 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.view.endEditing(true)
+        inputBottomConstraint.constant = 0
+        turnOffAccessoryView()
+        
         if try! Realm().object(ofType: Room.self, forPrimaryKey: localRoomId) == nil {
-            navigationController?.popToRootViewController(animated: true)
+            _ = navigationController?.popToRootViewController(animated: true)
         }
     }
     
@@ -214,25 +267,26 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     }
     
     func loadMessage() {
-        try! Realm().write {
-            localRoom.unread = 0
-        }
         messageTableView.reloadData()
         scrollToBottom(true)
     }
     
+    // MARK: - TableView delegate -
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let cnt = min((msgPage+1) * msgOffset, liveMessage.count)
+//        let cnt = min((msgPage+1) * msgOffset, liveMessage.count)
+        let cnt = liveMessage.count - msgHidePage * msgOffset
         return cnt
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cellCnt = min((msgPage+1) * msgOffset, liveMessage.count)
+//        let cellCnt = min((msgPage+1) * msgOffset, liveMessage.count)
+//        
+//        let msgIndex = liveMessage.count - (cellCnt - indexPath.row)
         
-        let msgIndex = liveMessage.count - (cellCnt - indexPath.row)
+        let msgIndex = indexPath.row + msgHidePage * msgOffset
 //        print("indexpath: \(indexPath.row) || msgIndex: \(msgIndex)")
         if liveMessage[msgIndex].senderId == User.currentUser?.id {
-            if liveMessage[msgIndex].imageUrl != nil {
+            if liveMessage[msgIndex].imageData != nil || liveMessage[msgIndex].imageUrl != nil {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "MessageOutgoingImageCell", for: indexPath) as! MessageOutgoingImageCell
                 var lastMessage:Message?
                 if msgIndex != 0 {
@@ -256,6 +310,7 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
                 if msgIndex != 0 {
                     lastMessage = liveMessage[msgIndex - 1]
                 }
+                cell.delegate = self
                 cell.configureCell(liveMessage[msgIndex], lastMessage: lastMessage)
                 return cell
             }
@@ -267,7 +322,8 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
                 if msgIndex != 0 {
                     lastMessage = liveMessage[msgIndex - 1]
                 }
-                cell.delegate = self
+                cell.cellDelegate = self
+                cell.popUpDelegate = self
                 cell.configureCell(liveMessage[msgIndex], lastMessage: lastMessage)
                 return cell
                 
@@ -277,7 +333,8 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
                 if msgIndex != 0 {
                     lastMessage = liveMessage[msgIndex - 1]
                 }
-                cell.delegate = self
+                cell.cellDelegate = self
+                cell.popUpDelegate = self
                 cell.configureCell(liveMessage[msgIndex], lastMessage: lastMessage)
                 return cell
             } else {
@@ -286,7 +343,7 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
                 if msgIndex != 0 {
                     lastMessage = liveMessage[msgIndex - 1]
                 }
-                cell.delegate = self
+                cell.cellDelegate = self
                 cell.configureCell(liveMessage[msgIndex], lastMessage: lastMessage)
                 return cell
                 
@@ -297,8 +354,8 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     
     func scrollToBottom(_ animated: Bool) {
         if liveMessage.count > 1 {
-            let cellCnt = min((msgPage+1) * msgOffset, liveMessage.count)
-            self.messageTableView.scrollToRow(at: IndexPath(row: cellCnt - 1, section: 0), at: .bottom, animated: animated)
+//            print("to row: \(self.messageTableView.numberOfRows(inSection: 0) - 1)")
+            self.messageTableView.scrollToRow(at: IndexPath(row: self.messageTableView.numberOfRows(inSection: 0) - 1, section: 0), at: .bottom, animated: animated)
         }
     }
     
@@ -311,19 +368,21 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if scrollView.isKind(of: UITableView.self) {
-            if scrollView.contentOffset.y < 0 {
-                if ((msgPage+1)*msgOffset < liveMessage.count) {
-                    print("get top add page \(msgPage) -> \(msgPage+1)")
-                    msgPage += 1
-                    messageTableView.reloadData()
-                    if (msgPage + 1) * msgOffset > liveMessage.count {
-                        let row = liveMessage.count - msgPage * msgOffset
-                        print("row is \(row)")
-                        messageTableView.scrollToRow(at: IndexPath(row: row, section: 0), at: .top, animated: false)
-
-                    } else {
+            guard let vRows = messageTableView.indexPathsForVisibleRows else {
+                return
+            }
+            if !scrollLoadingMore && scrollView.contentOffset.y < 0 && vRows.contains(IndexPath(row: 0, section: 0)) {
+                
+                scrollLoadingMore = true
+                if liveMessage.count > self.messageTableView.numberOfRows(inSection: 0) {
+                    if msgHidePage > 0 {
+                        msgHidePage -= 1
+                        messageTableView.reloadData()
                         messageTableView.scrollToRow(at: IndexPath(row: msgOffset, section: 0), at: .top, animated: false)
-
+                        Async.background(after: 0.1, {
+                            self.scrollLoadingMore = false
+                        })
+                        
                     }
                 }
             }
@@ -339,15 +398,24 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     @IBAction func sendBtnPressed(_ sender: UIButton) {
         sendBtn.isEnabled = false
         let message = Message()
-        message.initForCurrentUser(inputTextView.text, imageUrl: nil, image: nil, sharedRoom: nil, toRoom: localRoom.id!, isToUser: localRoom.isToUser)
+        message.initForCurrentUser(inputTextView.text, image: nil, sharedRoom: nil, toRoom: localRoom.id!, isToUser: localRoom.isToUser)
         message.saveToDatabase()
         inputTextView.text = ""
         UIView.animate(withDuration: 0.2, animations: {
             self.inputViewHeightConstraint.constant = 49
-            self.view.layoutIfNeeded()
+            self.inputTextView.layoutIfNeeded()
         }) 
         SocketIOManager.sharedInstance.sendMessage(message) { (success, error) in
             //TODO: message response
+            self.messageTableView.reloadData()
+            self.scrollToBottom(true)
+            if error != nil {
+                let hud = JGProgressHUD()
+                hud.show(in: self.view)
+                hud.indicatorView = JGProgressHUDErrorIndicatorView()
+                hud.textLabel.text = error?.description ?? "Message sent fail"
+                hud.dismiss(afterDelay: 2)
+            }
         }
         
         
@@ -380,18 +448,21 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
             self.scrollToBottom(true)
             for asset in assets {
                 asset.fetchOriginalImageWithCompleteBlock({ (image, info) in
-                    ServerConst.sharedInstance.uploadImage(image!, uploadType: .message, room: self.localRoom.id!, completion: { (imageUrl, progress, error) in
-                        //TODO:
-                        print("url: \(imageUrl) progress: \(progress) err: \(error)")
-                        if imageUrl != nil {
-                            let message = Message()
-                            message.initForCurrentUser(nil, imageUrl: imageUrl!, image: image, sharedRoom: nil, toRoom: self.localRoom.id!, isToUser: self.localRoom.isToUser)
-                            message.saveToDatabase()
-                            SocketIOManager.sharedInstance.sendMessage(message, completion: { (success, error) in
-                                //TODO: Message sent response
-                            })
+//                    let imageData = UIImageJPEGRepresentation(image!, 0)
+                    
+                    let message = Message()
+                    message.initForCurrentUser(nil, image: image, sharedRoom: nil, toRoom: self.localRoom.id!, isToUser: self.localRoom.isToUser)
+                    message.saveToDatabase()
+                    SocketIOManager.sharedInstance.sendMessage(message, completion: { (success, error) in
+                        //TODO: Message sent response
+                        print("success send image: \(success) + \(error)")
+                        if error != nil {
+                            let hud = JGProgressHUD()
+                            hud.show(in: self.view)
+                            hud.indicatorView = JGProgressHUDErrorIndicatorView()
+                            hud.textLabel.text = error?.description ?? "Message sent fail"
+                            hud.dismiss(afterDelay: 2)
                         }
-                        
                     })
                 })
                 
@@ -422,6 +493,7 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
             self.inputBottomConstraint.constant = 100
             self.view.layoutIfNeeded()
         }, completion: { (finish) in
+            self.scrollToBottom(true)
             self.accessoryViewShow = true
             self.accessoryBtn.isEnabled = true
         }) 
@@ -462,7 +534,7 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     func gobackToLastView(_ notification: Notification) {
         if let deletedRoomID = notification.object as? String {
             if deletedRoomID == localRoom.id {
-                self.navigationController?.popViewController(animated: true)
+                _ = self.navigationController?.popViewController(animated: true)
             }
         }
     }
@@ -473,41 +545,66 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
     }
     
     func displayViews(_ id:String) {
-        if !localRoom.isToUser {
-            tappedUserId = id
-            self.performSegue(withIdentifier: "gotoUserDetailPage", sender: self)
-        }
+        tappedUserId = id
+        self.performSegue(withIdentifier: "gotoUserDetailPage", sender: self)
     }
     
 }
 
 extension RoomsDialogVC: UITextViewDelegate {
-    //MARK: - Text View Delegate
+    //MARK: - Text View Delegate -
     func textViewDidChange(_ textView: UITextView){
         placeholderLabel.isHidden = !textView.text.isEmpty
         sendBtn.isEnabled = !inputTextView.text.trimWhiteSpace().isEmpty
+
+        let maxNumberOfLines:CGFloat = 3
+        var maxHeight = CGFloat.greatestFiniteMagnitude
+        if maxNumberOfLines > 0 {
+            let font = inputTextView.font
+            maxHeight = (ceil(font!.lineHeight) * maxNumberOfLines) + inputTextView.textContainerInset.top + inputTextView.textContainerInset.bottom + 16
+        }
         
-        let fixedWidth = textView.frame.size.width
-        let newSize = textView.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude))
+        let newSize:CGSize = inputTextView.sizeThatFits(CGSize(width: inputTextView.frame.width, height:CGFloat.greatestFiniteMagnitude))
+        
+        var expectedHeight:CGFloat = 44.0
+        if newSize.height + 16 >= maxHeight {
+            expectedHeight = maxHeight
+            inputTextView.isScrollEnabled = true
+        } else {
+            expectedHeight = newSize.height + 16
+            inputTextView.isScrollEnabled = false
+        }
+        let defaultHeight:CGFloat = 44
+        
         UIView.animate(withDuration: 0.2, animations: {
-            self.inputViewHeightConstraint.constant = min(newSize.height, 120) + 16
+            self.inputViewHeightConstraint.constant = expectedHeight < defaultHeight ? defaultHeight : expectedHeight
             self.view.layoutIfNeeded()
-            //            textView.setContentOffset(CGPointZero, animated: true)
-        }) 
+        })
+        ensureCaretDisplaysCorrectly()
+    }
+    
+    private func ensureCaretDisplaysCorrectly() {
+        if let s = inputTextView.selectedTextRange {
+            let rect = inputTextView.caretRect(for: s.end)
+            UIView.performWithoutAnimation({ () -> Void in
+                inputTextView.scrollRectToVisible(rect, animated: false)
+            })
+        }
     }
     
     func keyboardWasShown(_ notification:Notification) {
         let dict:NSDictionary = (notification as NSNotification).userInfo! as NSDictionary
         let s:NSValue = dict.value(forKey: UIKeyboardFrameEndUserInfoKey) as! NSValue
         let rect:CGRect = s.cgRectValue
+        
         UIView.animate(withDuration: 0.2, animations: {
             self.inputBottomConstraint.constant = rect.height
             self.view.layoutIfNeeded()
         }, completion: { (finish) in
+            self.scrollToBottom(true)
             self.accessoryView.isHidden = true
             self.accessoryViewShow = false
-            //            self.pieDetailTableView.addGestureRecognizer(self.tapCancelKeyboard!)
-        }) 
+        })
     }
     
     func keyboardWillDisappear(_ notification:Notification) {
@@ -515,15 +612,13 @@ extension RoomsDialogVC: UITextViewDelegate {
             self.inputBottomConstraint.constant = 0
             self.view.layoutIfNeeded()
         }, completion: { (finish) in
-            //            self.pieDetailTableView.removeGestureRecognizer(self.tapCancelKeyboard!)
+            //
         }) 
     }
     
     func dismissKeyboard(_ sender: AnyObject?) {
         view.endEditing(true)
     }
-    
-   
     
    
 }
@@ -545,26 +640,9 @@ extension RoomsDialogVC: UIViewControllerTransitioningDelegate, popUpMessageProt
     
     
     func popUpImage(_ imageView:UIImageView, message:Message) {
-        /*let browser = MWPhotoBrowser(delegate: self)
-        if let currentIndex = liveImageMessage.index(of: message) {
-            browser?.setCurrentPhotoIndex(UInt(currentIndex))
-        } else {
-            return
-        }
-                
-        //        browser.setCurrentPhotoIndex(UInt(currentIndex))
-        browser?.displayActionButton = false
-        browser?.enableSwipeToDismiss = false
-        let nc = UINavigationController(rootViewController: browser!)
-
-        
-        nc.transitioningDelegate = self
-        present(nc, animated: true, completion: nil)*/
- 
         selectedImageView = imageView
         
-        
-        print(liveImageMessage)
+        print("total img cnt: \(liveImageMessage.count)")
         
         let imagePresenter = ImagePresenterViewController()
 
@@ -581,7 +659,7 @@ extension RoomsDialogVC: UIViewControllerTransitioningDelegate, popUpMessageProt
         let nc = UINavigationController(rootViewController: imagePresenter)
         nc.isNavigationBarHidden = true
         nc.transitioningDelegate = self
-        present(nc, animated: true,completion:nil)
+        present(nc, animated: true, completion:nil)
     }
     
     func animationController(
@@ -622,4 +700,29 @@ extension RoomsDialogVC: UIViewControllerTransitioningDelegate, popUpMessageProt
         }
         
     }
+    
+    func popUpResend(_ message: Message) {
+        let alert = UIAlertController(title: "Resend message?", message: nil, preferredStyle: .alert)
+        let delete = UIAlertAction(title: "Send", style: .default, handler: { (UIAlertAction) in
+            try! Realm().write {
+                message.createdAt = Date()
+            }
+            SocketIOManager.sharedInstance.sendMessage(message) { (success, error) in
+                //TODO: message response
+                self.messageTableView.reloadData()
+                if error != nil {
+                    let hud = JGProgressHUD()
+                    hud.show(in: self.view)
+                    hud.indicatorView = JGProgressHUDErrorIndicatorView()
+                    hud.textLabel.text = error?.description ?? "Message sent fail"
+                    hud.dismiss(afterDelay: 2)
+                }
+            }
+        })
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        alert.addAction(delete)
+        alert.addAction(cancel)
+        self.present(alert, animated: true, completion: nil)
+    }
+    
 }

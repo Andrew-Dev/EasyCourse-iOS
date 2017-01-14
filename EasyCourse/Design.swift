@@ -44,6 +44,14 @@ open class Design {
         //LOCAL
         //very light green
         class func cellSelectedGreen() -> UIColor { return UIColor(red: 230/255, green: 255/255, blue: 236/255, alpha: 1) }
+        
+        static let backGroudColor = UIColor.white
+        static let outgoingBubbleColor = UIColor(red: 80/255, green: 163/255, blue: 247/255, alpha: 1)
+        static let outgoingTextColor = UIColor.white
+        static let incomingBubbleColor = UIColor(red: 237/255, green: 242/255, blue: 248/255, alpha: 1)
+        static let incomingTextColor = UIColor(white: 0.2, alpha: 1)
+        static let incomingUsernameColor = UIColor(white: 0.75, alpha: 1)
+
     }
 
 //    open static let defaultAvatarImage = UIImage(named: "DefaultAvatar")
@@ -51,5 +59,6 @@ open class Design {
     
     open static let defaultAvatarImage = #imageLiteral(resourceName: "DefaultAvatar")
     open static let defaultRoomImage = #imageLiteral(resourceName: "DefaultRoom")
+    open static let imagePlaceHolder = #imageLiteral(resourceName: "ImagePlaceHolder")
     
 }

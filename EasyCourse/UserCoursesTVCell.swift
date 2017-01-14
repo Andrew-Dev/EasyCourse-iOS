@@ -15,7 +15,10 @@ class UserCoursesTVCell: UITableViewCell {
     
     @IBOutlet weak var courseTitleLabel: UILabel!
     
-    @IBOutlet weak var operationBtn: UIButton!
+//    @IBOutlet weak var operationBtn: UIButton!
+    
+    @IBOutlet weak var joinIndicateLabel: UILabel!
+    
     
     var enrolledIn = false
     var cellCourse:Course?
@@ -27,10 +30,13 @@ class UserCoursesTVCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
-        operationBtn.layer.cornerRadius = 6
-        operationBtn.layer.borderWidth = 1
-        operationBtn.layer.masksToBounds = true
+//        joinIndicateLabel.layer.cornerRadius = 6
+//        joinIndicateLabel.layer.borderWidth = 1
+//        joinIndicateLabel.layer.masksToBounds = true
 //        self.operationBtn.alpha = 1
+//        joinIndicateLabel.layer.borderColor = Design.color.lighterGreenMountainMead().cgColor
+        joinIndicateLabel.textColor = Design.color.deepGreenPersianGreenColor()
+
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -38,8 +44,7 @@ class UserCoursesTVCell: UITableViewCell {
         // Configure the view for the selected state
     }
     
-    func configureCell(_ course:Course, userJoinedCourses:Results<(Course)>) {
-        operationBtn.alpha = 1
+    func configureCell(_ course:Course, userJoinedCourses:List<(Course)>) {
         cellCourse = course
         courseNameLabel.text = course.coursename
         courseTitleLabel.text = course.title
@@ -49,13 +54,11 @@ class UserCoursesTVCell: UITableViewCell {
         }
         
         if userJoinedThisCourse {
-            operationBtn.setTitle(" Drop ", for: UIControlState())
-            operationBtn.setTitleColor(Design.color.deleteButtonColor(), for: UIControlState())
-            operationBtn.layer.borderColor = Design.color.deleteButtonColor().cgColor
+            joinIndicateLabel.isHidden = false
+            joinIndicateLabel.text = " Joined "
         } else {
-            operationBtn.setTitle(" Join ", for: UIControlState())
-            operationBtn.setTitleColor(self.tintColor, for: UIControlState())
-            operationBtn.layer.borderColor = self.tintColor.cgColor
+            joinIndicateLabel.isHidden = true
+//            operationBtn.layer.borderColor = self.tintColor.cgColor
         }
     }
     
@@ -69,10 +72,12 @@ class UserCoursesTVCell: UITableViewCell {
             })
             
         } else {
-            print("click join \(User.userLang) = \(cellCourse!.id)")
-            ServerConst.sharedInstance.userChooseCourseAndLang(["lang":User.userLang, "course":[cellCourse!.id!]], completion: { (success, error) in
-
-            })
+            print("click join \(User.currentUser?.userLang()) = \(cellCourse!.id)")
+            
+            SocketIOManager.sharedInstance.joinCourse([cellCourse!.id!], languages: User.currentUser!.userLang()) { (success, error) in
+               
+                
+            }
         }
     }
 

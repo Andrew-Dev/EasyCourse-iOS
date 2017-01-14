@@ -13,13 +13,15 @@
 		F70A718C1DE60440000E502F /* UserRoomDetailTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F70A718B1DE60440000E502F /* UserRoomDetailTableVC.swift */; };
 		F72F22C51DD95A39009E7C6C /* NetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F72F22C41DD95A39009E7C6C /* NetworkError.swift */; };
 		F72F22CA1DDBA19B009E7C6C /* RoomDetailClassmatesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F72F22C81DDBA19B009E7C6C /* RoomDetailClassmatesVC.swift */; };
-		F72F22CB1DDBA19B009E7C6C /* RoomDetailSubgroupsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F72F22C91DDBA19B009E7C6C /* RoomDetailSubgroupsVC.swift */; };
 		F72F22D21DE0C0C6009E7C6C /* MessageAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = F72F22D11DE0C0C6009E7C6C /* MessageAlert.swift */; };
 		F7364C7D1DA6E0EF007A967F /* LoadingTVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7364C7B1DA6E0EF007A967F /* LoadingTVCell.swift */; };
 		F7364C7E1DA6E0EF007A967F /* LoadingTVCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F7364C7C1DA6E0EF007A967F /* LoadingTVCell.xib */; };
 		F7364C801DA7EE3C007A967F /* InfiniteScrollActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7364C7F1DA7EE3C007A967F /* InfiniteScrollActivityView.swift */; };
 		F7364C831DCBBF6B007A967F /* RoomsAddRoomVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7364C821DCBBF6B007A967F /* RoomsAddRoomVC.swift */; };
 		F7364C851DCBFD64007A967F /* RoomsAddRoomNameTVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7364C841DCBFD63007A967F /* RoomsAddRoomNameTVCell.swift */; };
+		F755B02D1E21F12A0017E138 /* MessageBubbleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F755B02C1E21F12A0017E138 /* MessageBubbleView.swift */; };
+		F755B02F1E22E2970017E138 /* UserResetPasswordTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F755B02E1E22E2970017E138 /* UserResetPasswordTableVC.swift */; };
+		F755B0311E23FE8F0017E138 /* MainNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F755B0301E23FE8F0017E138 /* MainNavigationController.swift */; };
 		F7607D431DCC0E6200FC16AB /* RoomsAddRoomNameListTVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7607D421DCC0E6200FC16AB /* RoomsAddRoomNameListTVCell.swift */; };
 		F76A9B8C1D85FF3B0065C25C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F76A9B8B1D85FF3B0065C25C /* AppDelegate.swift */; };
 		F76A9B911D85FF3B0065C25C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F76A9B8F1D85FF3B0065C25C /* Main.storyboard */; };
@@ -64,6 +66,11 @@
 		F76A9BFB1D8628C80065C25C /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = F76A9BFA1D8628C80065C25C /* Reachability.swift */; };
 		F76A9BFF1D86E22C0065C25C /* PopAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F76A9BFE1D86E22C0065C25C /* PopAnimator.swift */; };
 		F76A9C011D8706450065C25C /* RealmTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = F76A9C001D8706450065C25C /* RealmTools.swift */; };
+		F790C1C61E1DE107002246C9 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F790C1C51E1DE107002246C9 /* GoogleService-Info.plist */; };
+		F79FAB7D1DEDF85600F502AA /* CourseDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F79FAB7C1DEDF85600F502AA /* CourseDetailVC.swift */; };
+		F79FAB801DEDF89900F502AA /* CourseDetailTitleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F79FAB7F1DEDF89900F502AA /* CourseDetailTitleCell.swift */; };
+		F79FAB821DEDF8AA00F502AA /* CourseDetailUnivCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F79FAB811DEDF8AA00F502AA /* CourseDetailUnivCell.swift */; };
+		F79FAB841DEDF8C300F502AA /* CourseDetailSubroomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F79FAB831DEDF8C300F502AA /* CourseDetailSubroomCell.swift */; };
 		F7A5564A1D90DEC9003E258D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F7A556491D90DEC9003E258D /* Assets.xcassets */; };
 		F7A5564C1D9B3E6A003E258D /* UserSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A5564B1D9B3E6A003E258D /* UserSetting.swift */; };
 		F7A5564E1D9D7E43003E258D /* RoomDetailTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7A5564D1D9D7E43003E258D /* RoomDetailTableVC.swift */; };
@@ -81,6 +88,14 @@
 		F7CE24431DCE8E7B0004957E /* MessageOutgoingGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CE24421DCE8E7B0004957E /* MessageOutgoingGroupCell.swift */; };
 		F7CE24451DCE8E8F0004957E /* MessageIncomingGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CE24441DCE8E8F0004957E /* MessageIncomingGroupCell.swift */; };
 		F7CE24471DCE98780004957E /* RoomsDialogAccGroupVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CE24461DCE98780004957E /* RoomsDialogAccGroupVC.swift */; };
+		F7CFB8CD1E14DC94000C5491 /* RoomsAddRoomBelongingPickerTVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CFB8CC1E14DC94000C5491 /* RoomsAddRoomBelongingPickerTVCell.swift */; };
+		F7CFB8CF1E14DF90000C5491 /* RoomsAddRoomBelongingTVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CFB8CE1E14DF90000C5491 /* RoomsAddRoomBelongingTVCell.swift */; };
+		F7CFB8D11E16CC8B000C5491 /* RoomDetailClassmatesTVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CFB8D01E16CC8B000C5491 /* RoomDetailClassmatesTVCell.swift */; };
+		F7CFB8D61E171295000C5491 /* RoomListTVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CFB8D41E171295000C5491 /* RoomListTVCell.swift */; };
+		F7CFB8D71E171295000C5491 /* RoomListTVCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F7CFB8D51E171295000C5491 /* RoomListTVCell.xib */; };
+		F7CFB8D91E1715CB000C5491 /* RoomDetailShareRoomVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CFB8D81E1715CB000C5491 /* RoomDetailShareRoomVC.swift */; };
+		F7CFB8DD1E1C93DB000C5491 /* UserEditProfileChooseLangVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CFB8DC1E1C93DB000C5491 /* UserEditProfileChooseLangVC.swift */; };
+		F7CFB8DF1E1CAFBF000C5491 /* Language.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CFB8DE1E1CAFBF000C5491 /* Language.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -92,7 +107,6 @@
 		F70A718B1DE60440000E502F /* UserRoomDetailTableVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserRoomDetailTableVC.swift; sourceTree = "<group>"; };
 		F72F22C41DD95A39009E7C6C /* NetworkError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkError.swift; sourceTree = "<group>"; };
 		F72F22C81DDBA19B009E7C6C /* RoomDetailClassmatesVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomDetailClassmatesVC.swift; sourceTree = "<group>"; };
-		F72F22C91DDBA19B009E7C6C /* RoomDetailSubgroupsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomDetailSubgroupsVC.swift; sourceTree = "<group>"; };
 		F72F22D11DE0C0C6009E7C6C /* MessageAlert.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageAlert.swift; sourceTree = "<group>"; };
 		F7364C7B1DA6E0EF007A967F /* LoadingTVCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingTVCell.swift; sourceTree = "<group>"; };
 		F7364C7C1DA6E0EF007A967F /* LoadingTVCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LoadingTVCell.xib; sourceTree = "<group>"; };
@@ -100,6 +114,9 @@
 		F7364C821DCBBF6B007A967F /* RoomsAddRoomVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomsAddRoomVC.swift; sourceTree = "<group>"; };
 		F7364C841DCBFD63007A967F /* RoomsAddRoomNameTVCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomsAddRoomNameTVCell.swift; sourceTree = "<group>"; };
 		F742AC3D1D9EFB6300AA61D7 /* EasyCourse.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = EasyCourse.entitlements; sourceTree = "<group>"; };
+		F755B02C1E21F12A0017E138 /* MessageBubbleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageBubbleView.swift; sourceTree = "<group>"; };
+		F755B02E1E22E2970017E138 /* UserResetPasswordTableVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserResetPasswordTableVC.swift; sourceTree = "<group>"; };
+		F755B0301E23FE8F0017E138 /* MainNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainNavigationController.swift; sourceTree = "<group>"; };
 		F7607D421DCC0E6200FC16AB /* RoomsAddRoomNameListTVCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomsAddRoomNameListTVCell.swift; sourceTree = "<group>"; };
 		F76A9B881D85FF3B0065C25C /* EasyCourse.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EasyCourse.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F76A9B8B1D85FF3B0065C25C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -146,6 +163,11 @@
 		F76A9BFA1D8628C80065C25C /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		F76A9BFE1D86E22C0065C25C /* PopAnimator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PopAnimator.swift; sourceTree = "<group>"; };
 		F76A9C001D8706450065C25C /* RealmTools.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmTools.swift; sourceTree = "<group>"; };
+		F790C1C51E1DE107002246C9 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		F79FAB7C1DEDF85600F502AA /* CourseDetailVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CourseDetailVC.swift; sourceTree = "<group>"; };
+		F79FAB7F1DEDF89900F502AA /* CourseDetailTitleCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CourseDetailTitleCell.swift; sourceTree = "<group>"; };
+		F79FAB811DEDF8AA00F502AA /* CourseDetailUnivCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CourseDetailUnivCell.swift; sourceTree = "<group>"; };
+		F79FAB831DEDF8C300F502AA /* CourseDetailSubroomCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CourseDetailSubroomCell.swift; sourceTree = "<group>"; };
 		F7A556491D90DEC9003E258D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F7A5564B1D9B3E6A003E258D /* UserSetting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserSetting.swift; sourceTree = "<group>"; };
 		F7A5564D1D9D7E43003E258D /* RoomDetailTableVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomDetailTableVC.swift; sourceTree = "<group>"; };
@@ -163,6 +185,14 @@
 		F7CE24421DCE8E7B0004957E /* MessageOutgoingGroupCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageOutgoingGroupCell.swift; sourceTree = "<group>"; };
 		F7CE24441DCE8E8F0004957E /* MessageIncomingGroupCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageIncomingGroupCell.swift; sourceTree = "<group>"; };
 		F7CE24461DCE98780004957E /* RoomsDialogAccGroupVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomsDialogAccGroupVC.swift; sourceTree = "<group>"; };
+		F7CFB8CC1E14DC94000C5491 /* RoomsAddRoomBelongingPickerTVCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomsAddRoomBelongingPickerTVCell.swift; sourceTree = "<group>"; };
+		F7CFB8CE1E14DF90000C5491 /* RoomsAddRoomBelongingTVCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomsAddRoomBelongingTVCell.swift; sourceTree = "<group>"; };
+		F7CFB8D01E16CC8B000C5491 /* RoomDetailClassmatesTVCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomDetailClassmatesTVCell.swift; sourceTree = "<group>"; };
+		F7CFB8D41E171295000C5491 /* RoomListTVCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomListTVCell.swift; sourceTree = "<group>"; };
+		F7CFB8D51E171295000C5491 /* RoomListTVCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RoomListTVCell.xib; sourceTree = "<group>"; };
+		F7CFB8D81E1715CB000C5491 /* RoomDetailShareRoomVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomDetailShareRoomVC.swift; sourceTree = "<group>"; };
+		F7CFB8DC1E1C93DB000C5491 /* UserEditProfileChooseLangVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserEditProfileChooseLangVC.swift; sourceTree = "<group>"; };
+		F7CFB8DE1E1CAFBF000C5491 /* Language.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Language.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -199,7 +229,8 @@
 			children = (
 				F7A5564D1D9D7E43003E258D /* RoomDetailTableVC.swift */,
 				F72F22C81DDBA19B009E7C6C /* RoomDetailClassmatesVC.swift */,
-				F72F22C91DDBA19B009E7C6C /* RoomDetailSubgroupsVC.swift */,
+				F7CFB8D01E16CC8B000C5491 /* RoomDetailClassmatesTVCell.swift */,
+				F7CFB8D81E1715CB000C5491 /* RoomDetailShareRoomVC.swift */,
 				F70A718B1DE60440000E502F /* UserRoomDetailTableVC.swift */,
 				F7ADFB371D8CEFFF00AD53C3 /* UserDetailTableVC.swift */,
 			);
@@ -217,6 +248,7 @@
 		F72F22D01DE0BCF7009E7C6C /* UI Components */ = {
 			isa = PBXGroup;
 			children = (
+				F7CFB8D31E17124A000C5491 /* CommonCell */,
 				498AAFBC1DB70C8D00972AB2 /* ImagePresenterViewController.swift */,
 				F76A9BFE1D86E22C0065C25C /* PopAnimator.swift */,
 				F7364C7F1DA7EE3C007A967F /* InfiniteScrollActivityView.swift */,
@@ -231,6 +263,7 @@
 				F76A9B971D85FF3B0065C25C /* Info.plist */,
 				F7A556491D90DEC9003E258D /* Assets.xcassets */,
 				F742AC3D1D9EFB6300AA61D7 /* EasyCourse.entitlements */,
+				F790C1C51E1DE107002246C9 /* GoogleService-Info.plist */,
 				4945155E1DB71A6A003508CA /* loading.png */,
 			);
 			name = Assets;
@@ -268,6 +301,7 @@
 				F76A9B9E1D861C810065C25C /* Storyboard */,
 				F7364C811DCAA382007A967F /* Assets */,
 				F76A9B8B1D85FF3B0065C25C /* AppDelegate.swift */,
+				F755B0301E23FE8F0017E138 /* MainNavigationController.swift */,
 			);
 			path = EasyCourse;
 			sourceTree = "<group>";
@@ -302,6 +336,8 @@
 				F7ADFB271D889D4A00AD53C3 /* UserTermsVC.swift */,
 				F7ADFB291D889D8600AD53C3 /* UserRecruiteVC.swift */,
 				F7ADFB331D8BA2DF00AD53C3 /* UserEditProfileTableVC.swift */,
+				F755B02E1E22E2970017E138 /* UserResetPasswordTableVC.swift */,
+				F7CFB8DC1E1C93DB000C5491 /* UserEditProfileChooseLangVC.swift */,
 			);
 			name = User;
 			sourceTree = "<group>";
@@ -325,6 +361,7 @@
 				F76A9BB01D86203A0065C25C /* University.swift */,
 				F76A9BB21D8620500065C25C /* Room.swift */,
 				F76A9BB41D8620700065C25C /* Course.swift */,
+				F7CFB8DE1E1CAFBF000C5491 /* Language.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -405,6 +442,17 @@
 			name = Extension;
 			sourceTree = "<group>";
 		};
+		F79FAB7E1DEDF86600F502AA /* CourseDetail */ = {
+			isa = PBXGroup;
+			children = (
+				F79FAB7C1DEDF85600F502AA /* CourseDetailVC.swift */,
+				F79FAB7F1DEDF89900F502AA /* CourseDetailTitleCell.swift */,
+				F79FAB811DEDF8AA00F502AA /* CourseDetailUnivCell.swift */,
+				F79FAB831DEDF8C300F502AA /* CourseDetailSubroomCell.swift */,
+			);
+			name = CourseDetail;
+			sourceTree = "<group>";
+		};
 		F7ADFB2B1D88AA9500AD53C3 /* UserRooms */ = {
 			isa = PBXGroup;
 			children = (
@@ -419,6 +467,7 @@
 			children = (
 				F7ADFB231D889C2100AD53C3 /* UserCoursesVC.swift */,
 				F7ADFB311D8AE17400AD53C3 /* UserCoursesTVCell.swift */,
+				F79FAB7E1DEDF86600F502AA /* CourseDetail */,
 			);
 			name = UserCourses;
 			sourceTree = "<group>";
@@ -429,6 +478,8 @@
 				F7364C821DCBBF6B007A967F /* RoomsAddRoomVC.swift */,
 				F7607D421DCC0E6200FC16AB /* RoomsAddRoomNameListTVCell.swift */,
 				F7364C841DCBFD63007A967F /* RoomsAddRoomNameTVCell.swift */,
+				F7CFB8CE1E14DF90000C5491 /* RoomsAddRoomBelongingTVCell.swift */,
+				F7CFB8CC1E14DC94000C5491 /* RoomsAddRoomBelongingPickerTVCell.swift */,
 			);
 			name = CreateRoom;
 			sourceTree = "<group>";
@@ -442,8 +493,18 @@
 				F76A9BEB1D8626890065C25C /* MessageOutgoingImageCell.swift */,
 				F76A9BED1D8626A20065C25C /* MessageOutgoingTextCell.swift */,
 				F7CE24421DCE8E7B0004957E /* MessageOutgoingGroupCell.swift */,
+				F755B02C1E21F12A0017E138 /* MessageBubbleView.swift */,
 			);
 			name = MessageBubbleCells;
+			sourceTree = "<group>";
+		};
+		F7CFB8D31E17124A000C5491 /* CommonCell */ = {
+			isa = PBXGroup;
+			children = (
+				F7CFB8D41E171295000C5491 /* RoomListTVCell.swift */,
+				F7CFB8D51E171295000C5491 /* RoomListTVCell.xib */,
+			);
+			name = CommonCell;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -525,11 +586,13 @@
 				F7364C7E1DA6E0EF007A967F /* LoadingTVCell.xib in Resources */,
 				F7A5564A1D90DEC9003E258D /* Assets.xcassets in Resources */,
 				F76A9BD71D8622AB0065C25C /* LoginCourseListCVCell.xib in Resources */,
+				F790C1C61E1DE107002246C9 /* GoogleService-Info.plist in Resources */,
 				F76A9BF41D8627760065C25C /* LoginMainComponentVC.xib in Resources */,
 				F76A9BDB1D8623240065C25C /* LoginCourseChooseTVCell.xib in Resources */,
 				F76A9BA81D861E990065C25C /* Login.storyboard in Resources */,
 				F76A9BD31D8622680065C25C /* LoginUnivChooseCell.xib in Resources */,
 				F76A9BDF1D86236D0065C25C /* LoginLangChooseTVCell.xib in Resources */,
+				F7CFB8D71E171295000C5491 /* RoomListTVCell.xib in Resources */,
 				4945155F1DB71A6A003508CA /* loading.png in Resources */,
 				F76A9B911D85FF3B0065C25C /* Main.storyboard in Resources */,
 				F76A9BA11D861D580065C25C /* Room.storyboard in Resources */,
@@ -601,6 +664,7 @@
 				F72F22D21DE0C0C6009E7C6C /* MessageAlert.swift in Sources */,
 				F7A5564C1D9B3E6A003E258D /* UserSetting.swift in Sources */,
 				F72F22CA1DDBA19B009E7C6C /* RoomDetailClassmatesVC.swift in Sources */,
+				F7CFB8D11E16CC8B000C5491 /* RoomDetailClassmatesTVCell.swift in Sources */,
 				F76A9BFF1D86E22C0065C25C /* PopAnimator.swift in Sources */,
 				F7CE24431DCE8E7B0004957E /* MessageOutgoingGroupCell.swift in Sources */,
 				F76A9BE51D8625FF0065C25C /* RoomsDialogVC.swift in Sources */,
@@ -609,21 +673,27 @@
 				F76A9BC31D8621D80065C25C /* LoginUnivComponentVC.swift in Sources */,
 				F76A9BE31D8625AC0065C25C /* RoomsVC.swift in Sources */,
 				F76A9BD21D8622680065C25C /* LoginUnivChooseCell.swift in Sources */,
+				F7CFB8D61E171295000C5491 /* RoomListTVCell.swift in Sources */,
 				F76A9BF01D8626BD0065C25C /* MessageIncomingImageCell.swift in Sources */,
 				F76A9BEE1D8626A20065C25C /* MessageOutgoingTextCell.swift in Sources */,
+				F7CFB8DF1E1CAFBF000C5491 /* Language.swift in Sources */,
 				F76A9BFB1D8628C80065C25C /* Reachability.swift in Sources */,
 				F7ADFB281D889D4A00AD53C3 /* UserTermsVC.swift in Sources */,
 				F7CE24471DCE98780004957E /* RoomsDialogAccGroupVC.swift in Sources */,
 				F76A9BEC1D8626890065C25C /* MessageOutgoingImageCell.swift in Sources */,
 				F7ADFB341D8BA2DF00AD53C3 /* UserEditProfileTableVC.swift in Sources */,
+				F7CFB8D91E1715CB000C5491 /* RoomDetailShareRoomVC.swift in Sources */,
 				F76A9BEA1D86266E0065C25C /* MessageIncomingTextCell.swift in Sources */,
+				F7CFB8DD1E1C93DB000C5491 /* UserEditProfileChooseLangVC.swift in Sources */,
 				F7364C7D1DA6E0EF007A967F /* LoadingTVCell.swift in Sources */,
+				F7CFB8CD1E14DC94000C5491 /* RoomsAddRoomBelongingPickerTVCell.swift in Sources */,
 				F7ADFB201D888EC100AD53C3 /* UserTableVC.swift in Sources */,
 				F76A9C011D8706450065C25C /* RealmTools.swift in Sources */,
+				F7CFB8CF1E14DF90000C5491 /* RoomsAddRoomBelongingTVCell.swift in Sources */,
 				F76A9BBF1D86219E0065C25C /* LoginVC.swift in Sources */,
 				F72F22C51DD95A39009E7C6C /* NetworkError.swift in Sources */,
 				F7ADFB2A1D889D8600AD53C3 /* UserRecruiteVC.swift in Sources */,
-				F72F22CB1DDBA19B009E7C6C /* RoomDetailSubgroupsVC.swift in Sources */,
+				F755B02D1E21F12A0017E138 /* MessageBubbleView.swift in Sources */,
 				F76A9BB51D8620700065C25C /* Course.swift in Sources */,
 				F76A9BD61D8622AB0065C25C /* LoginCourseListCVCell.swift in Sources */,
 				F76A9BBB1D8620E50065C25C /* Constant.swift in Sources */,
@@ -634,12 +704,18 @@
 				F76A9BBD1D8621030065C25C /* ServerConstant.swift in Sources */,
 				F7607D431DCC0E6200FC16AB /* RoomsAddRoomNameListTVCell.swift in Sources */,
 				F7ADFB381D8CEFFF00AD53C3 /* UserDetailTableVC.swift in Sources */,
+				F79FAB841DEDF8C300F502AA /* CourseDetailSubroomCell.swift in Sources */,
+				F79FAB7D1DEDF85600F502AA /* CourseDetailVC.swift in Sources */,
 				F7ADFB221D889C1000AD53C3 /* UserRoomsVC.swift in Sources */,
+				F755B0311E23FE8F0017E138 /* MainNavigationController.swift in Sources */,
 				F7ADFB321D8AE17400AD53C3 /* UserCoursesTVCell.swift in Sources */,
 				F76A9BDE1D86236D0065C25C /* LoginLangChooseTVCell.swift in Sources */,
 				F76A9BC71D8621EF0065C25C /* LoginCourseComponentVC.swift in Sources */,
+				F79FAB821DEDF8AA00F502AA /* CourseDetailUnivCell.swift in Sources */,
 				F7ADFB1E1D888C1600AD53C3 /* Tools.swift in Sources */,
+				F79FAB801DEDF89900F502AA /* CourseDetailTitleCell.swift in Sources */,
 				F70A718C1DE60440000E502F /* UserRoomDetailTableVC.swift in Sources */,
+				F755B02F1E22E2970017E138 /* UserResetPasswordTableVC.swift in Sources */,
 				F76A9BB31D8620500065C25C /* Room.swift in Sources */,
 				F76A9BCB1D8622020065C25C /* LoginLangChooseVC.swift in Sources */,
 				F76A9BB81D8620A10065C25C /* SocketIOManager.swift in Sources */,
@@ -800,14 +876,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = EasyCourse/EasyCourse.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Jintao Zeng (4UAT7C35XK)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				DEVELOPMENT_TEAM = MYSFRJD98Y;
 				INFOPLIST_FILE = EasyCourse/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = ZengJintao.EasyCourse;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "2d854b06-698e-46a0-878a-8b60cf0ef9b3";
-				PROVISIONING_PROFILE_SPECIFIER = EasyCourseDevelopmentPushProvision;
+				PROVISIONING_PROFILE = "cb71d021-6e43-4e92-b3e5-23a60ba0be7d";
+				PROVISIONING_PROFILE_SPECIFIER = EasyCourseProductionPushProfile;
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;

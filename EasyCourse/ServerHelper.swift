@@ -22,8 +22,8 @@ class ServerHelper: NSObject {
     static let sharedInstance = ServerHelper()
     
     fileprivate let photoCache = AutoPurgingImageCache(
-        memoryCapacity: 100 * 1024 * 1024,
-        preferredMemoryUsageAfterPurge: 60 * 1024 * 1024
+        memoryCapacity: 1000 * 1024 * 1024,
+        preferredMemoryUsageAfterPurge: 600 * 1024 * 1024
     )
     
     func getNetworkImageData(_ urlString: String, completion: @escaping (_ data:Data?, _ error:NSError?) -> ()) {
@@ -40,22 +40,22 @@ class ServerHelper: NSObject {
 
     }
     
-    func getNetworkImage(_ urlString: String, completion: @escaping (_ image:Image?, _ error:NSError?) -> ()) {
+    func getNetworkImage(_ urlString: String, completion: @escaping (_ image:Image?, _ cached:Bool, _ error:NSError?) -> ()) {
         
         if let cachedImage = cachedImage(urlString) {
             print("cached Image")
-            return completion(cachedImage, nil)
+            return completion(cachedImage, true, nil)
         }
         print("no Image")
         do {
             let a = try URLRequest(url: urlString, method: .get)
             Alamofire.request(a).responseData { (response) in
-                guard let imageData = response.result.value else { return completion(nil, response.result.error as NSError?)}
+                guard let imageData = response.result.value else { return completion(nil, false, response.result.error as NSError?)}
                 self.cacheImage(UIImage(data: imageData)!, urlString: urlString)
-                completion(UIImage(data: imageData)!, nil)
+                completion(UIImage(data: imageData)!, false, nil)
             }
         } catch {
-            completion(nil, NSError())
+            completion(nil, false, NSError())
         }
         
     }
@@ -74,14 +74,6 @@ class ServerHelper: NSObject {
     func cacheObject(_ type: objectType, id: String, data: NSDictionary) {
         let cacheName = type.rawValue
         do {
-//            switch type {
-//            case .RoomMembers:
-//                let cache = try Cache<NSArray>(name: cacheName)
-//                cache.setObject(d ata, forKey: id)
-//            default:
-//                let cache = try Cache<NSDictionary>(name: cacheName)
-//                cache.setObject(data, forKey: id)
-//            }
             let cache = try Cache<NSDictionary>(name: cacheName)
             cache.setObject(data, forKey: id)
         } catch _ {

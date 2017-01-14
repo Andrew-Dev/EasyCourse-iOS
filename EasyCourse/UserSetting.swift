@@ -34,4 +34,17 @@ open class UserSetting {
         }
     }
     
+    class var shouldAskPushNotif:Bool {
+        get {
+            if let ask = UserDefaults.standard.object(forKey: Constant.UserDefaultKey.shouldAskPushNotif) as? Bool {
+                return ask
+            } else {
+                return true
+            }
+        }
+        set(shouldAsk) {
+            UserDefaults.standard.set(shouldAsk, forKey: Constant.UserDefaultKey.shouldAskPushNotif)
+            UserDefaults.standard.synchronize()
+        }
+    }
 }

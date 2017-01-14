@@ -24,18 +24,10 @@ class UserRecruiteVC: UIViewController, UIWebViewDelegate {
         hud.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
         hud.square = true
         
-        if Reachability.isConnectedToNetwork() == true {
-            hud.textLabel.text = "Loading"
-            hud.show(in: self.view)
-            let url = URL (string: "https://mtdtao.typeform.com/to/l9ZsMJ");
-            let requestObj = URLRequest(url: url!);
-            joinUsWebView.loadRequest(requestObj)
-        } else {
-            hud.indicatorView = JGProgressHUDErrorIndicatorView()
-            hud.textLabel.text = "Network error! Please send your personal information to mtdtao@gmail.com"
-            hud.show(in: self.navigationController?.view)
-            hud.dismiss(afterDelay: 2, animated: true)
-        }
+        hud.show(in: self.view)
+        let url = URL (string: "https://docs.google.com/forms/d/e/1FAIpQLSeKu9p0Al-E9LAQyjeQw06KmXQQ1DyoJenH2_tRwO2sbhvA_g/viewform");
+        let requestObj = URLRequest(url: url!);
+        joinUsWebView.loadRequest(requestObj)
     }
 
     override func didReceiveMemoryWarning() {
@@ -50,7 +42,7 @@ class UserRecruiteVC: UIViewController, UIWebViewDelegate {
     
     func webView(_ webView: UIWebView, didFailLoadWithError error: Error) {
         hud.indicatorView = JGProgressHUDErrorIndicatorView()
-        hud.textLabel.text = "Network error! Please send your personal information to mtdtao@gmail.com"
+        hud.textLabel.text = "Network error! Please send your personal information to contact@easycourse.io"
         hud.tapOutsideBlock = { (hu) in
             self.hud.dismiss()
         }

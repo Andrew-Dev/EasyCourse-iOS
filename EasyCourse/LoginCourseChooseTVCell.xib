@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11201" systemVersion="15G1004" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11762" systemVersion="15G1108" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -13,55 +16,36 @@
             <rect key="frame" x="0.0" y="0.0" width="320" height="60"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
-                <frame key="frameInset" width="320" height="59"/>
+                <rect key="frame" x="0.0" y="0.0" width="320" height="59"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6qD-KC-yvo">
-                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                        <nil key="highlightedColor"/>
-                    </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ri7-LX-eZ1">
-                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                        <color key="textColor" red="0.33333333333333331" green="0.33333333333333331" blue="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <rect key="frame" x="8" y="32" width="304" height="16"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                        <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="plus-ion" translatesAutoresizingMaskIntoConstraints="NO" id="82c-cM-AjQ">
-                        <constraints>
-                            <constraint firstAttribute="width" constant="38" id="5x1-T6-eXV"/>
-                            <constraint firstAttribute="height" constant="38" id="ROg-Ni-vCO"/>
-                        </constraints>
-                    </imageView>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6qD-KC-yvo">
+                        <rect key="frame" x="8" y="8" width="304" height="21"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                        <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                        <nil key="highlightedColor"/>
+                    </label>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="82c-cM-AjQ" firstAttribute="trailing" secondItem="H2p-sc-9uM" secondAttribute="trailingMargin" id="0O5-xX-k0y"/>
-                    <constraint firstItem="ri7-LX-eZ1" firstAttribute="trailing" secondItem="6qD-KC-yvo" secondAttribute="trailing" id="1sd-E8-jk2"/>
-                    <constraint firstItem="6qD-KC-yvo" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" constant="3" id="2wP-y6-ZEh"/>
-                    <constraint firstItem="6qD-KC-yvo" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" id="7ya-A9-wia"/>
-                    <constraint firstItem="ri7-LX-eZ1" firstAttribute="leading" secondItem="6qD-KC-yvo" secondAttribute="leading" id="Nhq-VB-Z72"/>
-                    <constraint firstItem="82c-cM-AjQ" firstAttribute="leading" secondItem="6qD-KC-yvo" secondAttribute="trailing" constant="8" id="VyS-3j-oES"/>
-                    <constraint firstItem="82c-cM-AjQ" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="eBa-MV-1AU"/>
-                    <constraint firstItem="6qD-KC-yvo" firstAttribute="trailing" secondItem="H2p-sc-9uM" secondAttribute="trailingMargin" id="hwQ-Jh-0cq"/>
-                    <constraint firstItem="ri7-LX-eZ1" firstAttribute="top" secondItem="6qD-KC-yvo" secondAttribute="bottom" id="p8V-lx-zmc"/>
-                    <constraint firstAttribute="bottomMargin" relation="greaterThanOrEqual" secondItem="ri7-LX-eZ1" secondAttribute="bottom" id="r3g-W1-nGM"/>
-                    <constraint firstItem="82c-cM-AjQ" firstAttribute="leading" secondItem="ri7-LX-eZ1" secondAttribute="trailing" constant="8" id="roz-MI-vCH"/>
+                    <constraint firstItem="ri7-LX-eZ1" firstAttribute="top" secondItem="6qD-KC-yvo" secondAttribute="bottom" constant="3" id="4R2-ua-DJM"/>
+                    <constraint firstItem="6qD-KC-yvo" firstAttribute="trailing" secondItem="H2p-sc-9uM" secondAttribute="trailingMargin" id="KGm-fl-wI6"/>
+                    <constraint firstAttribute="trailing" secondItem="ri7-LX-eZ1" secondAttribute="trailing" constant="8" id="lNg-4Z-FM5"/>
+                    <constraint firstItem="ri7-LX-eZ1" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="8" id="udi-a8-Fr1"/>
+                    <constraint firstItem="6qD-KC-yvo" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" id="vrm-An-juV"/>
+                    <constraint firstItem="6qD-KC-yvo" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" id="z5Q-Pu-N8Q"/>
                 </constraints>
-                <variation key="default">
-                    <mask key="constraints">
-                        <exclude reference="hwQ-Jh-0cq"/>
-                        <exclude reference="1sd-E8-jk2"/>
-                    </mask>
-                </variation>
             </tableViewCellContentView>
             <connections>
                 <outlet property="courseNameLabel" destination="6qD-KC-yvo" id="PbH-kj-221"/>
                 <outlet property="courseTitleLabel" destination="ri7-LX-eZ1" id="PzY-aJ-gZr"/>
-                <outlet property="operationImgView" destination="82c-cM-AjQ" id="zqU-SV-oeW"/>
             </connections>
             <point key="canvasLocation" x="286" y="291"/>
         </tableViewCell>
     </objects>
-    <resources>
-        <image name="plus-ion" width="512" height="512"/>
-    </resources>
 </document>

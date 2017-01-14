@@ -21,6 +21,8 @@ class UserDetailTableVC: UITableViewController {
     
     @IBOutlet weak var reportBtn: UIButton!
     
+    @IBOutlet weak var messageBtnWidthConstraint: NSLayoutConstraint!
+    
     var user:User?
     var userId:String?
     
@@ -29,8 +31,13 @@ class UserDetailTableVC: UITableViewController {
         self.view.layoutIfNeeded()
         avatarImageView.layer.cornerRadius = avatarImageView.frame.width/2
         avatarImageView.layer.masksToBounds = true
+        avatarImageView.image = Design.defaultAvatarImage
         
-        ServerConst.sharedInstance.getUserInfo(userId!, refresh: true) { (user, joinedCourse, error) in
+        messageBtnWidthConstraint.constant = UIScreen.main.bounds.width * 0.8
+        messageBtn.layer.cornerRadius = messageBtnWidthConstraint.constant/8/2
+        messageBtn.layer.masksToBounds = true
+        
+        SocketIOManager.sharedInstance.getUserInfo(userId!, loadType: .cacheAndNetwork) { (user, error) in
             if error != nil {
                 //TODO: no user
                 return
@@ -43,8 +50,13 @@ class UserDetailTableVC: UITableViewController {
             } else {
                 self.avatarImageView.image = Design.defaultAvatarImage
             }
+
         }
         
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
     }
 
     override func didReceiveMemoryWarning() {
