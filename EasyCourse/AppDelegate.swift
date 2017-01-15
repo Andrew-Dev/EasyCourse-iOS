@@ -33,11 +33,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.makeKeyAndVisible()
         window?.rootViewController = MainNavigationController()
 
-        UINavigationBar.appearance().tintColor = Design.color.lighterDarkGunPowder()
+//        UINavigationBar.appearance().tintColor = Design.color.lighterDarkGunPowder()
+//        UINavigationBar.appearance().backgroundColor = Design.color.lighterDarkGunPowder()
+//        UINavigationBar.appearance().tintColor = UIColor.white
+//        UINavigationBar.appearance().barStyle = .black
+//        UINavigationBar.appearance().barTintColor = Design.color.lighterDarkGunPowder()
+//        UINavigationBar.appearance().barTintColor = Design.color.lighterGreenMountainMead()
         UINavigationBar.appearance().isTranslucent = false
         
         UITabBar.appearance().isTranslucent = false
         UITabBar.appearance().tintColor = Design.color.lighterDarkGunPowder()
+//        UITabBar.appearance().tintColor = Design.color.deepGreenPersianGreenColor()
         
         if !UserSetting.shouldAskPushNotif {
             if #available(iOS 10, *) {

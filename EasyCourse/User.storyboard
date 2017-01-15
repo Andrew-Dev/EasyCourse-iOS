@@ -62,7 +62,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="342" height="86"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Kqr-z8-Pe9">
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Kqr-z8-Pe9">
                                                     <rect key="frame" x="8" y="11.5" width="64" height="64"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="64" id="3xx-iN-4aR"/>
@@ -305,7 +305,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="84"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="eqf-el-nc0">
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="eqf-el-nc0">
                                                     <rect key="frame" x="290.5" y="8" width="68.5" height="68.5"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" secondItem="eqf-el-nc0" secondAttribute="height" id="b0K-Cr-vTM"/>
@@ -588,7 +588,7 @@
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="KLd-xF-rLp">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="P84-KI-Q7P">
                                         <rect key="frame" x="0.0" y="28" width="375" height="44"/>
@@ -905,11 +905,11 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="7wI-CE-W5H">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="7wI-CE-W5H">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                                 <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="CourseDetailTitleCell" rowHeight="88" id="US6-4Q-P22" customClass="CourseDetailTitleCell" customModule="EasyCourse" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="CourseDetailTitleCell" rowHeight="88" id="US6-4Q-P22" customClass="CourseDetailTitleCell" customModule="EasyCourse" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="375" height="88"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="US6-4Q-P22" id="wk7-KN-X8f">
@@ -963,27 +963,39 @@
                                             <outlet property="joinOrQuitBtn" destination="kSI-BP-oY5" id="uqv-ka-u5b"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="CourseDetailUnivCell" textLabel="hlT-iX-J4J" style="IBUITableViewCellStyleDefault" id="1dp-Nf-O1F" customClass="CourseDetailUnivCell" customModule="EasyCourse" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="CourseDetailUnivCell" id="1dp-Nf-O1F" customClass="CourseDetailUnivCell" customModule="EasyCourse" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="116" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="1dp-Nf-O1F" id="Cea-iE-aLP">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="43"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="University" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="hlT-iX-J4J">
-                                                    <rect key="frame" x="15" y="0.0" width="345" height="43"/>
-                                                    <autoresizingMask key="autoresizingMask"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                                    <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4bh-K0-gAV">
+                                                    <rect key="frame" x="16" y="11" width="42" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="plus" translatesAutoresizingMaskIntoConstraints="NO" id="4fV-Uk-2d7">
+                                                    <rect key="frame" x="342" y="13.5" width="17" height="17"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="17" id="ERp-iV-c3M"/>
+                                                        <constraint firstAttribute="height" constant="17" id="qiQ-tR-R3n"/>
+                                                    </constraints>
+                                                </imageView>
                                             </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="trailingMargin" secondItem="4fV-Uk-2d7" secondAttribute="trailing" constant="8" id="3yx-iU-vHM"/>
+                                                <constraint firstItem="4bh-K0-gAV" firstAttribute="leading" secondItem="Cea-iE-aLP" secondAttribute="leadingMargin" constant="8" id="QIx-V5-QeM"/>
+                                                <constraint firstItem="4bh-K0-gAV" firstAttribute="centerY" secondItem="Cea-iE-aLP" secondAttribute="centerY" id="XOs-ca-I98"/>
+                                                <constraint firstItem="4fV-Uk-2d7" firstAttribute="centerY" secondItem="Cea-iE-aLP" secondAttribute="centerY" id="Zwk-Vg-BN3"/>
+                                            </constraints>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <outlet property="univLabel" destination="hlT-iX-J4J" id="zkn-EA-4qc"/>
+                                            <outlet property="univLabel" destination="4bh-K0-gAV" id="boP-a5-hP4"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="CourseDetailSubroomCell" rowHeight="72" id="z3R-qg-8EK" customClass="CourseDetailSubroomCell" customModule="EasyCourse" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="CourseDetailSubroomCell" rowHeight="72" id="z3R-qg-8EK" customClass="CourseDetailSubroomCell" customModule="EasyCourse" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="160" width="375" height="72"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="z3R-qg-8EK" id="tjz-ne-eu9">
@@ -1066,12 +1078,13 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Bph-yc-xXf" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2798" y="2176"/>
+            <point key="canvasLocation" x="2797.5999999999999" y="2175.562218890555"/>
         </scene>
     </scenes>
     <resources>
         <image name="DefaultAvatar" width="90" height="90"/>
         <image name="alert" width="25" height="25"/>
+        <image name="plus" width="25" height="25"/>
         <image name="user-tabbar" width="25" height="25"/>
         <image name="user-tabbar-filled" width="25" height="25"/>
     </resources>

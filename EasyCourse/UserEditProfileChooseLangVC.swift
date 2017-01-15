@@ -68,6 +68,25 @@ class UserEditProfileChooseLangVC: UIViewController, UITableViewDelegate, UITabl
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        if section == 0 {
+            let alertView = UIView(frame: CGRect(x: 0, y: 0, width: self.view.frame.width, height: 55))
+            alertView.backgroundColor = UIColor.groupTableViewBackground
+            let alertLabel = UILabel(frame: CGRect(x: 16, y: 0, width: self.view.frame.width-32, height: 55))
+            alertLabel.numberOfLines = 0
+            alertLabel.textColor = UIColor.darkGray
+            alertLabel.font = UIFont.systemFont(ofSize: 12)
+            alertLabel.text = "This is not system language. If you choose a language, next time when you join courses, you will also join the course rooms with language automatically"
+            alertView.addSubview(alertLabel)
+            return alertView
+        }
+        return nil
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 55
+    }
+    
     func saveLang() {
         let hud = JGProgressHUD()
         hud.show(in: self.view)

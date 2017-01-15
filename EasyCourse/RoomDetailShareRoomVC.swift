@@ -110,5 +110,6 @@ extension RoomDetailShareRoomVC: UITableViewDataSource, UITableViewDelegate {
         alert.addAction(send)
         alert.addAction(cancel)
         self.present(alert, animated: true, completion: nil)
+        tableView.deselectRow(at: indexPath, animated: true)
     }
 }

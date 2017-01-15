@@ -99,6 +99,7 @@ class ServerConst {
     
     func loginWithFacebook(_ view: UIViewController, completion: @escaping (_ success:Bool, _ error:NetworkError?) -> ()) {
         let login = FBSDKLoginManager()
+        login.logOut()
         login.logIn(withReadPermissions: ["email", "public_profile"], from: view) { (result, error) in
             if error != nil {
                 return completion(false, NetworkError.ServerError(reason: error?.localizedDescription))
