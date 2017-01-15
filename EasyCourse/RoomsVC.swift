@@ -234,13 +234,22 @@ extension RoomsVC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if tableView == searchResultsTableView {
-            let storyboard = UIStoryboard(name: "User", bundle: nil)
-            let courseDetailVC = storyboard.instantiateViewController(withIdentifier: "CourseDetailVC") as! CourseDetailVC
-            if let cell = tableView.cellForRow(at: indexPath) as? UserCoursesTVCell {
-                courseDetailVC.courseId = cell.cellCourse?.id
-                self.navigationController?.pushViewController(courseDetailVC, animated: true)
+            let cell = tableView.cellForRow(at: indexPath)
+            searchBar.resignFirstResponder()
+            if cell is RoomsTVCell {
+                let storyboard = UIStoryboard(name: "Room", bundle: nil)
+                let roomVC = storyboard.instantiateViewController(withIdentifier: "RoomsDialogVC") as! RoomsDialogVC
+                let roomId = localRoomResults![indexPath.row].id
+                roomVC.localRoomId = roomId
+                self.navigationController?.pushViewController(roomVC, animated: true)
+            } else if cell is UserCoursesTVCell {
+                let storyboard = UIStoryboard(name: "User", bundle: nil)
+                let courseDetailVC = storyboard.instantiateViewController(withIdentifier: "CourseDetailVC") as! CourseDetailVC
+                if let cell = tableView.cellForRow(at: indexPath) as? UserCoursesTVCell {
+                    courseDetailVC.courseId = cell.cellCourse?.id
+                    self.navigationController?.pushViewController(courseDetailVC, animated: true)
+                }
             }
-
         } else {
             self.performSegue(withIdentifier: "gotoLocalRoom", sender: self)
         }
@@ -256,7 +265,6 @@ extension RoomsVC: UISearchBarDelegate {
         searchResultsTableView.frame = roomTableView.frame
         searchResultsTableView.delegate = self
         searchResultsTableView.dataSource = self
-        searchResultsTableView.rowHeight = 65
         self.view.addSubview(searchResultsTableView)
     }
     
