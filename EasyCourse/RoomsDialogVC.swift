@@ -101,6 +101,8 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
                 customTitleView.subtitle = "\(localRoom.memberCountsDescription!) people"
             }
             customTitleView.title = localRoom.roomname!
+            customTitleView.titleColor = .white
+            customTitleView.subtitleColor = UIColor(white: 0.9, alpha: 1)
             self.navigationItem.titleView = customTitleView
         }
         

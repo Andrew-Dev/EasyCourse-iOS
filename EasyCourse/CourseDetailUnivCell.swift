@@ -15,7 +15,7 @@ class CourseDetailUnivCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
-        univLabel.text = "Create section"
+        univLabel.text = "Create a section"
         //univLabel.textColor = Design.color.deepGreenPersianGreenColor()
     }
 

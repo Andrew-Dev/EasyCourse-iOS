@@ -109,7 +109,7 @@ class RoomsTVCell_v2: UITableViewCell {
                 lastMessageLabel.text = content + " share an image"
             } else if lastMessage!.text != nil {
                 lastMessageLabel.text = content + ": " + lastMessage!.text!
-                //                lastMessageLabel.text =  lastMessage!.text!
+//                                lastMessageLabel.text =  lastMessage!.text!
             } else if lastMessage?.sharedRoom != nil {
                 lastMessageLabel.text = content + " shared a room"
             } else {

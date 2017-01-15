@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 public extension String {
     func replace(_ target: String, withString: String) -> String {
@@ -60,5 +61,16 @@ public extension String {
         
         // Nothing worked!
         return nil
+    }
+    
+    
+}
+
+public extension UISearchBar {
+    
+    public func setTextColor(color: UIColor) {
+        let svs = subviews.flatMap { $0.subviews }
+        guard let tf = (svs.filter { $0 is UITextField }).first as? UITextField else { return }
+        tf.textColor = color
     }
 }

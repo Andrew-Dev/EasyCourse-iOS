@@ -77,6 +77,7 @@
 		F7ADE2C61E295C91001442EE /* RoomsTVCell_v2.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7ADE2C51E295C91001442EE /* RoomsTVCell_v2.swift */; };
 		F7ADE2CA1E296372001442EE /* RoomsTVHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F7ADE2C91E296372001442EE /* RoomsTVHeaderView.xib */; };
 		F7ADE2CC1E2967EF001442EE /* RoomsTVHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7ADE2CB1E2967EF001442EE /* RoomsTVHeaderView.swift */; };
+		F7ADE2D31E2B47CE001442EE /* CourseTVCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F7ADE2D21E2B47CE001442EE /* CourseTVCell.xib */; };
 		F7ADFB1E1D888C1600AD53C3 /* Tools.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7ADFB1D1D888C1600AD53C3 /* Tools.swift */; };
 		F7ADFB201D888EC100AD53C3 /* UserTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7ADFB1F1D888EC100AD53C3 /* UserTableVC.swift */; };
 		F7ADFB221D889C1000AD53C3 /* UserRoomsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7ADFB211D889C1000AD53C3 /* UserRoomsVC.swift */; };
@@ -177,6 +178,7 @@
 		F7ADE2C51E295C91001442EE /* RoomsTVCell_v2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomsTVCell_v2.swift; sourceTree = "<group>"; };
 		F7ADE2C91E296372001442EE /* RoomsTVHeaderView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RoomsTVHeaderView.xib; sourceTree = "<group>"; };
 		F7ADE2CB1E2967EF001442EE /* RoomsTVHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomsTVHeaderView.swift; sourceTree = "<group>"; };
+		F7ADE2D21E2B47CE001442EE /* CourseTVCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CourseTVCell.xib; sourceTree = "<group>"; };
 		F7ADFB1D1D888C1600AD53C3 /* Tools.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tools.swift; sourceTree = "<group>"; };
 		F7ADFB1F1D888EC100AD53C3 /* UserTableVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserTableVC.swift; sourceTree = "<group>"; };
 		F7ADFB211D889C1000AD53C3 /* UserRoomsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserRoomsVC.swift; sourceTree = "<group>"; };
@@ -476,6 +478,7 @@
 			children = (
 				F7ADFB231D889C2100AD53C3 /* UserCoursesVC.swift */,
 				F7ADFB311D8AE17400AD53C3 /* UserCoursesTVCell.swift */,
+				F7ADE2D21E2B47CE001442EE /* CourseTVCell.xib */,
 				F79FAB7E1DEDF86600F502AA /* CourseDetail */,
 			);
 			name = UserCourses;
@@ -596,6 +599,7 @@
 				F7364C7E1DA6E0EF007A967F /* LoadingTVCell.xib in Resources */,
 				F7A5564A1D90DEC9003E258D /* Assets.xcassets in Resources */,
 				F76A9BD71D8622AB0065C25C /* LoginCourseListCVCell.xib in Resources */,
+				F7ADE2D31E2B47CE001442EE /* CourseTVCell.xib in Resources */,
 				F790C1C61E1DE107002246C9 /* GoogleService-Info.plist in Resources */,
 				F76A9BF41D8627760065C25C /* LoginMainComponentVC.xib in Resources */,
 				F76A9BDB1D8623240065C25C /* LoginCourseChooseTVCell.xib in Resources */,
