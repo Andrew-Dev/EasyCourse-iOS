@@ -24,7 +24,6 @@ class MainNavigationController: UINavigationController {
             }
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             let baseTabBarController = storyboard.instantiateViewController(withIdentifier: "BaseTabBarController") as! UITabBarController
-            
             viewControllers = [baseTabBarController]
         } else {
             perform(#selector(showLoginController), with: nil, afterDelay: 0.01)

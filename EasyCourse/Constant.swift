@@ -26,6 +26,7 @@ class Constant: NSObject {
         static let shouldAskPushNotif = "shouldAskPushNotif"
         static let deviceTokenKey = "deviceTokenKey"
         static let silentRoomKey = "deviceTokenKey"
+        static let updateShowDateKey = "updateShowDateKey"
         static func userMsgLastUpdateKey(id: String) -> String {
             return "userMsgLastUpdateKey\(id)"
         }
@@ -45,8 +46,8 @@ class Constant: NSObject {
         case receivedResult
     }
     
-//    static let baseURL = "https://www.easycourseserver.com/api"
+    static let baseURL = "https://www.easycourseserver.com/api"
     
-    static let baseURL = "https://zengjintaotest.com/api"
+//    static let baseURL = "https://zengjintaotest.com/api"
 //    static let baseURL = "http://localhost:3000/api"
 }

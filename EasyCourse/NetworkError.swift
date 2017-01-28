@@ -21,7 +21,7 @@ enum NetworkError: Error, CustomStringConvertible {
         case .ServerError(let reason):
             return reason ?? "Server error"
         case .ParseJSONError:
-            return "Server error"
+            return "Server error (parse json)"
         case .LocalError(let reason):
             return reason 
         default:

@@ -147,6 +147,18 @@ extension CourseDetailVC:UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let courseIndex = User.currentUser!.joinedCourse.index(where: { (crs) -> Bool in
+            return crs.id == courseId
+        })
+        if courseIndex == nil {
+            let alert = UIAlertController(title: "Please join the course", message: nil, preferredStyle: .alert)
+            let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+            alert.addAction(cancel)
+            self.present(alert, animated: true, completion: nil)
+            tableView.deselectRow(at: indexPath, animated: true)
+            return
+        }
+        
         if indexPath.section == 1 && indexPath.row == 0 {
             let sb = UIStoryboard(name: "Room", bundle: nil)
             let vc = sb.instantiateViewController(withIdentifier: "RoomsAddRoomVC") as! RoomsAddRoomVC

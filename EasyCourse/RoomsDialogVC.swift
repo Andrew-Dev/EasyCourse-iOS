@@ -150,15 +150,65 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
         let detailButton = UIBarButtonItem(title: "More", style: UIBarButtonItemStyle.done, target: self, action: #selector(self.gotoDetail))
         self.navigationItem.rightBarButtonItem = detailButton
         
+        
+        
+    }
+    
+    func mapMsgIndexToCell(dbIndex:Int) -> Int {
+        print("insert index=\(dbIndex - msgHidePage*msgOffset) || livemsg=\(liveMessage.count) || cellcnt=\(messageTableView.numberOfRows(inSection: 0))")
+        return dbIndex - msgHidePage*msgOffset
+    }
+    
+    
+    deinit {
+        print("view deinit \(localRoom.roomname)")
+//        messageUpdateNotif?.stop()
+//        roomUpdateNotif?.stop()
+//        NotificationCenter.default.removeObserver(self)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.view.endEditing(true)
+        inputBottomConstraint.constant = 0
+        turnOffAccessoryView()
+        
+        if try! Realm().object(ofType: Room.self, forPrimaryKey: localRoomId) == nil {
+            _ = navigationController?.popToRootViewController(animated: true)
+        }
+        setupNotification()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        try! Realm().write({ 
+            localRoom.unread = 0
+        })
+        messageUpdateNotif?.stop()
+        roomUpdateNotif?.stop()
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        if goToBottomAtFirst {
+            messageTableView.reloadData()
+            scrollToBottom(false)
+        }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        goToBottomAtFirst = false
+    }
+    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
+    }
+    
+    func setupNotification() {
         //Notification
-        NotificationCenter.default.addObserver(self, selector:#selector(self.keyboardWasShown(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.addObserver(self, selector:#selector(self.keyboardWillDisappear(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
-        
-//        messageUpdateNotif = liveMessage.addNotificationBlock({ (result) in
-//            print("get message notif")
-//            self.loadMessage()
-//        })
-        
         messageUpdateNotif = liveMessage.addNotificationBlock { [weak self] (changes: RealmCollectionChange) in
             guard let tableView = self?.messageTableView else { return }
             switch changes {
@@ -212,60 +262,22 @@ class RoomsDialogVC: UIViewController, UITableViewDelegate, UITableViewDataSourc
                 fatalError("\(error)")
                 break
             }
+            
+            // reset unread
+            Async.background(after: 0.1, {
+                self?.resetRoomUnread()
+            })
         }
         
         NotificationCenter.default.addObserver(self, selector: #selector(self.gobackToLastView), name: Constant.NotificationKey.RoomDelete, object: nil)
-        
+        NotificationCenter.default.addObserver(self, selector:#selector(self.keyboardWasShown(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector:#selector(self.keyboardWillDisappear(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
     }
     
-    func mapMsgIndexToCell(dbIndex:Int) -> Int {
-        print("insert index=\(dbIndex - msgHidePage*msgOffset) || livemsg=\(liveMessage.count) || cellcnt=\(messageTableView.numberOfRows(inSection: 0))")
-        return dbIndex - msgHidePage*msgOffset
-    }
-    
-    
-    
-    deinit {
-        messageUpdateNotif?.stop()
-        roomUpdateNotif?.stop()
-        NotificationCenter.default.removeObserver(self)
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.view.endEditing(true)
-        inputBottomConstraint.constant = 0
-        turnOffAccessoryView()
-        
-        if try! Realm().object(ofType: Room.self, forPrimaryKey: localRoomId) == nil {
-            _ = navigationController?.popToRootViewController(animated: true)
-        }
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        try! Realm().write({ 
+    func resetRoomUnread() {
+        try! Realm().write {
             localRoom.unread = 0
-        })
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        if goToBottomAtFirst {
-            messageTableView.reloadData()
-            scrollToBottom(false)
         }
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        goToBottomAtFirst = false
-    }
-    
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
     func loadMessage() {

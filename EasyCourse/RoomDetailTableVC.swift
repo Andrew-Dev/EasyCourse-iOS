@@ -248,7 +248,7 @@ class RoomDetailTableVC: UITableViewController {
     }
     
     func popUpQuitRoomAlert() {
-        let alert = UIAlertController(title: "Are you sure to quit?", message: nil, preferredStyle: .alert)
+        let alert = UIAlertController(title: "Are you sure to quit?", message: nil, preferredStyle: .actionSheet)
         let quit = UIAlertAction(title: "Quit Room", style: .destructive, handler: { (UIAlertAction) in
             let hud = JGProgressHUD(style: .extraLight)
             hud?.textLabel.text = "Loading"

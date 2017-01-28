@@ -121,9 +121,9 @@ class RoomsTVCell_v2: UITableViewCell {
                 lastMessageLabel.text = "Welcome to \(welcomeMsg)"
             } 
             
-            if room.lastUpdateTime != nil {
-                timeLabel.text = Tools.sharedInstance.timeAgoSinceDatePrefered(room.lastUpdateTime! as Date)
-            }
+//            if room.lastUpdateTime != nil {
+//                timeLabel.text = Tools.sharedInstance.timeAgoSinceDatePrefered(room.lastUpdateTime! as Date)
+//            }
         }
     }
 }

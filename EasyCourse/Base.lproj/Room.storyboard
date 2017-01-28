@@ -261,7 +261,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="74" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="gZJ-A9-gNe">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="618"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="RoomsTVCell" rowHeight="74" id="Ukq-pE-l4H" customClass="RoomsTVCell" customModule="EasyCourse" customModuleProvider="target">
@@ -463,8 +463,8 @@
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstAttribute="bottom" secondItem="gZJ-A9-gNe" secondAttribute="bottom" id="GgZ-VG-Fwi"/>
                             <constraint firstItem="gZJ-A9-gNe" firstAttribute="leading" secondItem="CU1-4k-IFw" secondAttribute="leading" id="Psi-0t-LCk"/>
-                            <constraint firstItem="5MC-d3-sMg" firstAttribute="top" secondItem="gZJ-A9-gNe" secondAttribute="bottom" id="gVY-lp-z13"/>
                             <constraint firstAttribute="trailing" secondItem="gZJ-A9-gNe" secondAttribute="trailing" id="if3-pV-7PU"/>
                             <constraint firstItem="gZJ-A9-gNe" firstAttribute="top" secondItem="Mrd-jG-G8k" secondAttribute="bottom" id="oZs-1R-frk"/>
                             <constraint firstItem="gZJ-A9-gNe" firstAttribute="top" secondItem="CU1-4k-IFw" secondAttribute="topMargin" id="yGl-6i-b6c"/>

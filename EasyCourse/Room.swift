@@ -39,6 +39,7 @@ class Room: Object {
     
     //Local
     dynamic var lastUpdateTime: NSDate? = nil
+    dynamic var removed = false
     
     override static func primaryKey() -> String? {
         return "id"
@@ -206,7 +207,6 @@ class Room: Object {
 //        })
 //    }
     
-
 
     
 }

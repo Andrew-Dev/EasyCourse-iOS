@@ -110,6 +110,8 @@ class UserTableVC: UITableViewController {
             self.performSegue(withIdentifier: "gotoUserRecruiteVC", sender: self)
         case (2,1):
             self.performSegue(withIdentifier: "gotoUserTermsVC", sender: self)
+        case (2,2):
+            self.performSegue(withIdentifier: "gotoUserFeedbackVC", sender: self)
         default: break
             //
         }

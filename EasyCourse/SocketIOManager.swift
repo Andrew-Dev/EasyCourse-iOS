@@ -11,6 +11,8 @@ import SocketIO
 import RealmSwift
 import AwesomeCache
 import SwiftyJSON
+import AudioToolbox
+
 
 class SocketIOManager: NSObject {
     
@@ -29,7 +31,7 @@ class SocketIOManager: NSObject {
     
     
     func establishConnection() {
-        print("connect with token: \(User.token!)")
+        print("connect with token: \(User.token)")
         socket = SocketIOClient(socketURL: URL(string: Constant.baseURL)!, config: [.connectParams(["token" : User.token!])])
         print("socket is \(socket)")
 //        socket = SocketIOClient(socketURL: URL(string: Constant.baseURL)!, config: [.connectParams(["token" : "asdf"])])
@@ -103,7 +105,8 @@ class SocketIOManager: NSObject {
         if let sharedRoom = message.sharedRoom { param["sharedRoom"] = "\(sharedRoom)" }
 //        print("param message \(param)")
         socket.emitWithAck("message", param).timingOut(after: timeoutSec) { (data) in
-            if let err = self.checkAckError(data, onlyCheckNetwork: true) {
+            print("res data: \(data)")
+            if let err = self.checkAckError(data, onlyCheckNetwork: false) {
                 print("get in check")
                 try! Realm().write {
                     message.successSent.value = false
@@ -114,7 +117,7 @@ class SocketIOManager: NSObject {
             guard let messageData = data[0] as? NSDictionary else {
                 return completion(false, NetworkError.ParseJSONError)
             }
-//            print("res msg data: \(messageData)")
+            print("res msg data: \(messageData)")
             do {
                 try self.updateMessageInDatabase(message: message, resData: messageData)
             } catch let error as NetworkError {
@@ -384,12 +387,7 @@ class SocketIOManager: NSObject {
             
             let json = JSON(data)
             if let success = json[0]["success"].bool {
-                let realm = try! Realm()
-                if let userroom = realm.object(ofType: Room.self, forPrimaryKey: userId), userroom.isToUser {
-                    try! realm.write {
-                        realm.delete(userroom)
-                    }
-                }
+                User.currentUser?.quitRoom(userId)
                 return completion(success, nil)
             } else {
                 print("get course error: \(json[0]["success"].error?.localizedDescription)")
@@ -615,18 +613,17 @@ class SocketIOManager: NSObject {
     
     func getHistMessage(_ initial: Bool, completion: @escaping (_ success:Bool, _ error:NetworkError?) -> ()) {
         var params:[String:Any] = [:]
-//        if let lastUpdatedTime = try! Realm().objects(Message.self).filter("successSent != false").last?.createdAt {
-//            params["lastUpdateTime"] = lastUpdatedTime.timeIntervalSince1970 * 1000
-//        }
-        let beginUpdateMsgTime = Date()
+        
+//        let beginUpdateMsgTime = Date()
         if initial {
             params["lastUpdateTime"] = Date().timeIntervalSince1970 * 1000 - 1000*60*60*24*7
         } else if let lastUpdatedTime = User.currentUser!.getLastMsgUpdateTime() {
             params["lastUpdateTime"] = lastUpdatedTime.timeIntervalSince1970 * 1000
+        } else if let lastUpdatedTime = try! Realm().objects(Message.self).filter("successSent != false").last?.createdAt {
+            params["lastUpdateTime"] = lastUpdatedTime.timeIntervalSince1970 * 1000
         }
-        
-//        let a = try! Realm().objects(Message.self).last?.text
-//        print("lastupdateTime: \(a), \(params["lastUpdateTime"])")
+        print("lastupdateTime: \(params["lastUpdateTime"])")
+
         socket.emitWithAck("getHistMessage", params).timingOut(after: timeoutSec) { (data) in
             if let err = self.checkAckError(data, onlyCheckNetwork: false) {
                 print("get histmsg error")
@@ -641,12 +638,9 @@ class SocketIOManager: NSObject {
                 return completion(false, NetworkError.ParseJSONError)
             }
             
-            if messageArray.count != 0 {
-                User.currentUser!.setLastMsgUpdateTime(beginUpdateMsgTime)
-            }
-            
+            print("hist message cnt: \(messageArray.count)")
             for obj in messageArray {
-                print("hist message obj: \(obj)")
+//                print("hist message obj: \(obj)")
 //                self.saveMessageToDatabase(data: obj)
                 if let data = obj as? NSDictionary {
                     Message.createOrUpdateMessage(data)
@@ -659,7 +653,7 @@ class SocketIOManager: NSObject {
     }
     
     func getUserInfo(_ userId:String, loadType:LoadType, completion: @escaping (_ user:User?, _ error:NetworkError?) -> ()) {
-        print("get user inf: \(userId)")
+//        print("get user inf: \(userId)")
         if loadType != .NetworkOnly {
             if let user = try! Realm().object(ofType: User.self, forPrimaryKey: userId) {
                 if loadType == .cacheAndNetwork {
@@ -743,6 +737,10 @@ class SocketIOManager: NSObject {
         }
         
         socket.on("message") { (objects, ack) in
+            AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
+            AudioServicesPlayAlertSound(1003)
+            
+
             for object in objects {
                 //                print("one object: \(object)")
 
@@ -764,6 +762,29 @@ class SocketIOManager: NSObject {
             }
         }
         
+        socket.on("iOSUpdate") { (obj, ack) in
+            print("ios update: \(obj)")
+            guard let updateData = obj[0] as? NSDictionary else {
+                return
+            }
+            guard let updateVersion = updateData["version"] as? Double else {
+                return
+            }
+            let updateTitle = updateData["updateTitle"] as? String ?? "Update"
+            let updateMessage = updateData["updateMessage"] as? String ?? "There is an update on app store. Please take a look."
+            let forceUpdate = updateData["forceUpdate"] as? Bool ?? false
+            let link = updateData["updateLink"] as? String ?? "https://itunes.apple.com/us/app/easycourse-chatroom-designed/id1157252902?ls=1&mt=8"
+            
+            
+            let dictionary = Bundle.main.infoDictionary!
+            if let version = dictionary["CFBundleShortVersionString"] as? String, let build = dictionary["CFBundleVersion"] as? String {
+                if let localVersion = Double("\(version)") {
+                    if localVersion < updateVersion {
+                        Tools.sharedInstance.showUpdateAlert(title: updateTitle, message: updateMessage, forceUpdate: forceUpdate, link: link)
+                    }
+                }
+            }
+        }
 
         socket.on("exception") { (obj, ack) in
             print(obj)
@@ -831,12 +852,13 @@ class SocketIOManager: NSObject {
                 if let remoteId = updatedMessage["_id"] as? String {
                     message.remoteId = remoteId
                 }
-                print("time==")
                 if let remoteCreated = updatedMessage["createdAt"] as? String {
-                    print("update remote date \(remoteCreated)")
                     message.createdAt = remoteCreated.stringToDate()
                 }
             }
+            
+            User.currentUser?.setLastMsgUpdateTime(message.createdAt!)
+
         } else {
             try! realm.write {
                 message.successSent.value = false

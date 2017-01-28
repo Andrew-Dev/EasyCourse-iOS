@@ -80,7 +80,7 @@ class UserRoomDetailTableVC: UITableViewController {
     
     func removeFriendAlert() {
         let otherUserName = user!.username ?? "user"
-        let alert = UIAlertController(title: "Remove friend", message: "You will no longer receive \(otherUserName)'s message. You can message him/her to allow him/her to talk to you again.", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Remove friend", message: "You will no longer receive \(otherUserName)'s message. You can message him/her to allow him/her to talk to you again.", preferredStyle: .actionSheet)
         let delete = UIAlertAction(title: "Remove", style: .destructive, handler: { (UIAlertAction) in
             let hud = JGProgressHUD()
             hud.show(in: self.view)

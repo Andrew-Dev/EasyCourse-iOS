@@ -78,6 +78,7 @@
 		F7ADE2CA1E296372001442EE /* RoomsTVHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F7ADE2C91E296372001442EE /* RoomsTVHeaderView.xib */; };
 		F7ADE2CC1E2967EF001442EE /* RoomsTVHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7ADE2CB1E2967EF001442EE /* RoomsTVHeaderView.swift */; };
 		F7ADE2D31E2B47CE001442EE /* CourseTVCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F7ADE2D21E2B47CE001442EE /* CourseTVCell.xib */; };
+		F7ADE2D51E2EF1CC001442EE /* RoomTVCellStruct.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7ADE2D41E2EF1CC001442EE /* RoomTVCellStruct.swift */; };
 		F7ADFB1E1D888C1600AD53C3 /* Tools.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7ADFB1D1D888C1600AD53C3 /* Tools.swift */; };
 		F7ADFB201D888EC100AD53C3 /* UserTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7ADFB1F1D888EC100AD53C3 /* UserTableVC.swift */; };
 		F7ADFB221D889C1000AD53C3 /* UserRoomsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7ADFB211D889C1000AD53C3 /* UserRoomsVC.swift */; };
@@ -89,6 +90,7 @@
 		F7ADFB341D8BA2DF00AD53C3 /* UserEditProfileTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7ADFB331D8BA2DF00AD53C3 /* UserEditProfileTableVC.swift */; };
 		F7ADFB361D8CD84500AD53C3 /* ServerHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7ADFB351D8CD84500AD53C3 /* ServerHelper.swift */; };
 		F7ADFB381D8CEFFF00AD53C3 /* UserDetailTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7ADFB371D8CEFFF00AD53C3 /* UserDetailTableVC.swift */; };
+		F7AF24D71E341E2900132DEB /* UserFeedbackVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7AF24D61E341E2900132DEB /* UserFeedbackVC.swift */; };
 		F7CE24431DCE8E7B0004957E /* MessageOutgoingGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CE24421DCE8E7B0004957E /* MessageOutgoingGroupCell.swift */; };
 		F7CE24451DCE8E8F0004957E /* MessageIncomingGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CE24441DCE8E8F0004957E /* MessageIncomingGroupCell.swift */; };
 		F7CE24471DCE98780004957E /* RoomsDialogAccGroupVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CE24461DCE98780004957E /* RoomsDialogAccGroupVC.swift */; };
@@ -179,6 +181,7 @@
 		F7ADE2C91E296372001442EE /* RoomsTVHeaderView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RoomsTVHeaderView.xib; sourceTree = "<group>"; };
 		F7ADE2CB1E2967EF001442EE /* RoomsTVHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomsTVHeaderView.swift; sourceTree = "<group>"; };
 		F7ADE2D21E2B47CE001442EE /* CourseTVCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CourseTVCell.xib; sourceTree = "<group>"; };
+		F7ADE2D41E2EF1CC001442EE /* RoomTVCellStruct.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomTVCellStruct.swift; sourceTree = "<group>"; };
 		F7ADFB1D1D888C1600AD53C3 /* Tools.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tools.swift; sourceTree = "<group>"; };
 		F7ADFB1F1D888EC100AD53C3 /* UserTableVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserTableVC.swift; sourceTree = "<group>"; };
 		F7ADFB211D889C1000AD53C3 /* UserRoomsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserRoomsVC.swift; sourceTree = "<group>"; };
@@ -190,6 +193,7 @@
 		F7ADFB331D8BA2DF00AD53C3 /* UserEditProfileTableVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserEditProfileTableVC.swift; sourceTree = "<group>"; };
 		F7ADFB351D8CD84500AD53C3 /* ServerHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerHelper.swift; sourceTree = "<group>"; };
 		F7ADFB371D8CEFFF00AD53C3 /* UserDetailTableVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDetailTableVC.swift; sourceTree = "<group>"; };
+		F7AF24D61E341E2900132DEB /* UserFeedbackVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserFeedbackVC.swift; sourceTree = "<group>"; };
 		F7CE24421DCE8E7B0004957E /* MessageOutgoingGroupCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageOutgoingGroupCell.swift; sourceTree = "<group>"; };
 		F7CE24441DCE8E8F0004957E /* MessageIncomingGroupCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageIncomingGroupCell.swift; sourceTree = "<group>"; };
 		F7CE24461DCE98780004957E /* RoomsDialogAccGroupVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomsDialogAccGroupVC.swift; sourceTree = "<group>"; };
@@ -343,6 +347,7 @@
 				F7ADFB301D8AE15900AD53C3 /* UserCourses */,
 				F7ADFB271D889D4A00AD53C3 /* UserTermsVC.swift */,
 				F7ADFB291D889D8600AD53C3 /* UserRecruiteVC.swift */,
+				F7AF24D61E341E2900132DEB /* UserFeedbackVC.swift */,
 				F7ADFB331D8BA2DF00AD53C3 /* UserEditProfileTableVC.swift */,
 				F755B02E1E22E2970017E138 /* UserResetPasswordTableVC.swift */,
 				F7CFB8DC1E1C93DB000C5491 /* UserEditProfileChooseLangVC.swift */,
@@ -354,6 +359,7 @@
 			isa = PBXGroup;
 			children = (
 				F76A9BE21D8625AC0065C25C /* RoomsVC.swift */,
+				F7ADE2D41E2EF1CC001442EE /* RoomTVCellStruct.swift */,
 				F76A9BE61D8626350065C25C /* RoomsTVCell.swift */,
 				F7ADE2C51E295C91001442EE /* RoomsTVCell_v2.swift */,
 				F7ADE2CB1E2967EF001442EE /* RoomsTVHeaderView.swift */,
@@ -674,6 +680,7 @@
 				F76A9BF61D86281E0065C25C /* Design.swift in Sources */,
 				F7CE24451DCE8E8F0004957E /* MessageIncomingGroupCell.swift in Sources */,
 				F7A5564E1D9D7E43003E258D /* RoomDetailTableVC.swift in Sources */,
+				F7ADE2D51E2EF1CC001442EE /* RoomTVCellStruct.swift in Sources */,
 				F7ADFB241D889C2100AD53C3 /* UserCoursesVC.swift in Sources */,
 				F72F22D21DE0C0C6009E7C6C /* MessageAlert.swift in Sources */,
 				F7A5564C1D9B3E6A003E258D /* UserSetting.swift in Sources */,
@@ -726,6 +733,7 @@
 				F755B0311E23FE8F0017E138 /* MainNavigationController.swift in Sources */,
 				F7ADFB321D8AE17400AD53C3 /* UserCoursesTVCell.swift in Sources */,
 				F76A9BDE1D86236D0065C25C /* LoginLangChooseTVCell.swift in Sources */,
+				F7AF24D71E341E2900132DEB /* UserFeedbackVC.swift in Sources */,
 				F76A9BC71D8621EF0065C25C /* LoginCourseComponentVC.swift in Sources */,
 				F79FAB821DEDF8AA00F502AA /* CourseDetailUnivCell.swift in Sources */,
 				F7ADFB1E1D888C1600AD53C3 /* Tools.swift in Sources */,

@@ -20,11 +20,13 @@ class RoomsVC: UIViewController {
     @IBOutlet weak var roomTableView: UITableView!
     
     lazy var message = try! Realm().objects(Message.self)
-//    lazy var rooms = try! Realm().objects(Room.self)
     lazy var rooms = User.currentUser!.joinedRoom
     var sortedRooms:[(room:Room,lastMessage:Message?)] = []
+    var sortedRooms_v2:[String:[(room:Room,lastMessage:Message?)]] = [:]
     var roomUpdateNotif: NotificationToken? = nil
     var messageUpdateNotif: NotificationToken? = nil
+    
+    // Search bar
     let searchBar = UISearchBar()
     let searchResultsTableView = UITableView()
     var courseResults: [Course] = []
@@ -32,16 +34,14 @@ class RoomsVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        print("User id: \(User.currentUser?.id)")
         roomTableView.delegate = self
         roomTableView.dataSource = self
         roomTableView.tableFooterView = UIView()
         roomTableView.register(UINib(nibName: "RoomsTVHeaderView", bundle: nil), forHeaderFooterViewReuseIdentifier: "RoomsTVHeaderView")
         
-        
-
-        
-        sortRooms()
+        sortRoom2()
+//        sortRooms()
 //        if rooms.count == 0 {
 //            SocketIOManager.sharedInstance.syncUser()
 //        }
@@ -49,39 +49,51 @@ class RoomsVC: UIViewController {
         let addRoomBtn = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(self.showAddRoom))
         navigationItem.rightBarButtonItem = addRoomBtn
         
-        roomUpdateNotif = rooms.addNotificationBlock({ (result) in
-            self.sortRooms()
-            self.roomTableView.reloadData()
-        })
-        messageUpdateNotif = message.addNotificationBlock({ (result) in
-            print("room message update")
-            self.sortRooms()
-            self.roomTableView.reloadData()
-        })
         
-        searchBar.placeholder = "Search"
+        
+        searchBar.placeholder = "Search course/section"
         searchBar.delegate = self
         searchBar.searchBarStyle = .minimal
 //        searchBar.tintColor = .white
         searchBar.setTextColor(color: .white)
         self.navigationItem.titleView = searchBar
         
-        searchResultsTableView.frame = self.view.frame
         searchResultsTableView.backgroundColor = UIColor.groupTableViewBackground
         searchResultsTableView.delegate = self
         searchResultsTableView.dataSource = self
         searchResultsTableView.tableFooterView = UIView()
         searchResultsTableView.register(UINib(nibName: "CourseTVCell", bundle: nil), forCellReuseIdentifier: "UserCoursesTVCell")
-        
+
     }
     
     deinit {
-        roomUpdateNotif?.stop()
-        messageUpdateNotif?.stop()
+        print("room VC deinit")
+        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        roomUpdateNotif = rooms.addNotificationBlock({ (result) in
+            //            self.sortRooms()
+            self.sortRoom2()
+            self.roomTableView.reloadData()
+            Tools.sharedInstance.setTabBarBadge()
+        })
+        messageUpdateNotif = message.addNotificationBlock({ (result) in
+            print("room message update")
+            //            self.sortRooms()
+            self.sortRoom2()
+            self.roomTableView.reloadData()
+            Tools.sharedInstance.setTabBarBadge()
+
+        })
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        searchResultsTableView.frame.size = self.view.frame.size
+
+        roomTableView.reloadData()
         if UserSetting.shouldAskPushNotif {
             let alert = UIAlertController(title: "Tips", message: "Using push notifications may help you to receive more information on class.", preferredStyle: .alert)
             let okay = UIAlertAction(title: "Okay", style: .default, handler: { (UIAlertAction) in
@@ -91,6 +103,12 @@ class RoomsVC: UIViewController {
             alert.addAction(okay)
             self.present(alert, animated: true, completion: nil)
         }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        roomUpdateNotif?.stop()
+        messageUpdateNotif?.stop()
     }
     
     override func didReceiveMemoryWarning() {
@@ -111,8 +129,6 @@ class RoomsVC: UIViewController {
     func sortRooms() {
         sortedRooms = []
         rooms.forEach { (room) in
-
-//            let lastMessage = try! Realm().objects(Message.self).filter("toRoom = '\(room.id!)'").sorted(byProperty: "createdAt", ascending: true).last
             if room.id != User.currentUser?.id {
                 let lastMessage = room.getMessage().last
                 sortedRooms.append((room,lastMessage))
@@ -151,6 +167,64 @@ class RoomsVC: UIViewController {
         }
     }
     
+    func sortRoom2() {
+        sortedRooms_v2 = [:]
+        rooms.forEach { (room) in
+            let lastMessage = room.getMessage().last
+            var roomKey = ""
+            if room.courseID != nil {
+                roomKey = room.courseID!
+            } else if room.isToUser == true && room.id != User.currentUser!.id {
+                roomKey = "Personal"
+            }
+            
+            if sortedRooms_v2[roomKey] == nil {
+                sortedRooms_v2[roomKey] = [(room,lastMessage)]
+            } else {
+                sortedRooms_v2[roomKey]?.append((room,lastMessage))
+            }
+            
+        }
+
+        
+        sortedRooms_v2.forEach { (courseTuple) in
+            sortedRooms_v2[courseTuple.key]?.sort { (a: (room:Room, msg:Message?), b: (room:Room, msg:Message?)) -> Bool in
+                
+                var aLastUpdate:Date?
+                var bLastUpdata:Date?
+                if a.room.lastUpdateTime != nil && a.msg?.createdAt != nil {
+                    if a.room.lastUpdateTime!.compare(a.msg!.createdAt!) == .orderedDescending {
+                        aLastUpdate = a.room.lastUpdateTime! as Date
+                    } else {
+                        aLastUpdate = a.msg!.createdAt!
+                    }
+                } else {
+                    aLastUpdate = a.msg?.createdAt ?? a.room.lastUpdateTime as Date?
+                }
+                if aLastUpdate == nil { return false }
+                if b.room.lastUpdateTime != nil && b.msg?.createdAt != nil {
+                    if b.room.lastUpdateTime!.compare(b.msg!.createdAt!) == .orderedDescending {
+                        bLastUpdata = b.room.lastUpdateTime! as Date
+                    } else {
+                        bLastUpdata = b.msg!.createdAt!
+                    }
+                } else {
+                    bLastUpdata = b.msg?.createdAt ?? b.room.lastUpdateTime as Date?
+                }
+                if bLastUpdata == nil { return true }
+                if aLastUpdate! > bLastUpdata! {
+                    return true
+                } else {
+                    return false
+                }
+            }
+        }
+
+        
+    }
+    
+
+    
     // MARK: - Navigation
     
     // In a storyboard-based application, you will often want to do a little preparation before navigation
@@ -164,15 +238,20 @@ class RoomsVC: UIViewController {
                 if indexPath.section < User.currentUser!.joinedCourse.count {
                     // Course rooms
                     if let courseId = User.currentUser?.joinedCourse[indexPath.section].id {
-                        let room = User.currentUser!.joinedRoom.filter("courseID = '\(courseId)'")[indexPath.row]
-                        vc.localRoomId = room.id
+//                        let room = User.currentUser!.joinedRoom.filter("courseID = '\(courseId)'")[indexPath.row]
+                        if let courseTuple = sortedRooms_v2[courseId] {
+//                            cell.configureCell(courseTuple[indexPath.row].room)
+                            vc.localRoomId = courseTuple[indexPath.row].room.id
+                        }
+//                        vc.localRoomId = room.id
                     } else {
                         print("segue error at index: \(indexPath)")
                     }
                 } else {
                     // 'personal' rooms
-                    let room = User.currentUser!.joinedRoom.filter("courseID = nil && isToUser = true")[indexPath.row]
-                    vc.localRoomId = room.id
+                    if let courseTuple = sortedRooms_v2["Personal"] {
+                        vc.localRoomId = courseTuple[indexPath.row].room.id
+                    }
                 }
             }
             
@@ -185,7 +264,6 @@ class RoomsVC: UIViewController {
     }
     
     func doneSearching() {
-        hideTabbar(hide: false)
         searchBar.resignFirstResponder()
         searchBar.text = ""
         courseResults = []
@@ -225,14 +303,14 @@ extension RoomsVC: UITableViewDelegate, UITableViewDataSource {
                     if course.collapseOnRoomMenu {
                         return 0
                     } else {
-                        return User.currentUser!.joinedRoom.filter("courseID = '\(course.id!)'").count
+                        return sortedRooms_v2[course.id!]?.count ?? 0
                     }
                 } else {
                     return 0
                 }
             } else {
                 // 'personal' rooms
-                return User.currentUser!.joinedRoom.filter("courseID = nil").count
+                return sortedRooms_v2["Personal"]?.count ?? 0
             }
         }
         
@@ -290,27 +368,26 @@ extension RoomsVC: UITableViewDelegate, UITableViewDataSource {
             if indexPath.section < User.currentUser!.joinedCourse.count {
                 // Course rooms
                 if let courseId = User.currentUser?.joinedCourse[indexPath.section].id {
-                    let room = User.currentUser!.joinedRoom.filter("courseID = '\(courseId)'")[indexPath.row]
-                    cell.configureCell(room)
+                    if let courseTuple = sortedRooms_v2[courseId] {
+                        cell.configureCell(courseTuple[indexPath.row].room)
+                    }
                 } else {
                     print("course error at index: \(indexPath)")
                 }
             } else {
                 // 'personal' rooms
-                let room = User.currentUser!.joinedRoom.filter("courseID = nil")[indexPath.row]
-                cell.configureCell(room)
+                if let courseTuple = sortedRooms_v2["Personal"] {
+                    cell.configureCell(courseTuple[indexPath.row].room)
+                }
             }
             return cell
         }
         
         if tableView == searchResultsTableView {
             if indexPath.section == 0 {
-//                let cell = tableView.dequeueReusableCell(withIdentifier: "RoomsTVCell_v2", for: indexPath) as! RoomsTVCell_v2
                 let room = localRoomResults![indexPath.row]
-//                cell.configureCell(room)
                 let cell = UITableViewCell()
                 cell.textLabel?.text = room.roomname
-                
                 return cell
             } else if indexPath.section == 1 {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "UserCoursesTVCell", for: indexPath) as! UserCoursesTVCell
@@ -338,6 +415,7 @@ extension RoomsVC: UITableViewDelegate, UITableViewDataSource {
                 let courseDetailVC = storyboard.instantiateViewController(withIdentifier: "CourseDetailVC") as! CourseDetailVC
                 if let cell = tableView.cellForRow(at: indexPath) as? UserCoursesTVCell {
                     courseDetailVC.courseId = cell.cellCourse?.id
+                    courseDetailVC.hidesBottomBarWhenPushed = true
                     self.navigationController?.pushViewController(courseDetailVC, animated: true)
                 }
             }
@@ -412,7 +490,6 @@ extension RoomsVC: UITableViewDelegate, UITableViewDataSource {
 extension RoomsVC: UISearchBarDelegate {
     
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-        hideTabbar(hide: true)
         let doneBtn = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(self.doneSearching))
         navigationItem.rightBarButtonItem = doneBtn
         
@@ -444,26 +521,6 @@ extension RoomsVC: UISearchBarDelegate {
     }
 
     
-    func hideTabbar(hide:Bool) {
-        print("tabbar: \(tabBarController!.tabBar.frame.origin.y) and \(self.view.frame.maxY)")
-        if hide {
-            if tabBarController!.tabBar.frame.origin.y < self.view.frame.maxY {
-                return
-            }
-        } else {
-            if tabBarController!.tabBar.frame.origin.y < self.view.frame.maxY {
-                return
-            }
-        }
-        
-        var offsetY = -self.tabBarController!.tabBar.frame.size.height
-        if hide {
-            offsetY = -offsetY
-        }
-        UIView.animate(withDuration: 0.3, animations: {
-            self.tabBarController?.tabBar.frame = self.tabBarController!.tabBar.frame.offsetBy(dx: 0, dy: offsetY)
-            return
-        })
-    }
+   
 
 }
