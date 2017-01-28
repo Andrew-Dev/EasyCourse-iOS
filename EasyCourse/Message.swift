@@ -126,7 +126,11 @@ class Message: Object {
             let _ = sharedRoomData["_id"] as? String {
             _ = Room.createOrUpdateRoomWithData(data: sharedRoomData, isToUser: false)
         }
+        
+        // Save sender
         saveSenderUserInfo(data)
+        
+        // Save room
         if message.toRoom == nil { return }
         let roomId = message.isToUser ? message.senderId : message.toRoom
         if let room = realm.object(ofType: Room.self, forPrimaryKey: roomId) {
@@ -140,17 +144,22 @@ class Message: Object {
                     room.messageList.append(message)
                     room.unread += 1
                 }
+                Tools.sharedInstance.setTabBarBadge()
             }
         } else {
             let room = Room()
             room.id = roomId
             room.messageList.append(message)
             room.unread += 1
+            Tools.sharedInstance.setTabBarBadge()
             room.isToUser = message.isToUser
             try! realm.write {
                 User.currentUser?.joinedRoom.append(room)
             }
         }
+        
+        // Update lastGetMessageTime
+        User.currentUser?.setLastMsgUpdateTime(message.createdAt!)
     }
     
     
@@ -221,11 +230,7 @@ class Message: Object {
         }
         print("save the room: \(roomID) + \(self)")
         if let room = realm.object(ofType: Room.self, forPrimaryKey: roomID) {
-            if User.currentUser?.joinedRoom.index(of: room) == nil {
-                try! realm.write {
-                    User.currentUser?.joinedRoom.append(room)
-                }
-            }
+            User.currentUser?.joinRoom(room)
             if realm.object(ofType: Message.self, forPrimaryKey: self.id) == nil {
                 print("save msg to db: \(self.text))")
                 try! realm.write {
@@ -243,6 +248,7 @@ class Message: Object {
             room.messageList.append(self)
             room.unread += 1
             room.isToUser = true
+            Tools.sharedInstance.setTabBarBadge()
             try! realm.write {
                 User.currentUser?.joinedRoom.append(room)
             }

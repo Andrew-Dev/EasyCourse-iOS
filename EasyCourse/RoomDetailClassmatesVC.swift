@@ -39,6 +39,8 @@ class RoomDetailClassmatesVC: UIViewController {
         insets.bottom += InfiniteScrollActivityView.defaultHeight;
         classmatesTableView.contentInset = insets
 
+        self.navigationItem.title = "Classmates"
+        
         
         SocketIOManager.sharedInstance.getRoomMembers(roomId, limit: pageOffset, skip: (page+1)*pageOffset, refresh: true) { (users, error) in
             if error != nil {

@@ -53,5 +53,48 @@ open class Tools {
         
     }
     
+    func setTabBarBadge() {
+        if User.currentUser == nil { return }
+        guard let mainNav = UIApplication.shared.keyWindow?.rootViewController as? MainNavigationController else {
+            return
+        }
+        
+        guard let tabBarController = mainNav.viewControllers[0] as? UITabBarController else {
+            return
+        }
+        let badgeValue = User.currentUser!.countUnread() == 0 ? nil : String(User.currentUser!.countUnread())
+        tabBarController.tabBar.items?[0].badgeValue = badgeValue
+    }
+    
+    func showUpdateAlert(title:String, message:String, forceUpdate:Bool, link:String) {
+        
+        if let lastShowDate = UserDefaults.standard.object(forKey: Constant.UserDefaultKey.updateShowDateKey) as? Date {
+            if Date().timeIntervalSince(lastShowDate) < 60*60*24*3 {
+                return
+            } else {
+                UserDefaults.standard.set(Date(), forKey: Constant.UserDefaultKey.updateShowDateKey)
+                UserDefaults.standard.synchronize()
+            }
+        } else {
+            UserDefaults.standard.set(Date(), forKey: Constant.UserDefaultKey.updateShowDateKey)
+            UserDefaults.standard.synchronize()
+        }
+    
+        guard let mainNav = UIApplication.shared.keyWindow?.rootViewController as? MainNavigationController else {
+            return
+        }
+        
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let update = UIAlertAction(title: "Update", style: .default, handler: { (UIAlertAction) in
+            UIApplication.shared.openURL(URL(string:link)!)
+        })
+        alert.addAction(update)
+
+        if !forceUpdate {
+            let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+            alert.addAction(cancel)
+        }
+        mainNav.present(alert, animated: true, completion: nil)
+    }
    
 }

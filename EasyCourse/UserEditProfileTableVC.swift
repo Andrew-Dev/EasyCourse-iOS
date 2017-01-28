@@ -195,10 +195,10 @@ extension UserEditProfileTableVC {
                 return 2
             }
         } else if section == 1 {
-            if User.currentUser?.email != nil {
-                return 1
-            } else {
+            if User.currentUser?.fbUser.value == true {
                 return 0
+            } else {
+                return 1
             }
         }
         return 0

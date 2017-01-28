@@ -26,6 +26,7 @@ class Constant: NSObject {
         static let shouldAskPushNotif = "shouldAskPushNotif"
         static let deviceTokenKey = "deviceTokenKey"
         static let silentRoomKey = "deviceTokenKey"
+        static let updateShowDateKey = "updateShowDateKey"
         static func userMsgLastUpdateKey(id: String) -> String {
             return "userMsgLastUpdateKey\(id)"
         }

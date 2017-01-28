@@ -56,6 +56,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
         
+//        application.applicationIconBadgeNumber = User.currentUser?.countUnread() ?? 0
+
+        
         return true
     }
     
@@ -66,8 +69,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let storyboard = UIStoryboard(name: "Login", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "LoginVC") as! LoginVC
         window?.rootViewController?.present(vc, animated: true, completion: {
-//            self.window?.rootViewController = vc
-//            self.window?.makeKeyAndVisible()
+
+            guard let mainNavController = self.window?.rootViewController as? MainNavigationController else {
+                return
+            }
+
+            let tabBarController = mainNavController.viewControllers[0] as? UITabBarController
+            tabBarController?.removeFromParentViewController()
+
         })
         
     }
@@ -83,6 +92,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if User.currentUser != nil {
             SocketIOManager.sharedInstance.closeConnection()
         }
+        print("enter bg cnt \(User.currentUser?.countUnread())")
+        application.applicationIconBadgeNumber = User.currentUser?.countUnread() ?? 0
     }
     
     
@@ -119,6 +130,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+        application.applicationIconBadgeNumber = User.currentUser?.countUnread() ?? 0
     }
     
     func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {

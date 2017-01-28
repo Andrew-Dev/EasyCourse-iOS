@@ -25,6 +25,7 @@ class User: Object {
     dynamic var profilePictureUrl:String? = nil
     dynamic var email:String? = nil
     dynamic var universityId:String? = nil
+    let fbUser = RealmOptional<Bool>()
     let joinedRoom = List<Room>()
     let joinedCourse = List<Course>()
     let langArray = List<Language>()
@@ -110,6 +111,7 @@ class User: Object {
     
     // New
     internal class func createOrUpdateUserWithData(_ data:NSDictionary) -> User? {
+//        print("user data: \(data)")
         let realm = try! Realm()
         // Check id
         guard let id = data["_id"] as? String else {
@@ -147,6 +149,9 @@ class User: Object {
             }
             if let universityId = data["university"] as? String {
                 self.universityId = universityId
+            }
+            if let fbUser = data["fbUser"] as? Bool {
+                self.fbUser.value = fbUser
             }
         }
 //        print("data: \(data)")
@@ -216,6 +221,10 @@ class User: Object {
     }
     
     func joinRoom(_ room:Room) {
+        if room.isToUser == true && room.id == self.id {
+            return
+        }
+        
         let realm = try! Realm()
         let roomIndex = self.joinedRoom.index { (userroom) -> Bool in
             return userroom.id == room.id
@@ -239,6 +248,14 @@ class User: Object {
     
     func quitRoom(_ roomId:String) {
         let realm = try! Realm()
+        if let room = realm.object(ofType: Room.self, forPrimaryKey: roomId) {
+            if room.isToUser {
+                let roomMessage = realm.objects(Message.self).filter("(senderId = '\(roomId)' OR toRoom = '\(roomId)') AND isToUser = true")
+                try! realm.write {
+                    realm.delete(roomMessage)
+                }
+            }
+        }
         let roomIndex = self.joinedRoom.index { (userroom) -> Bool in
             return userroom.id == roomId
         }
@@ -315,6 +332,14 @@ class User: Object {
     }
     
     
-    
+    func countUnread() -> Int {
+        var unreadCnt = 0
+        self.joinedRoom.filter("silent = false").forEach { (room) in
+            if !room.isToUser && room.id != self.id {
+                unreadCnt += room.unread
+            }
+        }
+        return unreadCnt
+    }
     
 }

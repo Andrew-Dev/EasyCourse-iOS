@@ -16,9 +16,9 @@ open class RealmTools {
     class func RealmMigration() {
 
         let migrationBlock: MigrationBlock = { migration, oldSchemaVersion in
-            if oldSchemaVersion < 3 {
+            if oldSchemaVersion < 5 {
                 migration.enumerateObjects(ofType: User.className()) { oldObject, newObject in
-                    if oldSchemaVersion < 3 {
+                    if oldSchemaVersion < 4 {
                                                 print("success in block")
                         // combine name fields into a single field
                         //                        let firstName = oldObject!["firstName"] as! String
@@ -28,7 +28,7 @@ open class RealmTools {
                 }
             }
         }
-        Realm.Configuration.defaultConfiguration.schemaVersion = 3
+        Realm.Configuration.defaultConfiguration.schemaVersion = 5
         Realm.Configuration.defaultConfiguration.migrationBlock = migrationBlock
         print("realm config: \(Realm.Configuration.defaultConfiguration)")
     }
