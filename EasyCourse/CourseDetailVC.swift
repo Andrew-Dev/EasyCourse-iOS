@@ -8,6 +8,7 @@
 
 import UIKit
 import JGProgressHUD
+import RealmSwift
 
 protocol CourseDetailVCProtocol : NSObjectProtocol {
     // true is join and false is drop
@@ -89,9 +90,9 @@ extension CourseDetailVC:UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0:
-            return 2
+            return 1
         case 1:
-            return rooms.count
+            return rooms.count + 1
         default:
             return 0
         }
@@ -104,14 +105,14 @@ extension CourseDetailVC:UITableViewDelegate, UITableViewDataSource {
             cell.delegate = self
             cell.configureCell(course: course)
             return cell
-        case (0,1):
+        case (1,0):
             let cell = tableView.dequeueReusableCell(withIdentifier: "CourseDetailUnivCell", for: indexPath) as! CourseDetailUnivCell
-            cell.configureCell(course: course)
+//            cell.configureCell(course: course)
             return cell
-        case (1,0...rooms.count):
+        case (1,1...rooms.count):
             let cell = tableView.dequeueReusableCell(withIdentifier: "CourseDetailSubroomCell", for: indexPath) as! CourseDetailSubroomCell
             cell.delegate = self
-            cell.configureCell(rooms[indexPath.row], showJoinBtn: userHasJoinThisCourse)
+            cell.configureCell(rooms[indexPath.row - 1], showJoinBtn: userHasJoinThisCourse)
             return cell
         default:
             return UITableViewCell()
@@ -139,10 +140,24 @@ extension CourseDetailVC:UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
         case 1:
-            return rooms.count == 0 ? nil : "Rooms"
+            return "Rooms"
         default:
             return nil
         }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if indexPath.section == 1 && indexPath.row == 0 {
+            let sb = UIStoryboard(name: "Room", bundle: nil)
+            let vc = sb.instantiateViewController(withIdentifier: "RoomsAddRoomVC") as! RoomsAddRoomVC
+            if let course = try! Realm().object(ofType: Course.self, forPrimaryKey: self.courseId) {
+                vc.belongedCourse = course
+                vc.belongedCourseChoosed = true
+            }
+            let navi = UINavigationController(rootViewController: vc)
+            self.navigationController?.present(navi, animated: true, completion: nil)
+        }
+        tableView.deselectRow(at: indexPath, animated: true)
     }
 }
 

@@ -39,6 +39,8 @@ class RoomsAddRoomVC: UIViewController {
         addRoomTableView.delegate = self
         addRoomTableView.dataSource = self
         
+        
+        
         let cancelBtn = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(self.cancelBtnPressed))
         navigationItem.leftBarButtonItem = cancelBtn
         
@@ -188,6 +190,7 @@ extension RoomsAddRoomVC: UITableViewDelegate, UITableViewDataSource {
             } else if indexPath.row == 2 {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "RoomsAddRoomBelongingPickerTVCell") as! RoomsAddRoomBelongingPickerTVCell
                 cell.delegate = self
+                cell.moveToChoosedCourse(course: belongedCourse)
 //                cell.configureCell(roomName: roomName)
                 return cell
             }
@@ -228,6 +231,8 @@ extension RoomsAddRoomVC: UITableViewDelegate, UITableViewDataSource {
             if coursePickerIsOpen {
                 let a = IndexPath(row: 2, section: 0)
                 addRoomTableView.insertRows(at: [a], with: .top)
+//                let cell = tableView.cellForRow(at: a) as? RoomsAddRoomBelongingPickerTVCell
+//                cell?.coursePicker.
             } else {
                 let a = IndexPath(row: 2, section: 0)
                 addRoomTableView.deleteRows(at: [a], with: .top)
@@ -260,7 +265,7 @@ extension RoomsAddRoomVC: UITableViewDelegate, UITableViewDataSource {
 }
 
 extension RoomsAddRoomVC: RoomsAddRoomVCProtocol {
-
+    
     func courseSelect(course: Course?) {
         belongedCourse = course
         existedRooms.removeAll()

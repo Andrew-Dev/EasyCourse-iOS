@@ -53,4 +53,8 @@ class MessageAlert {
         }
     }
     
+    func closeAlert() {
+        SwiftMessages.hideAll()
+    }
+    
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11762" systemVersion="15G1212" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11762" systemVersion="15G1108" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -20,13 +20,13 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="OO" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="geQ-is-kv7">
-                        <rect key="frame" x="8" y="30.5" width="289" height="18"/>
+                        <rect key="frame" x="16" y="30.5" width="281" height="18"/>
                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
                         <color key="textColor" red="0.66666666669999997" green="0.66666666669999997" blue="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="CS180" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Xm7-Nf-mV2">
-                        <rect key="frame" x="8" y="8" width="289" height="20.5"/>
+                        <rect key="frame" x="16" y="8" width="281" height="20.5"/>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                         <nil key="highlightedColor"/>
@@ -45,15 +45,15 @@
                     <constraint firstItem="s47-uD-JSH" firstAttribute="leading" secondItem="Xm7-Nf-mV2" secondAttribute="trailing" constant="8" id="Q8R-VP-ApM"/>
                     <constraint firstItem="geQ-is-kv7" firstAttribute="leading" secondItem="Xm7-Nf-mV2" secondAttribute="trailing" constant="8" id="RbE-Kq-9FI"/>
                     <constraint firstItem="s47-uD-JSH" firstAttribute="leading" secondItem="geQ-is-kv7" secondAttribute="trailing" constant="8" id="gAG-Nw-t4Z"/>
-                    <constraint firstAttribute="leadingMargin" secondItem="geQ-is-kv7" secondAttribute="leading" id="mSJ-cs-xh7"/>
-                    <constraint firstItem="Xm7-Nf-mV2" firstAttribute="leading" secondItem="b5u-XO-ZCE" secondAttribute="leadingMargin" id="nmz-o2-63l"/>
+                    <constraint firstItem="geQ-is-kv7" firstAttribute="leading" secondItem="b5u-XO-ZCE" secondAttribute="leadingMargin" constant="8" id="mSJ-cs-xh7"/>
+                    <constraint firstItem="Xm7-Nf-mV2" firstAttribute="leading" secondItem="b5u-XO-ZCE" secondAttribute="leadingMargin" constant="8" id="nmz-o2-63l"/>
                     <constraint firstItem="geQ-is-kv7" firstAttribute="baseline" secondItem="Xm7-Nf-mV2" secondAttribute="baseline" id="qvZ-Kr-CR1"/>
                     <constraint firstItem="Xm7-Nf-mV2" firstAttribute="top" secondItem="b5u-XO-ZCE" secondAttribute="topMargin" id="vSB-n0-NJn"/>
                 </constraints>
                 <variation key="default">
                     <mask key="constraints">
-                        <exclude reference="qvZ-Kr-CR1"/>
                         <exclude reference="RbE-Kq-9FI"/>
+                        <exclude reference="qvZ-Kr-CR1"/>
                     </mask>
                 </variation>
             </tableViewCellContentView>

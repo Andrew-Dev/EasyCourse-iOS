@@ -19,6 +19,9 @@ class Course: Object {
     let creditHours = RealmOptional<Int>()
     dynamic var universityId:String? = nil
     
+    //Local
+    dynamic var collapseOnRoomMenu = false
+    
     override static func primaryKey() -> String? {
         return "id"
     }

@@ -17,6 +17,8 @@ class RoomListTVCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        roomAvatarImageView.layer.cornerRadius = roomAvatarImageView.frame.height/2
+        roomAvatarImageView.layer.masksToBounds = true
         // Initialization code
     }
 

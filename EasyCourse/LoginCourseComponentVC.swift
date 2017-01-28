@@ -49,6 +49,17 @@ class LoginCourseComponentVC: UIViewController, UITextFieldDelegate {
             return name
         }
     }
+    var choosedCourseIdList:[String] {
+        get {
+            var idList:[String] = []
+            for crs in choosedCourse {
+                if let id = crs.id {
+                    idList.append(id)
+                }
+            }
+            return idList
+        }
+    }
     var isSearching = false
     var searchStatus = Constant.searchStatus.notSearching
     
@@ -65,6 +76,7 @@ class LoginCourseComponentVC: UIViewController, UITextFieldDelegate {
 //        titleLabel.textColor = UIColor(white: 0.9, alpha: 1)
         
         choosedCourseLabel.text = nil
+        choosedCourseLabel.textColor = Design.color.deepGreenPersianGreenColor()
         
         titleLabelToCenterConstraint.constant = UIScreen.main.bounds.height * -0.25
         nextBtn.layer.cornerRadius = nextBtn.frame.height/2
@@ -182,8 +194,28 @@ class LoginCourseComponentVC: UIViewController, UITextFieldDelegate {
             hud.show(in: self.view)
             hud.dismiss(afterDelay: 2)
         } else {
-            delegate?.updateChoosedCourse(choosedCourse)
-            delegate?.moveToVC(2)
+//            delegate?.updateChoosedCourse(choosedCourse)
+//            delegate?.moveToVC(2)
+            let hud = JGProgressHUD(style: .extraLight)
+            hud?.show(in: self.view, animated: true)
+            
+            SocketIOManager.sharedInstance.joinCourse(choosedCourseIdList, languages: nil) { (success, error) in
+                if success {
+                    hud?.indicatorView = JGProgressHUDSuccessIndicatorView()
+                    hud?.dismiss(animated: true)
+                    self.delegate?.showMainTabBarVC(true)
+                } else {
+                    hud?.indicatorView = JGProgressHUDErrorIndicatorView()
+                    hud?.textLabel.text = error?.description ?? "Error, try again"
+                    hud?.tapOutsideBlock = { (hu) in
+                        hud?.dismiss()
+                    }
+                    hud?.tapOnHUDViewBlock = { (hu) in
+                        hud?.dismiss()
+                    }
+                }
+                
+            }
         }
     }
     

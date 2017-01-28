@@ -30,6 +30,17 @@ class RoomsAddRoomBelongingPickerTVCell: UITableViewCell, UIPickerViewDelegate, 
         // Configure the view for the selected state
     }
     
+    func moveToChoosedCourse(course: Course?) {
+        if let choosedId = course?.id {
+            let index = courseList.index(where: { (crs) -> Bool in
+                crs.id == choosedId
+            })
+            if index != nil {
+                coursePicker.selectRow(index! + 1, inComponent: 0, animated: false)
+            }
+        }
+    }
+    
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
     }

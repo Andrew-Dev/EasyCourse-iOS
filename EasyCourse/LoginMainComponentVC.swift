@@ -126,6 +126,11 @@ class LoginMainComponentVC: UIViewController, UITextFieldDelegate {
         
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        MessageAlert.sharedInstance.closeAlert()
+    }
+    
     func setLoginbtnHighlighted() {
         loginBtn.alpha = 0.95
         loginBtn.backgroundColor = Design.color.lighterGreenMountainMead()
