@@ -77,7 +77,7 @@ class UserEditProfileTableVC: UITableViewController, UIImagePickerControllerDele
     
 
     @IBAction func usernameTextFieldEditingChanged(_ sender: UITextField) {
-//
+        sender.text = sender.text?.replace(" ", withString: "\u{00a0}")
     }
     
     func showChangeAvatarAlertView() {

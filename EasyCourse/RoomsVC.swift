@@ -12,6 +12,7 @@ import Alamofire
 import RealmSwift
 import SwiftMessages
 import UserNotifications
+import DZNEmptyDataSet
 
 //import Cache
 
@@ -49,7 +50,10 @@ class RoomsVC: UIViewController {
         let addRoomBtn = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(self.showAddRoom))
         navigationItem.rightBarButtonItem = addRoomBtn
         
-        
+        roomTableView.emptyDataSetSource = self
+        roomTableView.emptyDataSetDelegate = self
+        searchResultsTableView.emptyDataSetSource = self
+        searchResultsTableView.emptyDataSetDelegate = self
         
         searchBar.placeholder = "Search course/section"
         searchBar.delegate = self
@@ -281,7 +285,10 @@ extension RoomsVC: UITableViewDelegate, UITableViewDataSource {
         
         if tableView == roomTableView {
             // + 1 is for the 'personal' (private chat and rooms without course)
-            return User.currentUser!.joinedCourse.count + 1
+            if User.currentUser!.joinedRoom.filter("courseID = nil").count > 0 {
+                return User.currentUser!.joinedCourse.count + 1
+            }
+            return User.currentUser!.joinedCourse.count
         }
         
         if tableView == searchResultsTableView {
@@ -289,6 +296,10 @@ extension RoomsVC: UITableViewDelegate, UITableViewDataSource {
                 return 0
             } else if User.currentUser != nil && User.currentUser!.joinedRoom.count > 0 {
                 return 2
+            } else if User.currentUser!.joinedRoom.count == 0 && courseResults.count == 0{
+                return 0
+            } else if User.currentUser!.joinedRoom.count == 0 {
+                return 1
             }
         }
         
@@ -316,8 +327,10 @@ extension RoomsVC: UITableViewDelegate, UITableViewDataSource {
         
         if tableView == searchResultsTableView {
             if section == 0 {
-                if localRoomResults != nil {
+                if localRoomResults!.count > 0 {
                     return localRoomResults!.count
+                } else {
+                    return courseResults.count
                 }
                 return 0
             } else if section == 1 {
@@ -350,7 +363,7 @@ extension RoomsVC: UITableViewDelegate, UITableViewDataSource {
             alertView.backgroundColor = UIColor.groupTableViewBackground
             if section == 0 && localRoomResults?.count != 0 {
                 alertLabel.text = "My Rooms"
-            } else if section == 1 && courseResults.count != 0{
+            } else if (section == 0 && localRoomResults?.count == 0) || (section == 1 && courseResults.count != 0) {
                 alertLabel.text = "Courses"
             }
             alertView.addSubview(alertLabel)
@@ -384,12 +397,12 @@ extension RoomsVC: UITableViewDelegate, UITableViewDataSource {
         }
         
         if tableView == searchResultsTableView {
-            if indexPath.section == 0 {
+            if indexPath.section == 0 && User.currentUser!.joinedRoom.count > 0 {
                 let room = localRoomResults![indexPath.row]
                 let cell = UITableViewCell()
                 cell.textLabel?.text = room.roomname
                 return cell
-            } else if indexPath.section == 1 {
+            } else if (indexPath.section == 0 && User.currentUser!.joinedRoom.count == 0) || indexPath.section == 1 {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "UserCoursesTVCell", for: indexPath) as! UserCoursesTVCell
                 cell.configureCell(courseResults[indexPath.row], userJoinedCourses: User.currentUser!.joinedCourse)
                 return cell
@@ -404,13 +417,13 @@ extension RoomsVC: UITableViewDelegate, UITableViewDataSource {
         if tableView == searchResultsTableView {
             let cell = tableView.cellForRow(at: indexPath)
             searchBar.resignFirstResponder()
-            if indexPath.section == 0 {
+            if indexPath.section == 0 && User.currentUser!.joinedRoom.count > 0 {
                 let storyboard = UIStoryboard(name: "Room", bundle: nil)
                 let roomVC = storyboard.instantiateViewController(withIdentifier: "RoomsDialogVC") as! RoomsDialogVC
                 let roomId = localRoomResults![indexPath.row].id
                 roomVC.localRoomId = roomId
                 self.navigationController?.pushViewController(roomVC, animated: true)
-            } else if indexPath.section == 1 {
+            } else if (indexPath.section == 0 && User.currentUser!.joinedRoom.count == 0) || indexPath.section == 1 {
                 let storyboard = UIStoryboard(name: "User", bundle: nil)
                 let courseDetailVC = storyboard.instantiateViewController(withIdentifier: "CourseDetailVC") as! CourseDetailVC
                 if let cell = tableView.cellForRow(at: indexPath) as? UserCoursesTVCell {
@@ -427,9 +440,9 @@ extension RoomsVC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if tableView == searchResultsTableView {
-            if indexPath.section == 0 {
+            if indexPath.section == 0 && User.currentUser!.joinedRoom.count > 0 {
                 return 44
-            } else if indexPath.section == 1 {
+            } else if (indexPath.section == 0 && User.currentUser!.joinedRoom.count == 0) || indexPath.section == 1 {
                 return 65
             }
         }
@@ -520,7 +533,48 @@ extension RoomsVC: UISearchBarDelegate {
         self.searchBar.endEditing(true)
     }
 
+}
+
+extension RoomsVC: DZNEmptyDataSetSource, DZNEmptyDataSetDelegate {
     
-   
+    func image(forEmptyDataSet scrollView: UIScrollView!) -> UIImage! {
+        return UIImage(named: "DefaultRoom")
+    }
+    
+    func title(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
+        var text = ""
+        if scrollView == searchResultsTableView {
+            if searchBar.text == "" {
+                text = "Search For Rooms/Courses"
+            } else {
+                text = "No results."
+            }
+        } else {
+            text = "No Rooms Joined"
+        }
+        let attributedString = NSAttributedString(string: text, attributes: [ NSFontAttributeName: UIFont(name: "Helvetica Neue", size: 18.0)! ])
+        return attributedString
+    }
+    
+    func description(forEmptyDataSet scrollView: UIScrollView!) -> NSAttributedString! {
+        var text = ""
+        if scrollView == searchResultsTableView {
+            if searchBar.text == "" {
+                text = "Search for rooms and courses which you can join."
+            } else {
+                text = "No results could be found. Please try a different query."
+            }
+        }
+        text = "Search for courses using the search bar above to join rooms."
+        let attributedString = NSAttributedString(string: text, attributes: [ NSFontAttributeName: UIFont(name: "Helvetica Neue", size: 14.0)! ])
+        return attributedString
+    }
+    
+    func verticalOffset(forEmptyDataSet scrollView: UIScrollView!) -> CGFloat {
+        if scrollView == searchResultsTableView {
+            return -scrollView.frame.height / 4
+        }
+        return 0
+    }
 
 }

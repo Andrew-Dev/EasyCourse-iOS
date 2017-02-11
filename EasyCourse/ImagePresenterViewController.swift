@@ -21,6 +21,7 @@ class ImagePresenterViewController: UIViewController, MXPagerViewDelegate, MXPag
     var startImageIndex: Int = 0
     var currentIndex: Int = 0
     var singleTapDismiss: Bool = true
+    var images = [UIImage]()
     
     private var uiTimer: Timer = Timer()
     
@@ -33,9 +34,11 @@ class ImagePresenterViewController: UIViewController, MXPagerViewDelegate, MXPag
 
         pagerView = MXPagerView(frame: self.view.frame)
         pageLabel = UILabel(frame: CGRect(x: 30, y: 30, width: view.frame.size.width - 60, height: 32))
-        saveBtn = UIButton(frame: CGRect(x: view.frame.size.width - 40, y: view.frame.size.height - 40, width: 32, height: 32))
+        saveBtn = UIButton(frame: CGRect(x: view.frame.size.width - 70, y: view.frame.size.height - 70, width: 64, height: 64))
         //saveBtn.setImage(UIImage(named: "download.png")!.withRenderingMode(UIImageRenderingMode.alwaysTemplate) , for: UIControlState.normal)
         saveBtn.imageView?.tintColor = UIColor.white
+        saveBtn.setTitle("Save", for: .normal)
+        saveBtn.addTarget(self, action: Selector("saveImage"), for: .touchUpInside)
         pageLabel.text = String(currentIndex+1) + " of " + String(liveImageMessage.count)
         pageLabel.textAlignment = .center
         pageLabel.textColor = UIColor.white
@@ -142,6 +145,9 @@ class ImagePresenterViewController: UIViewController, MXPagerViewDelegate, MXPag
     // MARK: - Pager view data source
     
     public func numberOfPages(in pagerView: MXPagerView) -> Int {
+        for _ in liveImageMessage {
+            images.append(UIImage())
+        }
         return liveImageMessage.count
     }
     
@@ -154,12 +160,13 @@ class ImagePresenterViewController: UIViewController, MXPagerViewDelegate, MXPag
         let result = liveImageMessage[index]
         if result.imageData != nil {
             image = UIImage(data: result.imageData!)!
+            images[index] = image!
             let when = DispatchTime.now() + 0.00000001
             DispatchQueue.main.asyncAfter(deadline: when) {
                 imageScrollView.display(image: image!)
             }
         } else {
-            asynchronouslyLoadImageIntoView(imageScrollView: imageScrollView, imageUrl: result.imageUrl!)
+            asynchronouslyLoadImageIntoView(imageScrollView: imageScrollView, imageUrl: result.imageUrl!, index: index)
         }
         
         imageScrollView.isUserInteractionEnabled = true
@@ -168,11 +175,12 @@ class ImagePresenterViewController: UIViewController, MXPagerViewDelegate, MXPag
         return imageScrollView
     }
 
-    func asynchronouslyLoadImageIntoView(imageScrollView: ImageScrollView, imageUrl: String) {
+    func asynchronouslyLoadImageIntoView(imageScrollView: ImageScrollView, imageUrl: String, index: Int) {
         ServerHelper.sharedInstance.getNetworkImage(imageUrl, completion: { (image, cache, error) in
             if image != nil {
                 let when = DispatchTime.now() + 0.00000001
                 DispatchQueue.main.asyncAfter(deadline: when) {
+                    self.images[index] = image!
                     imageScrollView.display(image: image!)
                 }
             } else {
@@ -189,7 +197,25 @@ class ImagePresenterViewController: UIViewController, MXPagerViewDelegate, MXPag
         })
     
     }
+    
+    func saveImage() {
+        let image = images[currentIndex]
+        UIImageWriteToSavedPhotosAlbum(image, self, #selector(image(_:didFinishSavingWithError:contextInfo:)), nil)
+    }
 
+    func image(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
+        if error != nil {
+            let alertView = UIAlertController(title: "Error Saving Image", message: error!.localizedDescription, preferredStyle: .alert)
+            alertView.addAction(UIAlertAction(title: "OK", style: .default))
+            present(alertView, animated: true)
+        } else {
+            let alertView = UIAlertController(title: "Image Saved", message: "This image has been saved to your photo library." , preferredStyle: .alert)
+            alertView.addAction(UIAlertAction(title: "OK", style: .default))
+            present(alertView, animated: true)
+        }
+        
+    }
+    
     /*
     // MARK: - Navigation
 
