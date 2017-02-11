@@ -23,6 +23,11 @@
 		F755B02F1E22E2970017E138 /* UserResetPasswordTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F755B02E1E22E2970017E138 /* UserResetPasswordTableVC.swift */; };
 		F755B0311E23FE8F0017E138 /* MainNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F755B0301E23FE8F0017E138 /* MainNavigationController.swift */; };
 		F7607D431DCC0E6200FC16AB /* RoomsAddRoomNameListTVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7607D421DCC0E6200FC16AB /* RoomsAddRoomNameListTVCell.swift */; };
+		F769B3961E429D9200CAEA24 /* Tutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F769B3951E429D9200CAEA24 /* Tutor.swift */; };
+		F769B3981E4655E000CAEA24 /* TutorTVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F769B3971E4655E000CAEA24 /* TutorTVCell.swift */; };
+		F769B39C1E466FEC00CAEA24 /* TutorDetailInfoTVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F769B39B1E466FEC00CAEA24 /* TutorDetailInfoTVCell.swift */; };
+		F769B39E1E467C3000CAEA24 /* TutorDetailBottomView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F769B39D1E467C3000CAEA24 /* TutorDetailBottomView.xib */; };
+		F769B3A01E467C4300CAEA24 /* TutorDetailBottomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F769B39F1E467C4300CAEA24 /* TutorDetailBottomView.swift */; };
 		F76A9B8C1D85FF3B0065C25C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F76A9B8B1D85FF3B0065C25C /* AppDelegate.swift */; };
 		F76A9B911D85FF3B0065C25C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F76A9B8F1D85FF3B0065C25C /* Main.storyboard */; };
 		F76A9B961D85FF3B0065C25C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F76A9B941D85FF3B0065C25C /* LaunchScreen.storyboard */; };
@@ -91,6 +96,11 @@
 		F7ADFB361D8CD84500AD53C3 /* ServerHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7ADFB351D8CD84500AD53C3 /* ServerHelper.swift */; };
 		F7ADFB381D8CEFFF00AD53C3 /* UserDetailTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7ADFB371D8CEFFF00AD53C3 /* UserDetailTableVC.swift */; };
 		F7AF24D71E341E2900132DEB /* UserFeedbackVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7AF24D61E341E2900132DEB /* UserFeedbackVC.swift */; };
+		F7AF25441E401AB400132DEB /* Resource.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F7AF25431E401AB300132DEB /* Resource.storyboard */; };
+		F7AF25471E403A7200132DEB /* TutorVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7AF25461E403A7200132DEB /* TutorVC.swift */; };
+		F7AF25491E403A8100132DEB /* TutorRegisterVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7AF25481E403A8100132DEB /* TutorRegisterVC.swift */; };
+		F7AF254B1E403A9900132DEB /* TutorRegisterDetailTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7AF254A1E403A9900132DEB /* TutorRegisterDetailTableVC.swift */; };
+		F7AF254D1E403AB100132DEB /* TutorDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7AF254C1E403AB100132DEB /* TutorDetailVC.swift */; };
 		F7CE24431DCE8E7B0004957E /* MessageOutgoingGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CE24421DCE8E7B0004957E /* MessageOutgoingGroupCell.swift */; };
 		F7CE24451DCE8E8F0004957E /* MessageIncomingGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CE24441DCE8E8F0004957E /* MessageIncomingGroupCell.swift */; };
 		F7CE24471DCE98780004957E /* RoomsDialogAccGroupVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CE24461DCE98780004957E /* RoomsDialogAccGroupVC.swift */; };
@@ -124,6 +134,11 @@
 		F755B02E1E22E2970017E138 /* UserResetPasswordTableVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserResetPasswordTableVC.swift; sourceTree = "<group>"; };
 		F755B0301E23FE8F0017E138 /* MainNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainNavigationController.swift; sourceTree = "<group>"; };
 		F7607D421DCC0E6200FC16AB /* RoomsAddRoomNameListTVCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomsAddRoomNameListTVCell.swift; sourceTree = "<group>"; };
+		F769B3951E429D9200CAEA24 /* Tutor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tutor.swift; sourceTree = "<group>"; };
+		F769B3971E4655E000CAEA24 /* TutorTVCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TutorTVCell.swift; sourceTree = "<group>"; };
+		F769B39B1E466FEC00CAEA24 /* TutorDetailInfoTVCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TutorDetailInfoTVCell.swift; sourceTree = "<group>"; };
+		F769B39D1E467C3000CAEA24 /* TutorDetailBottomView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TutorDetailBottomView.xib; sourceTree = "<group>"; };
+		F769B39F1E467C4300CAEA24 /* TutorDetailBottomView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TutorDetailBottomView.swift; sourceTree = "<group>"; };
 		F76A9B881D85FF3B0065C25C /* EasyCourse.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EasyCourse.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F76A9B8B1D85FF3B0065C25C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F76A9B901D85FF3B0065C25C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -194,6 +209,11 @@
 		F7ADFB351D8CD84500AD53C3 /* ServerHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerHelper.swift; sourceTree = "<group>"; };
 		F7ADFB371D8CEFFF00AD53C3 /* UserDetailTableVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDetailTableVC.swift; sourceTree = "<group>"; };
 		F7AF24D61E341E2900132DEB /* UserFeedbackVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserFeedbackVC.swift; sourceTree = "<group>"; };
+		F7AF25431E401AB300132DEB /* Resource.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Resource.storyboard; sourceTree = "<group>"; };
+		F7AF25461E403A7200132DEB /* TutorVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TutorVC.swift; sourceTree = "<group>"; };
+		F7AF25481E403A8100132DEB /* TutorRegisterVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TutorRegisterVC.swift; sourceTree = "<group>"; };
+		F7AF254A1E403A9900132DEB /* TutorRegisterDetailTableVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TutorRegisterDetailTableVC.swift; sourceTree = "<group>"; };
+		F7AF254C1E403AB100132DEB /* TutorDetailVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TutorDetailVC.swift; sourceTree = "<group>"; };
 		F7CE24421DCE8E7B0004957E /* MessageOutgoingGroupCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageOutgoingGroupCell.swift; sourceTree = "<group>"; };
 		F7CE24441DCE8E8F0004957E /* MessageIncomingGroupCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageIncomingGroupCell.swift; sourceTree = "<group>"; };
 		F7CE24461DCE98780004957E /* RoomsDialogAccGroupVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomsDialogAccGroupVC.swift; sourceTree = "<group>"; };
@@ -281,6 +301,26 @@
 			name = Assets;
 			sourceTree = "<group>";
 		};
+		F769B3991E46670200CAEA24 /* Register */ = {
+			isa = PBXGroup;
+			children = (
+				F7AF25481E403A8100132DEB /* TutorRegisterVC.swift */,
+				F7AF254A1E403A9900132DEB /* TutorRegisterDetailTableVC.swift */,
+			);
+			name = Register;
+			sourceTree = "<group>";
+		};
+		F769B39A1E466FC800CAEA24 /* Detail */ = {
+			isa = PBXGroup;
+			children = (
+				F7AF254C1E403AB100132DEB /* TutorDetailVC.swift */,
+				F769B39B1E466FEC00CAEA24 /* TutorDetailInfoTVCell.swift */,
+				F769B39F1E467C4300CAEA24 /* TutorDetailBottomView.swift */,
+				F769B39D1E467C3000CAEA24 /* TutorDetailBottomView.xib */,
+			);
+			name = Detail;
+			sourceTree = "<group>";
+		};
 		F76A9B7F1D85FF3B0065C25C = {
 			isa = PBXGroup;
 			children = (
@@ -302,6 +342,7 @@
 		F76A9B8A1D85FF3B0065C25C /* EasyCourse */ = {
 			isa = PBXGroup;
 			children = (
+				F7AF25451E403A5700132DEB /* Tutor */,
 				F72F22D01DE0BCF7009E7C6C /* UI Components */,
 				F76A9BF71D86288F0065C25C /* Extension */,
 				F76A9BB91D8620DB0065C25C /* Util */,
@@ -326,6 +367,7 @@
 				F76A9B8F1D85FF3B0065C25C /* Main.storyboard */,
 				F76A9B9F1D861D580065C25C /* Room.storyboard */,
 				F76A9BA21D861D870065C25C /* User.storyboard */,
+				F7AF25431E401AB300132DEB /* Resource.storyboard */,
 			);
 			name = Storyboard;
 			sourceTree = "<group>";
@@ -379,6 +421,7 @@
 				F76A9BB21D8620500065C25C /* Room.swift */,
 				F76A9BB41D8620700065C25C /* Course.swift */,
 				F7CFB8DE1E1CAFBF000C5491 /* Language.swift */,
+				F769B3951E429D9200CAEA24 /* Tutor.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -488,6 +531,17 @@
 				F79FAB7E1DEDF86600F502AA /* CourseDetail */,
 			);
 			name = UserCourses;
+			sourceTree = "<group>";
+		};
+		F7AF25451E403A5700132DEB /* Tutor */ = {
+			isa = PBXGroup;
+			children = (
+				F7AF25461E403A7200132DEB /* TutorVC.swift */,
+				F769B3971E4655E000CAEA24 /* TutorTVCell.swift */,
+				F769B3991E46670200CAEA24 /* Register */,
+				F769B39A1E466FC800CAEA24 /* Detail */,
+			);
+			name = Tutor;
 			sourceTree = "<group>";
 		};
 		F7CE24401DCE7F350004957E /* CreateRoom */ = {
@@ -600,6 +654,8 @@
 				F76A9B961D85FF3B0065C25C /* LaunchScreen.storyboard in Resources */,
 				F76A9BCC1D8622020065C25C /* LoginLangChooseVC.xib in Resources */,
 				F76A9BC81D8621EF0065C25C /* LoginCourseComponentVC.xib in Resources */,
+				F769B39E1E467C3000CAEA24 /* TutorDetailBottomView.xib in Resources */,
+				F7AF25441E401AB400132DEB /* Resource.storyboard in Resources */,
 				F7ADE2CA1E296372001442EE /* RoomsTVHeaderView.xib in Resources */,
 				F76A9BA31D861D870065C25C /* User.storyboard in Resources */,
 				F7364C7E1DA6E0EF007A967F /* LoadingTVCell.xib in Resources */,
@@ -679,14 +735,19 @@
 				F76A9BE71D8626350065C25C /* RoomsTVCell.swift in Sources */,
 				F76A9BF61D86281E0065C25C /* Design.swift in Sources */,
 				F7CE24451DCE8E8F0004957E /* MessageIncomingGroupCell.swift in Sources */,
+				F769B3981E4655E000CAEA24 /* TutorTVCell.swift in Sources */,
 				F7A5564E1D9D7E43003E258D /* RoomDetailTableVC.swift in Sources */,
 				F7ADE2D51E2EF1CC001442EE /* RoomTVCellStruct.swift in Sources */,
+				F7AF254D1E403AB100132DEB /* TutorDetailVC.swift in Sources */,
+				F7AF254B1E403A9900132DEB /* TutorRegisterDetailTableVC.swift in Sources */,
+				F769B3A01E467C4300CAEA24 /* TutorDetailBottomView.swift in Sources */,
 				F7ADFB241D889C2100AD53C3 /* UserCoursesVC.swift in Sources */,
 				F72F22D21DE0C0C6009E7C6C /* MessageAlert.swift in Sources */,
 				F7A5564C1D9B3E6A003E258D /* UserSetting.swift in Sources */,
 				F72F22CA1DDBA19B009E7C6C /* RoomDetailClassmatesVC.swift in Sources */,
 				F7CFB8D11E16CC8B000C5491 /* RoomDetailClassmatesTVCell.swift in Sources */,
 				F76A9BFF1D86E22C0065C25C /* PopAnimator.swift in Sources */,
+				F769B39C1E466FEC00CAEA24 /* TutorDetailInfoTVCell.swift in Sources */,
 				F7CE24431DCE8E7B0004957E /* MessageOutgoingGroupCell.swift in Sources */,
 				F76A9BE51D8625FF0065C25C /* RoomsDialogVC.swift in Sources */,
 				F7364C851DCBFD64007A967F /* RoomsAddRoomNameTVCell.swift in Sources */,
@@ -719,6 +780,7 @@
 				F755B02D1E21F12A0017E138 /* MessageBubbleView.swift in Sources */,
 				F76A9BB51D8620700065C25C /* Course.swift in Sources */,
 				F76A9BD61D8622AB0065C25C /* LoginCourseListCVCell.swift in Sources */,
+				F7AF25491E403A8100132DEB /* TutorRegisterVC.swift in Sources */,
 				F76A9BBB1D8620E50065C25C /* Constant.swift in Sources */,
 				F76A9BAD1D86200F0065C25C /* Message.swift in Sources */,
 				F76A9BDA1D8623240065C25C /* LoginCourseChooseTVCell.swift in Sources */,
@@ -731,6 +793,8 @@
 				F79FAB7D1DEDF85600F502AA /* CourseDetailVC.swift in Sources */,
 				F7ADFB221D889C1000AD53C3 /* UserRoomsVC.swift in Sources */,
 				F755B0311E23FE8F0017E138 /* MainNavigationController.swift in Sources */,
+				F769B3961E429D9200CAEA24 /* Tutor.swift in Sources */,
+				F7AF25471E403A7200132DEB /* TutorVC.swift in Sources */,
 				F7ADFB321D8AE17400AD53C3 /* UserCoursesTVCell.swift in Sources */,
 				F76A9BDE1D86236D0065C25C /* LoginLangChooseTVCell.swift in Sources */,
 				F7AF24D71E341E2900132DEB /* UserFeedbackVC.swift in Sources */,

@@ -17,6 +17,7 @@ PODS:
     - DKImagePickerController/ImageManager (= 3.4.2)
   - DKImagePickerController/Camera (3.4.2)
   - DKImagePickerController/ImageManager (3.4.2)
+  - DZNEmptyDataSet (1.8.1)
   - FacebookCore (0.2.0):
     - Bolts (~> 1.8)
     - FBSDKCoreKit (~> 4.15)
@@ -66,6 +67,7 @@ DEPENDENCIES:
   - AwesomeCache
   - CryptoSwift
   - DKImagePickerController
+  - DZNEmptyDataSet
   - FacebookCore
   - FacebookLogin
   - FacebookShare
@@ -90,6 +92,7 @@ SPEC CHECKSUMS:
   CryptoSwift: 88592381b73f36e192124539390a7c9bacda76af
   DACircularProgress: 4dd437c0fc3da5161cb289e07ac449493d41db71
   DKImagePickerController: 8fc8a42120cb0c9b7982af04d47e0e5b25b5186f
+  DZNEmptyDataSet: 9525833b9e68ac21c30253e1d3d7076cc828eaa7
   FacebookCore: 2cb3f0fbff218e9d3119cec84bae983b232412de
   FacebookLogin: c9d606504735780a9e3002465a615512e0a691a5
   FacebookShare: 8e9ee8ea06505e6a1d3d719b0cc63e840fb8aaeb
@@ -111,6 +114,6 @@ SPEC CHECKSUMS:
   SwiftMessages: 3c6fd0375009d69ff35a7656bae0e31b4d8a930d
   SwiftyJSON: 38a8ea2006779c0fc4c310cb2ee8195327740faf
 
-PODFILE CHECKSUM: 5fc16fe63320e0421f16a83086c17ea19594a645
+PODFILE CHECKSUM: 23f02bd4a9512a7bc064574681f9fb9283f3ff2e
 
 COCOAPODS: 1.1.0.rc.2
