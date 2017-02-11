@@ -292,13 +292,16 @@ extension RoomsVC: UITableViewDelegate, UITableViewDataSource {
         }
         
         if tableView == searchResultsTableView {
-            if searchBar.text == "" {
+            print("Text: " + searchBar.text!)
+            print("Local Results:")
+            print(localRoomResults)
+            print("Course Results")
+            print(courseResults)
+            if searchBar.text == "" || (localRoomResults!.count == 0 && courseResults.count == 0) {
                 return 0
-            } else if User.currentUser != nil && User.currentUser!.joinedRoom.count > 0 {
+            } else if User.currentUser != nil && User.currentUser!.joinedRoom.count > 0 && localRoomResults!.count > 0{
                 return 2
-            } else if User.currentUser!.joinedRoom.count == 0 && courseResults.count == 0{
-                return 0
-            } else if User.currentUser!.joinedRoom.count == 0 {
+            } else if User.currentUser!.joinedRoom.count == 0 || localRoomResults!.count == 0 {
                 return 1
             }
         }
@@ -397,12 +400,12 @@ extension RoomsVC: UITableViewDelegate, UITableViewDataSource {
         }
         
         if tableView == searchResultsTableView {
-            if indexPath.section == 0 && User.currentUser!.joinedRoom.count > 0 {
+            if indexPath.section == 0 && localRoomResults!.count > 0 {
                 let room = localRoomResults![indexPath.row]
                 let cell = UITableViewCell()
                 cell.textLabel?.text = room.roomname
                 return cell
-            } else if (indexPath.section == 0 && User.currentUser!.joinedRoom.count == 0) || indexPath.section == 1 {
+            } else if (indexPath.section == 0 && localRoomResults!.count == 0) || indexPath.section == 1 {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "UserCoursesTVCell", for: indexPath) as! UserCoursesTVCell
                 cell.configureCell(courseResults[indexPath.row], userJoinedCourses: User.currentUser!.joinedCourse)
                 return cell
@@ -417,13 +420,13 @@ extension RoomsVC: UITableViewDelegate, UITableViewDataSource {
         if tableView == searchResultsTableView {
             let cell = tableView.cellForRow(at: indexPath)
             searchBar.resignFirstResponder()
-            if indexPath.section == 0 && User.currentUser!.joinedRoom.count > 0 {
+            if indexPath.section == 0 && localRoomResults!.count > 0 {
                 let storyboard = UIStoryboard(name: "Room", bundle: nil)
                 let roomVC = storyboard.instantiateViewController(withIdentifier: "RoomsDialogVC") as! RoomsDialogVC
                 let roomId = localRoomResults![indexPath.row].id
                 roomVC.localRoomId = roomId
                 self.navigationController?.pushViewController(roomVC, animated: true)
-            } else if (indexPath.section == 0 && User.currentUser!.joinedRoom.count == 0) || indexPath.section == 1 {
+            } else if (indexPath.section == 0 && localRoomResults!.count == 0) || indexPath.section == 1 {
                 let storyboard = UIStoryboard(name: "User", bundle: nil)
                 let courseDetailVC = storyboard.instantiateViewController(withIdentifier: "CourseDetailVC") as! CourseDetailVC
                 if let cell = tableView.cellForRow(at: indexPath) as? UserCoursesTVCell {
@@ -440,9 +443,9 @@ extension RoomsVC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if tableView == searchResultsTableView {
-            if indexPath.section == 0 && User.currentUser!.joinedRoom.count > 0 {
+            if indexPath.section == 0 && localRoomResults!.count > 0 {
                 return 44
-            } else if (indexPath.section == 0 && User.currentUser!.joinedRoom.count == 0) || indexPath.section == 1 {
+            } else if (indexPath.section == 0 && localRoomResults!.count == 0) || indexPath.section == 1 {
                 return 65
             }
         }
@@ -519,10 +522,11 @@ extension RoomsVC: UISearchBarDelegate {
             if error == nil {
                 self.courseResults = courseArr
                 self.searchResultsTableView.reloadData()
+            } else {
+                self.searchResultsTableView.reloadData()
             }
         })
         localRoomResults = User.currentUser?.joinedRoom.filter("roomname CONTAINS[c] '" + searchBar.text! + "'")
-        self.searchResultsTableView.reloadData()
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
