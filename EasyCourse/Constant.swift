@@ -48,6 +48,7 @@ class Constant: NSObject {
     
 //    static let baseURL = "https://www.easycourseserver.com/api"
     
-    static let baseURL = "https://zengjintaotest.com/api"
-//    static let baseURL = "http://localhost:3000/api"
+//    static let baseURL = "https://zengjintaotest.com/api"
+    static let baseURL = "http://localhost:3000/api"
+    
 }

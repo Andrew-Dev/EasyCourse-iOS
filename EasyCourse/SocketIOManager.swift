@@ -720,6 +720,59 @@ class SocketIOManager: NSObject {
         }
     }
     
+    // MARK: - Tutor
+    func registerTutor(_ courseId:String, grade:String, price:Int, description:String, completion: @escaping (_ tutor:Tutor?, _ error:NetworkError?) -> ()) {
+        
+        let params = ["courseId":courseId, "grade":grade, "price":price, "description":description] as [String : Any]
+        socket.emitWithAck("createTutor", params).timingOut(after: timeoutSec) { (data) in
+            if let err = self.checkAckError(data, onlyCheckNetwork: false) {
+                return completion(nil, err)
+            }
+            print("data: \(data)")
+            
+            let json = JSON(data)
+            
+            if let tutorData = json[0]["tutor"].dictionary {
+                return completion(nil, nil)
+            } else {
+                return completion(nil, NetworkError.ParseJSONError)
+            }
+        }
+    }
+    
+    func getTutor(_ limit:Int?, skip:Int?, completion: @escaping (_ tutors:[Tutor], _ error:NetworkError?) -> ()) {
+        var params:[String:Any] = [:]
+        if (skip != nil) {
+            params["skip"] = skip!
+        }
+        if (limit != nil) {
+            params["limit"] = limit!
+        }
+        socket.emitWithAck("getTutor", params).timingOut(after: timeoutSec) { (data) in
+            if let err = self.checkAckError(data, onlyCheckNetwork: false) {
+                return completion([], err)
+            }
+            print("get tutor: \(data)")
+            
+            let json = JSON(data)
+            guard let tutorArrayData = json[0]["tutor"].arrayObject else {
+                print("get course error: \(json[0]["tutor"].error?.localizedDescription)")
+                return completion([], NetworkError.ParseJSONError)
+            }
+            
+            var tutorArray:[Tutor] = []
+            for tutorData in tutorArrayData {
+                if let data = tutorData as? NSDictionary {
+                    if let tutor = Tutor(data: data) {
+                        tutorArray.append(tutor)
+                    }
+                }
+            }
+            return completion(tutorArray, nil)
+            
+        }
+    }
+    
     // MARK: - public listener
     func publicListener() {
         socket.on("connect") {data, ack in
