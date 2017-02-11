@@ -17,6 +17,7 @@ target 'EasyCourse' do
     pod 'ImageScrollView'
     pod 'MXPagerView'
     pod 'SwiftMessages'
+    pod 'DZNEmptyDataSet'
 
     # Util
     pod 'AsyncSwift'
