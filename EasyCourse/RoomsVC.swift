@@ -296,6 +296,8 @@ extension RoomsVC: UITableViewDelegate, UITableViewDataSource {
                 return 0
             } else if User.currentUser != nil && User.currentUser!.joinedRoom.count > 0 {
                 return 2
+            } else if User.currentUser!.joinedRoom.count == 0 && courseResults.count == 0{
+                return 0
             } else if User.currentUser!.joinedRoom.count == 0 {
                 return 1
             }
