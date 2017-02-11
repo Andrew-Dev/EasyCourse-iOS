@@ -23,6 +23,7 @@ class TutorRegisterDetailTableVC: UITableViewController, UITextFieldDelegate, UI
     
     var placeholderLabel = UILabel()
     
+    var tutor:Tutor?
     var course:Course?
     let gradeArray = ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-"]
     var choosedGrade:String?
@@ -39,7 +40,7 @@ class TutorRegisterDetailTableVC: UITableViewController, UITextFieldDelegate, UI
         navigationItem.title = course?.coursename ?? "Tutor"
         
 //        placeholderLabel = UILabel()
-        placeholderLabel.text = "Why you can"
+        placeholderLabel.text = "Describe why you can tutor this course"
         placeholderLabel.font = UIFont.systemFont(ofSize: descriptionTextView.font!.pointSize)
         placeholderLabel.sizeToFit()
         descriptionTextView.addSubview(placeholderLabel)
@@ -56,6 +57,23 @@ class TutorRegisterDetailTableVC: UITableViewController, UITextFieldDelegate, UI
         registerButton.layer.masksToBounds = true
         registerBtnWidthConstraint.constant = UIScreen.main.bounds.width*0.6
         registerButton.addTarget(self, action: #selector(self.registerBtnPressed), for: .touchUpInside)
+        
+        if tutor != nil {
+            self.navigationItem.title = "Edit Details"
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(TutorRegisterDetailTableVC.cancel))
+            choosedGrade = tutor!.grade
+            gradeTextField.text = choosedGrade
+            choosedPrice = tutor!.price
+            priceTextField.text = "$\(choosedPrice!)/h"
+            tutorDescription = tutor!.tutorDescription
+            descriptionTextView.text = tutorDescription
+            placeholderLabel.isHidden = true
+            registerButton.setTitle("Update", for: .normal)
+        }
+    }
+    
+    func cancel() {
+        self.dismiss(animated: true, completion: nil)
     }
 
     override func didReceiveMemoryWarning() {
@@ -124,17 +142,24 @@ class TutorRegisterDetailTableVC: UITableViewController, UITextFieldDelegate, UI
     func registerBtnPressed() {
         let hud = JGProgressHUD()
         hud.show(in: self.view)
-        SocketIOManager.sharedInstance.registerTutor(course!.id!, grade: choosedGrade!, price: choosedPrice!, description: tutorDescription!) { (tutor, error) in
-            if error != nil {
-                hud.indicatorView = JGProgressHUDErrorIndicatorView()
-                hud.textLabel.text = error?.description ?? "Error"
-                hud.tapOutsideBlock = { (hu) in hud.dismiss() }
-                hud.tapOnHUDViewBlock = { (hu) in hud.dismiss() }
-            } else {
-                self.dismiss(animated: true, completion: nil)
-                hud.dismiss()
+        if tutor != nil {
+            //update the tutor
+            print("update tutor")
+        } else {
+            //register new tutor
+            SocketIOManager.sharedInstance.registerTutor(course!.id!, grade: choosedGrade!, price: choosedPrice!, description: tutorDescription!) { (tutor, error) in
+                if error != nil {
+                    hud.indicatorView = JGProgressHUDErrorIndicatorView()
+                    hud.textLabel.text = error?.description ?? "Error"
+                    hud.tapOutsideBlock = { (hu) in hud.dismiss() }
+                    hud.tapOnHUDViewBlock = { (hu) in hud.dismiss() }
+                } else {
+                    self.dismiss(animated: true, completion: nil)
+                    hud.dismiss()
+                }
             }
         }
+        
     }
     
     // MARK: - Table view data source
