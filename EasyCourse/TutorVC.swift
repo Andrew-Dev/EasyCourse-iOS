@@ -2,35 +2,34 @@
 //  TutorVC.swift
 //  EasyCourse
 //
-//  Created by ZengJintao on 1/30/17.
+//  Created by ZengJintao on 2/11/17.
 //  Copyright © 2017 ZengJintao. All rights reserved.
 //
 
 import UIKit
+import XLPagerTabStrip
 
-class TutorVC: UIViewController {
+class TutorVC: ButtonBarPagerTabStripViewController {
 
-    var tutorArray:[Tutor] = []
-    
-    @IBOutlet weak var tutorTableView: UITableView!
-    
     override func viewDidLoad() {
+        setupStripViewUI()
         super.viewDidLoad()
+    }
+    
+    func setupStripViewUI() {
+        self.settings.style.selectedBarHeight = 2
+        self.settings.style.selectedBarBackgroundColor = Design.color.deepGreenPersianGreenColor()
+        self.settings.style.buttonBarBackgroundColor = UIColor.white
+        self.settings.style.buttonBarItemBackgroundColor = UIColor.white
+        self.settings.style.buttonBarHeight = 35
+        let originFontName = self.settings.style.buttonBarItemFont.fontName
+        self.settings.style.buttonBarItemFont = UIFont(name: originFontName, size: 15)!
+        self.settings.style.buttonBarItemTitleColor = UIColor.darkGray
         
-        tutorTableView.delegate = self
-        tutorTableView.dataSource = self
-        tutorTableView.tableFooterView = UIView()
-        
-        //Navigation
-        let registerButton = UIBarButtonItem(title: "Register", style: UIBarButtonItemStyle.done, target: self, action: #selector(self.showRegisterTutor))
-        self.navigationItem.rightBarButtonItem = registerButton
-        
-        SocketIOManager.sharedInstance.getTutor(20, skip: 0) { (tutors, error) in
-            if error != nil {
-                
-            }
-            self.tutorArray = tutors
-            self.tutorTableView.reloadData()
+        changeCurrentIndexProgressive = { [weak self] (oldCell: ButtonBarViewCell?, newCell: ButtonBarViewCell?, progressPercentage: CGFloat, changeCurrentIndex: Bool, animated: Bool) -> Void in
+            guard changeCurrentIndex == true else { return }
+            oldCell?.label.textColor = .darkGray
+            newCell?.label.textColor = Design.color.deepGreenPersianGreenColor()
         }
     }
 
@@ -39,38 +38,21 @@ class TutorVC: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    func showRegisterTutor() {
-        self.performSegue(withIdentifier: "showRegisterTutor", sender: self)
+    override func viewControllers(for pagerTabStripController: PagerTabStripViewController) -> [UIViewController] {
+        let tutorAvaibaleVC = self.storyboard?.instantiateViewController(withIdentifier: "TutorAvailableVC") as! TutorAvailableVC
+        let myTutorVC = self.storyboard?.instantiateViewController(withIdentifier: "TutorMyTutorVC") as! TutorMyTutorVC
+        let myStudentAvaibaleVC = self.storyboard?.instantiateViewController(withIdentifier: "TutorMyStudentVC") as! TutorMyStudentVC
+        return [tutorAvaibaleVC, myTutorVC, myStudentAvaibaleVC]
     }
-
     
+    /*
     // MARK: - Navigation
 
+    // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "gotoTutorDetail" {
-            if let indexPath = tutorTableView.indexPathForSelectedRow {
-                let vc = segue.destination as! TutorDetailVC
-                vc.tutor = tutorArray[indexPath.row]
-            }
-        }
+        // Get the new view controller using segue.destinationViewController.
+        // Pass the selected object to the new view controller.
     }
- 
+    */
 
-}
-
-extension TutorVC: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return tutorArray.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "TutorTVCell", for: indexPath) as! TutorTVCell
-        cell.configureCell(tutor: tutorArray[indexPath.row])
-        return cell
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        self.performSegue(withIdentifier: "gotoTutorDetail", sender: self)
-        tableView.deselectRow(at: indexPath, animated: true)
-    }
 }

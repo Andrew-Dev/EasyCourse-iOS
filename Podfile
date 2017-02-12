@@ -8,7 +8,7 @@ target 'EasyCourse' do
   # Pods for EasyCourse
 
     # UI
-#    pod 'XLPagerTabStrip'
+    pod 'XLPagerTabStrip'
     pod 'JGProgressHUD'
     pod 'JVFloatLabeledTextField'
     pod 'DKImagePickerController'
