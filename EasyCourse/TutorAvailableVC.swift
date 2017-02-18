@@ -26,7 +26,7 @@ class TutorAvailableVC: UIViewController, IndicatorInfoProvider {
         //let registerButton = UIBarButtonItem(title: "Register", style: UIBarButtonItemStyle.done, target: self, action: #selector(self.showRegisterTutor))
         //self.navigationItem.rightBarButtonItem = registerButton
         
-        SocketIOManager.sharedInstance.getTutor(20, skip: 0) { (tutors, error) in
+        SocketIOManager.sharedInstance.getTutors(20, skip: 0, postedByUserOnly: false) { (tutors, error) in
             if error != nil {
                 
             }

@@ -740,15 +740,18 @@ class SocketIOManager: NSObject {
         }
     }
     
-    func getTutor(_ limit:Int?, skip:Int?, completion: @escaping (_ tutors:[Tutor], _ error:NetworkError?) -> ()) {
+    func getTutors(_ limit:Int?, skip:Int?, postedByUserOnly: Bool, completion: @escaping (_ tutors:[Tutor], _ error:NetworkError?) -> ()) {
         var params:[String:Any] = [:]
-        if (skip != nil) {
+        if skip != nil {
             params["skip"] = skip!
         }
-        if (limit != nil) {
+        if limit != nil {
             params["limit"] = limit!
         }
-        socket.emitWithAck("getTutor", params).timingOut(after: timeoutSec) { (data) in
+        if postedByUserOnly {
+            params["postedByUser"] = postedByUserOnly
+        }
+        socket.emitWithAck("getTutors", params).timingOut(after: timeoutSec) { (data) in
             if let err = self.checkAckError(data, onlyCheckNetwork: false) {
                 return completion([], err)
             }

@@ -33,6 +33,8 @@ class Tutor: NSObject {
     
     // Reviews
     var rating:Double?
+    var applicationCount:Int?
+    var pendingCount:Int?
     
 //    init(id:String, tutorUser:User, course:Course, price:Int, grade:String?) {
 //        self.id = id
@@ -93,6 +95,12 @@ class Tutor: NSObject {
         }
         if let tutorDescription = json["description"].string {
             self.tutorDescription = tutorDescription
+        }
+        if let applicationCount = json["applicationCount"].int {
+            self.applicationCount = applicationCount
+        }
+        if let pendingCount = json["pendingCount"].int {
+            self.pendingCount = pendingCount
         }
         
         grade = json["grade"].string

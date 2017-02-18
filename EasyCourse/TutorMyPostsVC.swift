@@ -1,5 +1,5 @@
 //
-//  TutorMyTutorVC.swift
+//  TutorMyStudentVC.swift
 //  EasyCourse
 //
 //  Created by ZengJintao on 2/12/17.
@@ -9,14 +9,24 @@
 import UIKit
 import XLPagerTabStrip
 
-class TutorMyTutorVC: UIViewController, IndicatorInfoProvider {
+class TutorMyPostsVC: UIViewController, IndicatorInfoProvider {
 
     @IBOutlet weak var mainTableView: UITableView!
     
+    var tutorArray:[Tutor] = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        mainTableView.delegate = self
+        mainTableView.dataSource = self
+        
+        SocketIOManager.sharedInstance.getTutors(20, skip: 0, postedByUserOnly: true) { (tutors, error) in
+            if error != nil {
+                
+            }
+            self.tutorArray = tutors
+            self.mainTableView.reloadData()
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -25,7 +35,7 @@ class TutorMyTutorVC: UIViewController, IndicatorInfoProvider {
     }
     
     func indicatorInfo(for pagerTabStripController: PagerTabStripViewController) -> IndicatorInfo {
-        return IndicatorInfo(title: "Applied")
+        return IndicatorInfo(title: "My Posts")
     }
 
     /*
@@ -40,12 +50,14 @@ class TutorMyTutorVC: UIViewController, IndicatorInfoProvider {
 
 }
 
-extension TutorMyTutorVC: UITableViewDelegate, UITableViewDataSource {
+extension TutorMyPostsVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 5
+        return tutorArray.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return UITableViewCell()
+        let cell = tableView.dequeueReusableCell(withIdentifier: "TutorMyPostsTVCell", for: indexPath) as! TutorMyPostsTVCell
+        cell.configureCell(tutor: tutorArray[indexPath.row])
+        return cell
     }
 }

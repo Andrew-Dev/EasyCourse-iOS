@@ -103,7 +103,8 @@
 		F7AF254D1E403AB100132DEB /* TutorDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7AF254C1E403AB100132DEB /* TutorDetailVC.swift */; };
 		F7BB316A1E4FB53600567E7A /* TutorVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7BB31691E4FB53600567E7A /* TutorVC.swift */; };
 		F7BB316C1E51020700567E7A /* TutorMyTutorVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7BB316B1E51020700567E7A /* TutorMyTutorVC.swift */; };
-		F7BB316E1E51022400567E7A /* TutorMyStudentVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7BB316D1E51022400567E7A /* TutorMyStudentVC.swift */; };
+		F7BB316E1E51022400567E7A /* TutorMyPostsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7BB316D1E51022400567E7A /* TutorMyPostsVC.swift */; };
+		F7BB31701E58E61200567E7A /* TutorMyPostsTVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7BB316F1E58E61200567E7A /* TutorMyPostsTVCell.swift */; };
 		F7CE24431DCE8E7B0004957E /* MessageOutgoingGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CE24421DCE8E7B0004957E /* MessageOutgoingGroupCell.swift */; };
 		F7CE24451DCE8E8F0004957E /* MessageIncomingGroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CE24441DCE8E8F0004957E /* MessageIncomingGroupCell.swift */; };
 		F7CE24471DCE98780004957E /* RoomsDialogAccGroupVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CE24461DCE98780004957E /* RoomsDialogAccGroupVC.swift */; };
@@ -219,7 +220,8 @@
 		F7AF254C1E403AB100132DEB /* TutorDetailVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TutorDetailVC.swift; sourceTree = "<group>"; };
 		F7BB31691E4FB53600567E7A /* TutorVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TutorVC.swift; sourceTree = "<group>"; };
 		F7BB316B1E51020700567E7A /* TutorMyTutorVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TutorMyTutorVC.swift; sourceTree = "<group>"; };
-		F7BB316D1E51022400567E7A /* TutorMyStudentVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TutorMyStudentVC.swift; sourceTree = "<group>"; };
+		F7BB316D1E51022400567E7A /* TutorMyPostsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TutorMyPostsVC.swift; sourceTree = "<group>"; };
+		F7BB316F1E58E61200567E7A /* TutorMyPostsTVCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TutorMyPostsTVCell.swift; sourceTree = "<group>"; };
 		F7CE24421DCE8E7B0004957E /* MessageOutgoingGroupCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageOutgoingGroupCell.swift; sourceTree = "<group>"; };
 		F7CE24441DCE8E8F0004957E /* MessageIncomingGroupCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageIncomingGroupCell.swift; sourceTree = "<group>"; };
 		F7CE24461DCE98780004957E /* RoomsDialogAccGroupVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomsDialogAccGroupVC.swift; sourceTree = "<group>"; };
@@ -544,11 +546,12 @@
 			children = (
 				F7BB31691E4FB53600567E7A /* TutorVC.swift */,
 				F7AF25461E403A7200132DEB /* TutorAvailableVC.swift */,
-				F7BB316D1E51022400567E7A /* TutorMyStudentVC.swift */,
+				F7BB316D1E51022400567E7A /* TutorMyPostsVC.swift */,
 				F7BB316B1E51020700567E7A /* TutorMyTutorVC.swift */,
 				F769B3971E4655E000CAEA24 /* TutorTVCell.swift */,
 				F769B3991E46670200CAEA24 /* Register */,
 				F769B39A1E466FC800CAEA24 /* Detail */,
+				F7BB316F1E58E61200567E7A /* TutorMyPostsTVCell.swift */,
 			);
 			name = Tutor;
 			sourceTree = "<group>";
@@ -754,6 +757,7 @@
 				F72F22D21DE0C0C6009E7C6C /* MessageAlert.swift in Sources */,
 				F7A5564C1D9B3E6A003E258D /* UserSetting.swift in Sources */,
 				F72F22CA1DDBA19B009E7C6C /* RoomDetailClassmatesVC.swift in Sources */,
+				F7BB31701E58E61200567E7A /* TutorMyPostsTVCell.swift in Sources */,
 				F7CFB8D11E16CC8B000C5491 /* RoomDetailClassmatesTVCell.swift in Sources */,
 				F76A9BFF1D86E22C0065C25C /* PopAnimator.swift in Sources */,
 				F769B39C1E466FEC00CAEA24 /* TutorDetailInfoTVCell.swift in Sources */,
@@ -821,7 +825,7 @@
 				F76A9B8C1D85FF3B0065C25C /* AppDelegate.swift in Sources */,
 				F76A9BAB1D861FCF0065C25C /* User.swift in Sources */,
 				F7ADFB361D8CD84500AD53C3 /* ServerHelper.swift in Sources */,
-				F7BB316E1E51022400567E7A /* TutorMyStudentVC.swift in Sources */,
+				F7BB316E1E51022400567E7A /* TutorMyPostsVC.swift in Sources */,
 				F76A9BB11D86203A0065C25C /* University.swift in Sources */,
 				F76A9BF91D8628A30065C25C /* Extension.swift in Sources */,
 				F76A9BF31D8627760065C25C /* LoginMainComponentVC.swift in Sources */,

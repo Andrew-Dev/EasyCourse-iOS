@@ -41,7 +41,7 @@ class TutorVC: ButtonBarPagerTabStripViewController {
     override func viewControllers(for pagerTabStripController: PagerTabStripViewController) -> [UIViewController] {
         let tutorAvaibaleVC = self.storyboard?.instantiateViewController(withIdentifier: "TutorAvailableVC") as! TutorAvailableVC
         let myTutorVC = self.storyboard?.instantiateViewController(withIdentifier: "TutorMyTutorVC") as! TutorMyTutorVC
-        let myStudentAvaibaleVC = self.storyboard?.instantiateViewController(withIdentifier: "TutorMyStudentVC") as! TutorMyStudentVC
+        let myStudentAvaibaleVC = self.storyboard?.instantiateViewController(withIdentifier: "TutorMyStudentVC") as! TutorMyPostsVC
         return [tutorAvaibaleVC, myTutorVC, myStudentAvaibaleVC]
     }
     
