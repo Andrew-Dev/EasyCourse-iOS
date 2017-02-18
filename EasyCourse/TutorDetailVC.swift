@@ -50,11 +50,19 @@ class TutorDetailVC: UIViewController {
         bottomView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: 0).isActive = true
         bottomView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: 0).isActive = true
         bottomView.translatesAutoresizingMaskIntoConstraints = false
+        bottomView.priceLabel.text = "$" + String(tutor!.price! ?? 0) + "/hr"
         bottomView.messageBtn.addTarget(self, action: #selector(self.messageBtnPressed), for: .touchUpInside)
     }
     
     func editBtnPressed() {
-
+        let vc = UIStoryboard(name: "Resource", bundle: nil).instantiateViewController(withIdentifier: "tutorEditDetails") as! TutorRegisterDetailTableVC
+        let navi = UINavigationController(rootViewController: vc)
+        vc.tutor = tutor
+        print("tutor:")
+        print(tutor)
+        print("vctutor:")
+        print(vc.tutor)
+        present(navi, animated: true, completion: nil)
     }
     
     func messageBtnPressed() {
