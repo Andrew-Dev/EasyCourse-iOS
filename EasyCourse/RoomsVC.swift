@@ -292,11 +292,11 @@ extension RoomsVC: UITableViewDelegate, UITableViewDataSource {
         }
         
         if tableView == searchResultsTableView {
-            print("Text: " + searchBar.text!)
-            print("Local Results:")
-            print(localRoomResults)
-            print("Course Results")
-            print(courseResults)
+//            print("Text: " + searchBar.text!)
+//            print("Local Results:")
+//            print(localRoomResults)
+//            print("Course Results")
+//            print(courseResults)
             if searchBar.text == "" || (localRoomResults!.count == 0 && courseResults.count == 0) {
                 return 0
             } else if User.currentUser != nil && User.currentUser!.joinedRoom.count > 0 && localRoomResults!.count > 0{

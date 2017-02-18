@@ -13,6 +13,7 @@ class TutorDetailBottomView: UIView {
     @IBOutlet weak var priceLabel: UILabel!
     
     @IBOutlet weak var messageBtn: UIButton!
+    @IBOutlet weak var signUpBtn: UIButton!
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -28,10 +29,6 @@ class TutorDetailBottomView: UIView {
         let view = Bundle.main.loadNibNamed("TutorDetailBottomView", owner: self, options: nil)!.first as! UIView
         view.frame = self.bounds
         self.addSubview(view)
-    }
-    
-    @IBAction func messageBtnPressed(_ sender: UIButton) {
-        
     }
     
 }
