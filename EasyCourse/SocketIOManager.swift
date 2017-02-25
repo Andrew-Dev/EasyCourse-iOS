@@ -776,6 +776,50 @@ class SocketIOManager: NSObject {
         }
     }
     
+    
+    func getTutorStudents(_ limit:Int?, skip:Int?, pending: Bool, completion: @escaping (_ students:[TutorStudent], _ error:NetworkError?) -> ()) {
+        var params:[String:Any] = [:]
+        if skip != nil {
+            params["skip"] = skip!
+        }
+        if limit != nil {
+            params["limit"] = limit!
+        }
+        params["pending"] = pending
+        socket.emitWithAck("getTutorStudents", params).timingOut(after: timeoutSec) { (data) in
+            if let err = self.checkAckError(data, onlyCheckNetwork: false) {
+                return completion([], err)
+            }
+            print("get tutor: \(data)")
+            
+            let json = JSON(data)
+            guard let studentArrayData = json[0]["students"].arrayObject else {
+                print("get course error: \(json[0]["students"].error?.localizedDescription)")
+                return completion([], NetworkError.ParseJSONError)
+            }
+            
+            var studentsArray:[TutorStudent] = []
+            for studentData in studentArrayData {
+                guard let studentDataDict = studentData as? NSDictionary else {
+                    continue
+                }
+                guard let userData = studentDataDict["user"] as? NSDictionary else {
+                    continue
+                }
+                guard let statusData = studentDataDict["status"] as? String else {
+                    continue
+                }
+                if let student = User.createOrUpdateUserWithData(userData) {
+                    if let tutorStudent = try? TutorStudent(_user: student, _status: statusData) {
+                        studentsArray.append(tutorStudent)
+                    }
+                }
+            }
+            return completion(studentsArray, nil)
+            
+        }
+    }
+    
     // MARK: - public listener
     func publicListener() {
         socket.on("connect") {data, ack in

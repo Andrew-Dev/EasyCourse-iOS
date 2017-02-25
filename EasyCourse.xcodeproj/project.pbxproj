@@ -116,6 +116,7 @@
 		F7CFB8D91E1715CB000C5491 /* RoomDetailShareRoomVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CFB8D81E1715CB000C5491 /* RoomDetailShareRoomVC.swift */; };
 		F7CFB8DD1E1C93DB000C5491 /* UserEditProfileChooseLangVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CFB8DC1E1C93DB000C5491 /* UserEditProfileChooseLangVC.swift */; };
 		F7CFB8DF1E1CAFBF000C5491 /* Language.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CFB8DE1E1CAFBF000C5491 /* Language.swift */; };
+		F7FC258E1E621BB2006D605D /* TutorStudent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7FC258D1E621BB2006D605D /* TutorStudent.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -233,6 +234,7 @@
 		F7CFB8D81E1715CB000C5491 /* RoomDetailShareRoomVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomDetailShareRoomVC.swift; sourceTree = "<group>"; };
 		F7CFB8DC1E1C93DB000C5491 /* UserEditProfileChooseLangVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserEditProfileChooseLangVC.swift; sourceTree = "<group>"; };
 		F7CFB8DE1E1CAFBF000C5491 /* Language.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Language.swift; sourceTree = "<group>"; };
+		F7FC258D1E621BB2006D605D /* TutorStudent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TutorStudent.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -424,6 +426,7 @@
 			isa = PBXGroup;
 			children = (
 				F76A9BAA1D861FCF0065C25C /* User.swift */,
+				F7FC258D1E621BB2006D605D /* TutorStudent.swift */,
 				F76A9BAC1D86200F0065C25C /* Message.swift */,
 				F76A9BB01D86203A0065C25C /* University.swift */,
 				F76A9BB21D8620500065C25C /* Room.swift */,
@@ -785,6 +788,7 @@
 				F7364C7D1DA6E0EF007A967F /* LoadingTVCell.swift in Sources */,
 				F7CFB8CD1E14DC94000C5491 /* RoomsAddRoomBelongingPickerTVCell.swift in Sources */,
 				F7ADFB201D888EC100AD53C3 /* UserTableVC.swift in Sources */,
+				F7FC258E1E621BB2006D605D /* TutorStudent.swift in Sources */,
 				F76A9C011D8706450065C25C /* RealmTools.swift in Sources */,
 				F7CFB8CF1E14DF90000C5491 /* RoomsAddRoomBelongingTVCell.swift in Sources */,
 				F76A9BBF1D86219E0065C25C /* LoginVC.swift in Sources */,
