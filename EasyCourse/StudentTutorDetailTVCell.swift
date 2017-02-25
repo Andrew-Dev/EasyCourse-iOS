@@ -9,7 +9,7 @@
 import UIKit
 
 class StudentTutorDetailTVCell: UITableViewCell {
-
+    
     @IBOutlet weak var userLabel: UILabel!
     
     @IBOutlet weak var acceptButton: UIButton!
@@ -22,19 +22,22 @@ class StudentTutorDetailTVCell: UITableViewCell {
     
     var pending: Bool = false
     
+    var user: User? = nil
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
     }
-
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
+        
         // Configure the view for the selected state
     }
-
+    
     func configureCell(user: User, pending: Bool, accepted: Bool) {
         self.pending = pending
+        self.user = user
         if !pending && accepted {
             statusLabel.isHidden = false
             statusLabel.text = "Accepted"

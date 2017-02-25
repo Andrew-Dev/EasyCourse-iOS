@@ -15,7 +15,8 @@ class TutorDetailVC: UIViewController {
     
     var tutor:Tutor?
     var tutorUser:User?
-    let awaitingApproval:Bool = false
+    var pendingStudents = [TutorStudent]()
+    var currentStudents = [TutorStudent]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,6 +35,10 @@ class TutorDetailVC: UIViewController {
         if tutor!.tutorId == User.currentUser!.id {
             let editBtn = UIBarButtonItem(title: "Edit", style: .plain, target: self, action: #selector(self.editBtnPressed))
             navigationItem.rightBarButtonItem = editBtn
+            SocketIOManager.sharedInstance.getTutorStudents(tutor!.tutorId, limit: 10, skip: 0, pending: true, completion: {(tutorStudents, error) in
+                self.pendingStudents = tutorStudents
+                print(tutorStudents)
+            })
         } else {
             setupBottomView()
         }
@@ -51,8 +56,10 @@ class TutorDetailVC: UIViewController {
         bottomView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: 0).isActive = true
         bottomView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: 0).isActive = true
         bottomView.translatesAutoresizingMaskIntoConstraints = false
-        bottomView.priceLabel.text = "$" + String(tutor!.price ?? 0 ) + "/hr"
+        bottomView.priceLabel.text = "$" + String(tutor!.price ?? 0 ) + "/h"
         bottomView.messageBtn.addTarget(self, action: #selector(self.messageBtnPressed), for: .touchUpInside)
+        bottomView.signUpBtn.addTarget(self, action: #selector(self.signUpBtnPressed), for: .touchUpInside)
+
     }
     
     func editBtnPressed() {
@@ -60,6 +67,14 @@ class TutorDetailVC: UIViewController {
         let navi = UINavigationController(rootViewController: vc)
         vc.tutor = tutor
         present(navi, animated: true, completion: nil)
+    }
+    
+    func signUpBtnPressed() {
+        if tutorUser != nil {
+            SocketIOManager.sharedInstance.applyTutor(tutor!.tutorId, completion: {(success,error) in
+                print("success: " + String(success))
+            })
+        }
     }
     
     func messageBtnPressed() {
@@ -98,24 +113,25 @@ class TutorDetailVC: UIViewController {
 extension TutorDetailVC: UITableViewDataSource, UITableViewDelegate {
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        if tutor!.tutorId == User.currentUser!.id && awaitingApproval {
+        if tutor!.tutorId == User.currentUser!.id && pendingStudents.count > 0 {
             return 3
-        } else if tutor!.tutorId == User.currentUser!.id {
+        } else if tutor!.tutorId == User.currentUser!.id && currentStudents.count > 0 {
             return 2
         }
         return 1
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
         if section == 0 {
             return 1
+        } else if section == 1 && pendingStudents.count > 0 {
+            return pendingStudents.count
         }
-        return 0
+        return currentStudents.count
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if section == 1 && awaitingApproval {
+        if section == 1 && pendingStudents.count > 0 {
             return "Awaiting Approval"
         } else if section != 0 {
             return "My Students"
@@ -144,9 +160,13 @@ extension TutorDetailVC: UITableViewDataSource, UITableViewDelegate {
             let cell = tableView.dequeueReusableCell(withIdentifier: "TutorDetailInfoTVCell", for: indexPath) as! TutorDetailInfoTVCell
             cell.configureCell(tutor: tutor!)
             return cell
-        } else if indexPath.section == 1 {
+        } else if indexPath.section == 1 && pendingStudents.count > 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "StudentTutorDetailTVCell", for: indexPath) as! StudentTutorDetailTVCell
-            cell.configureCell(user: User.currentUser!, pending: true, accepted: false)
+            cell.configureCell(user: pendingStudents[indexPath.row].user, pending: true, accepted: false)
+            return cell
+        } else if currentStudents.count > 0 {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "StudentTutorDetailTVCell", for: indexPath) as! StudentTutorDetailTVCell
+            cell.configureCell(user: pendingStudents[indexPath.row].user, pending: true, accepted: false)
             return cell
         }
         return UITableViewCell()
@@ -154,6 +174,11 @@ extension TutorDetailVC: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        if indexPath.section > 0 {
+            let cell = tableView.cellForRow(at: indexPath) as! StudentTutorDetailTVCell
+            let studentUser = cell.user!
+            print(studentUser)
+        }
     }
     
 }
