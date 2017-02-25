@@ -776,9 +776,29 @@ class SocketIOManager: NSObject {
         }
     }
     
-    
-    func getTutorStudents(_ limit:Int?, skip:Int?, pending: Bool, completion: @escaping (_ students:[TutorStudent], _ error:NetworkError?) -> ()) {
+    func applyTutor(_ tutorId:String, completion: @escaping (_ success:Bool, _ error:NetworkError?) -> ()) {
         var params:[String:Any] = [:]
+        params["tutorId"] = tutorId
+        socket.emitWithAck("applyTutor", params).timingOut(after: timeoutSec) { (data) in
+            if let err = self.checkAckError(data, onlyCheckNetwork: false) {
+                return completion(false, err)
+            }
+            
+            let json = JSON(data)
+            guard let success = json[0]["success"].bool else {
+                print("applyTutor error: \(json[0]["success"].error?.localizedDescription)")
+                return completion(false, NetworkError.ParseJSONError)
+            }
+            
+
+            return completion(success, nil)
+            
+        }
+    }
+    
+    func getTutorStudents(_ tutorId:String, limit:Int?, skip:Int?, pending: Bool, completion: @escaping (_ students:[TutorStudent], _ error:NetworkError?) -> ()) {
+        var params:[String:Any] = [:]
+        params["tutorId"] = tutorId
         if skip != nil {
             params["skip"] = skip!
         }
@@ -794,7 +814,7 @@ class SocketIOManager: NSObject {
             
             let json = JSON(data)
             guard let studentArrayData = json[0]["students"].arrayObject else {
-                print("get course error: \(json[0]["students"].error?.localizedDescription)")
+                print("getTutorStudents error: \(json[0]["students"].error?.localizedDescription)")
                 return completion([], NetworkError.ParseJSONError)
             }
             
