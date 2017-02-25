@@ -777,7 +777,7 @@ class SocketIOManager: NSObject {
     }
     
     
-    func getTutorStudents(_ limit:Int?, skip:Int?, pending: Bool, completion: @escaping (_ tutors:[TutorStudent], _ error:NetworkError?) -> ()) {
+    func getTutorStudents(_ limit:Int?, skip:Int?, pending: Bool, completion: @escaping (_ students:[TutorStudent], _ error:NetworkError?) -> ()) {
         var params:[String:Any] = [:]
         if skip != nil {
             params["skip"] = skip!
