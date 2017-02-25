@@ -15,6 +15,7 @@ class TutorDetailVC: UIViewController {
     
     var tutor:Tutor?
     var tutorUser:User?
+    let awaitingApproval:Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -97,26 +98,62 @@ class TutorDetailVC: UIViewController {
 extension TutorDetailVC: UITableViewDataSource, UITableViewDelegate {
     
     func numberOfSections(in tableView: UITableView) -> Int {
+        if tutor!.tutorId == User.currentUser!.id && awaitingApproval {
+            return 3
+        } else if tutor!.tutorId == User.currentUser!.id {
+            return 2
+        }
         return 1
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 1
+        if section == 0 {
+            return 1
+        }
+        return 0
+    }
+    
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        if section == 1 && awaitingApproval {
+            return "Awaiting Approval"
+        } else if section != 0 {
+            return "My Students"
+        }
+        return nil
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        if section == 0 {
+            return 0
+        } else {
+            return 38
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if indexPath.section == 0 {
+            return 200
+        } else {
+            return 64
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch (indexPath.section, indexPath.row) {
-        case (0,0):
+        if indexPath.section == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "TutorDetailInfoTVCell", for: indexPath) as! TutorDetailInfoTVCell
             cell.configureCell(tutor: tutor!)
             return cell
-        default:
-            return UITableViewCell()
+        } else if indexPath.section == 1 {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "StudentTutorDetailTVCell", for: indexPath) as! StudentTutorDetailTVCell
+            cell.configureCell(user: User.currentUser!, pending: true, accepted: false)
+            return cell
         }
-        
+        return UITableViewCell()
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
     }
+    
 }

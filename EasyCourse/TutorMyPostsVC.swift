@@ -38,15 +38,18 @@ class TutorMyPostsVC: UIViewController, IndicatorInfoProvider {
         return IndicatorInfo(title: "My Posts")
     }
 
-    /*
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+        if segue.identifier == "gotoMyTutorDetail" {
+            if let indexPath = mainTableView.indexPathForSelectedRow {
+                let vc = segue.destination as! TutorDetailVC
+                vc.tutor = tutorArray[indexPath.row]
+            }
+        }
     }
-    */
+
 
 }
 
@@ -59,5 +62,10 @@ extension TutorMyPostsVC: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "TutorMyPostsTVCell", for: indexPath) as! TutorMyPostsTVCell
         cell.configureCell(tutor: tutorArray[indexPath.row])
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        self.performSegue(withIdentifier: "gotoMyTutorDetail", sender: self)
+        tableView.deselectRow(at: indexPath, animated: true)
     }
 }
